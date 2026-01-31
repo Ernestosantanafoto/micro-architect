@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3 uid="uid://j8hgfoyld0e5"]
+
+[ext_resource type="Script" uid="uid://cwd2oqv6tjqjj" path="res://scripts/ui/god_siphon_ui.gd" id="1_7b15w"]
+
+[node name="GodSiphonUI" type="CanvasLayer"]
+script = ExtResource("1_7b15w")
+
+[node name="FondoDetector" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VentanaFlotante" type="PanelContainer" parent="FondoDetector"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = 128.0
+offset_bottom = 230.0
+
+[node name="MarginContainer" type="MarginContainer" parent="FondoDetector/VentanaFlotante"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer"]
+layout_mode = 2
+
+[node name="LabelTitulo" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "MODO DIOS"
+
+[node name="OptionColor" type="OptionButton" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionTipo" type="OptionButton" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LabelValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SpinValor" type="SpinBox" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LabelFreq" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Ticks (Velocidad)"
+
+[node name="SpinFrecuencia" type="SpinBox" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BtnCerrar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CERRAR"

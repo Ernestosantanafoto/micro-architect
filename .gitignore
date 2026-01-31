@@ -1,0 +1,40 @@
+# Godot 4+
+.godot/
+.import/
+
+# Exports y builds
+export_presets.cfg
+EXPORT/
+builds/
+*.pck
+*.wasm
+*.js
+*.html
+*.zip
+*.apk
+*.dmg
+*.exe
+
+# Archivos de export específicos
+MicroArchitect.*
+index.*
+
+# Temporales
+*.tmp
+*.tscn*.tmp
+*.depren
+
+# Desarrollo personal
+todo_el_codigo.txt
+volcado.py
+exportar_scripts.py
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Logs
+*.log

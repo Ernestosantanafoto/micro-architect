@@ -1,0 +1,15 @@
+[gd_scene load_steps=6 format=3 uid="uid://cjr2qp83x5bhu"]
+
+[ext_resource type="Script" uid="uid://p7h2f3ask70u" path="res://scripts/autoload/music_manager.gd" id="1_4h43n"]
+[ext_resource type="AudioStream" uid="uid://dy12j3h6ljccr" path="res://assets/música_ambiental_de_sintetizadores_para_un_videojuego_futurista-_2__1.ogg" id="2_oesyv"]
+[ext_resource type="AudioStream" uid="uid://cupbqgraypu3e" path="res://assets/música_ambiental_de_sintetizadores_para_un_videojuego_futurista-_3_.ogg" id="3_weci2"]
+[ext_resource type="AudioStream" uid="uid://cvevmkfgcgqtx" path="res://assets/música_ambiental_de_sintetizadores_para_un_videojuego_futurista-_4__1.ogg" id="4_k5reo"]
+[ext_resource type="AudioStream" uid="uid://cce2hy8oatbfw" path="res://assets/música_ambiental_de_sintetizadores_para_un_videojuego_futurista.ogg" id="5_j1of8"]
+
+[node name="MusicManager" type="Node"]
+script = ExtResource("1_4h43n")
+playlist = Array[AudioStream]([ExtResource("2_oesyv"), ExtResource("3_weci2"), ExtResource("4_k5reo"), ExtResource("5_j1of8")])
+
+[node name="MusicPlayer1" type="AudioStreamPlayer" parent="."]
+
+[node name="MusicPlayer2" type="AudioStreamPlayer" parent="."]

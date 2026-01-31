@@ -1,0 +1,80 @@
+[gd_scene load_steps=2 format=3 uid="uid://dm0f43vbctqt0"]
+
+[ext_resource type="Script" uid="uid://dctjljh4stpj6" path="res://main_menu.gd" id="1_06t4h"]
+
+[node name="MainMenu" type="CanvasLayer"]
+script = ExtResource("1_06t4h")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07977123, 0.00010203719, 0.21440637, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="ColorRect/CenterContainer/MainMenuContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "MICRO-ARCHITECT"
+
+[node name="ButtonNueva" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+custom_minimum_size = Vector2(10, 40)
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_font_sizes/font_size = 50
+text = "NUEVA"
+
+[node name="ButtonCargar" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+custom_minimum_size = Vector2(10, 40)
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_font_sizes/font_size = 50
+text = "CARGAR"
+
+[node name="ButtonOpciones" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+custom_minimum_size = Vector2(10, 40)
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_font_sizes/font_size = 50
+text = "OPCIONES"
+
+[node name="ButtonSalir" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+custom_minimum_size = Vector2(10, 40)
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_font_sizes/font_size = 50
+text = "SALIR"
+
+[node name="OptionsMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "VOLUMEN"
+
+[node name="VolumeSlider" type="HSlider" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.1
+
+[node name="ButtonBack" type="Button" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+custom_minimum_size = Vector2(10, 40)
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_font_sizes/font_size = 50
+text = "ATRAS"

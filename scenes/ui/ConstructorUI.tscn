@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnpx62uoxlkf"]
+
+[ext_resource type="Script" uid="uid://dhcmr5b1uohud" path="res://scenes/ui/constructor_ui.gd" id="1_26v4u"]
+
+[node name="ConstructorUI" type="CanvasLayer"]
+script = ExtResource("1_26v4u")
+
+[node name="FondoDetector" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VentanaFlotante" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante"]
+layout_mode = 2
+
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+text = "CONSTRUCTOR"
+
+[node name="OptionButton" type="OptionButton" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelEstado" type="Label" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="BarraProgreso" type="ProgressBar" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LabelRequisitos" type="Label" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelAlmacen" type="Label" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BarraAlmacen" type="ProgressBar" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VentanaFlotante/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ListaRecursos" type="VBoxContainer" parent="VentanaFlotante/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BotonReclamar" type="Button" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RECLAMAR (0)"

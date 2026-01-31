@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://b4wcrhpy61to7"]
+
+[ext_resource type="Script" uid="uid://1fgcjrwyy811" path="res://scripts/buildings/merger.gd" id="1_hy0d4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_po3av"]
+size = Vector3(3, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wby5s"]
+size = Vector3(3, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_6jx24"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wby5s"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6jx24"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_wby5s")
+size = Vector3(1, 0.1, 0.05)
+
+[node name="Merger" type="Area3D"]
+script = ExtResource("1_hy0d4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_po3av")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+transform = Transform3D(0.48999998, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_wby5s")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="CollisionShape3D"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0.5, 0, 0)
+mesh = SubResource("CapsuleMesh_6jx24")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="CollisionShape3D"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.5, 0, 0)
+mesh = SubResource("CapsuleMesh_6jx24")
+
+[node name="UI_Root" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5977347, 0)
+
+[node name="TextoInfo" type="Label3D" parent="UI_Root"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.606621, -0.5064392)
+pixel_size = 0.01
+billboard = 1
+text = "0/10"
+font_size = 45
+
+[node name="BarraVisual" type="MeshInstance3D" parent="UI_Root"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 3.788974, 0, -0.43049836, 0.403512)
+mesh = SubResource("BoxMesh_6jx24")
+skeleton = NodePath("../..")

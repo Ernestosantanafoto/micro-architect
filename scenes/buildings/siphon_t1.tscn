@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://be3o57unlov4p"]
+
+[ext_resource type="Script" uid="uid://bdtr5xh0mvul" path="res://scripts/buildings/siphon_logic.gd" id="1_8cgig"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8cgig"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7bcvb"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8cgig"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gsspj"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
+[node name="SiphonT1" type="Area3D" groups=["Sifones"]]
+collision_layer = 5
+script = ExtResource("1_8cgig")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_8cgig")
+
+[node name="CuerpoCubo" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_7bcvb")
+
+[node name="CaraEmisora" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.18186605, 0, 0, 0, -0.18186605, 0, 0, 0, 0.7127802, 0, 0, -0.51)
+mesh = SubResource("BoxMesh_8cgig")
+surface_material_override/0 = SubResource("StandardMaterial3D_gsspj")

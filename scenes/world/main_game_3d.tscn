@@ -1,0 +1,136 @@
+[gd_scene load_steps=16 format=3 uid="uid://cwhvblny03sya"]
+
+[ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
+[ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
+[ext_resource type="Shader" uid="uid://c4kfcb5wrqdql" path="res://main_game_3d.gdshader" id="1_ibdhq"]
+[ext_resource type="MeshLibrary" uid="uid://4sk6jlrgilco" path="res://tileset_resources.tres" id="4_ypd6b"]
+[ext_resource type="Script" uid="uid://byk6ni3intjxn" path="res://scripts/world/world_generator.gd" id="5_t1nic"]
+[ext_resource type="Script" uid="uid://1l5qwpqm725k" path="res://scripts/ui/hud.gd" id="6_dmcra"]
+[ext_resource type="Script" uid="uid://duhtij3a37pih" path="res://scripts/managers/construction_manager.gd" id="7_5bore"]
+[ext_resource type="PackedScene" uid="uid://j8hgfoyld0e5" path="res://scenes/ui/god_siphon_ui.tscn" id="8_g1lpv"]
+[ext_resource type="PackedScene" uid="uid://5d03gyj5ss2q" path="res://scenes/ui/inventory_hud.tscn" id="9_g1lpv"]
+[ext_resource type="PackedScene" uid="uid://bnpx62uoxlkf" path="res://scenes/ui/ConstructorUI.tscn" id="10_3vmts"]
+[ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scenes/world/system_hud.gd" id="11_7an1d"]
+
+[sub_resource type="Environment" id="Environment_t5qdf"]
+background_mode = 1
+glow_enabled = true
+glow_intensity = 1.61
+glow_bloom = 0.64
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ibdhq"]
+albedo_color = Color(0.0121183405, 0.0121183405, 0.0121183405, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ypd6b"]
+material = SubResource("StandardMaterial3D_ibdhq")
+size = Vector2(200, 200)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ypd6b"]
+render_priority = 0
+shader = ExtResource("1_ibdhq")
+shader_parameter/grid_color = Color(0, 0.16461393, 0.3610067, 1)
+shader_parameter/grid_density = 1.0
+shader_parameter/line_thickness = 0.045
+
+[node name="MainGame3D" type="Node3D"]
+script = ExtResource("1_bxm63")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_t5qdf")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 389.89294, -44.36802, 27.433317)
+
+[node name="CameraPivot" type="Node3D" parent="."]
+script = ExtResource("1_1dsme")
+
+[node name="CameraElevation" type="Node3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/CameraElevation"]
+transform = Transform3D(1, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000002, 0, 8.408709, 2.2104428)
+keep_aspect = 0
+projection = 1
+current = true
+size = 20.861141
+near = 0.015
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CameraPivot"]
+mesh = SubResource("PlaneMesh_ypd6b")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("ShaderMaterial_ypd6b")
+
+[node name="GridMap" type="GridMap" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh_library = ExtResource("4_ypd6b")
+cell_size = Vector3(1, 1, 1)
+data = {
+"cells": PackedInt32Array(65506, 65510, 0, 65507, 65511, 1, 65509, 65513, 1, 65510, 65505, 1, 65510, 65515, 1, 65511, 65505, 1, 65511, 65514, 1, 65512, 65514, 0, 65518, 65509, 1, 65518, 65510, 2, 65519, 65508, 2, 65519, 65509, 1, 65519, 65510, 0, 65504, 65524, 1, 65505, 65524, 1, 65506, 65528, 0, 65507, 65528, 0, 65507, 65529, 1, 65508, 65529, 0, 65508, 65530, 2, 65509, 65529, 1, 65512, 65533, 0, 65513, 65533, 0, 65514, 65522, 1, 65514, 65533, 1, 65515, 65533, 1, 65518, 65525, 0, 65518, 65526, 0, 65519, 65525, 0, 65519, 65526, 0, 65519, 65528, 0, 65519, 65529, 1, 65519, 65535, 1, 65505, 5, 1, 65505, 11, 0, 65505, 12, 0, 65506, 0, 0, 65506, 9, 1, 65506, 11, 0, 65506, 12, 0, 65507, 0, 0, 65507, 9, 0, 65511, 9, 1, 65511, 10, 1, 65513, 1, 0, 65514, 1, 2, 65515, 7, 1, 65504, 26, 1, 65505, 23, 0, 65508, 17, 1, 65508, 30, 0, 65509, 19, 0, 65510, 19, 0, 65511, 20, 0, 65511, 21, 0, 65511, 22, 0, 65511, 23, 1, 65512, 20, 0, 65512, 21, 1, 65512, 22, 1, 65513, 20, 2, 65513, 21, 1, 65517, 17, 0, 65512, 41, 0, 65513, 41, 0, 65514, 44, 0, 65519, 36, 1, 65519, 44, 1, 65520, 65510, 2, 65520, 65512, 0, 65521, 65512, 0, 65523, 65517, 0, 65526, 65511, 1, 65526, 65513, 0, 65527, 65510, 1, 65527, 65511, 0, 65527, 65512, 0, 65528, 65515, 0, 65529, 65515, 0, 65531, 65510, 0, 65520, 65535, 0, 65521, 65521, 0, 65522, 65521, 0, 65522, 65522, 0, 65524, 65534, 1, 65525, 65534, 0, 65526, 8, 2, 65529, 8, 0, 65522, 24, 1, 65522, 25, 1, 65525, 18, 0, 65526, 18, 1, 65531, 19, 1, 65531, 24, 0, 65531, 25, 1, 65534, 24, 1, 65534, 25, 1, 65524, 36, 0, 65525, 37, 1, 65525, 46, 2, 65525, 47, 1, 65526, 37, 1, 65527, 37, 1, 65530, 39, 1, 65530, 40, 0, 65530, 41, 0, 65530, 42, 2, 65531, 40, 0, 65533, 38, 0, 65534, 37, 0, 65534, 38, 1, 65535, 37, 1, 65535, 38, 1, 0, 65518, 0, 1, 65509, 0, 1, 65517, 0, 1, 65518, 2, 1, 65519, 2, 2, 65509, 1, 2, 65517, 0, 2, 65518, 0, 3, 65507, 1, 3, 65517, 0, 3, 65518, 0, 4, 65506, 1, 7, 65511, 1, 7, 65512, 1, 8, 65511, 1, 8, 65512, 1, 10, 65514, 1, 11, 65514, 1, 12, 65514, 1, 14, 65509, 1, 14, 65510, 1, 14, 65511, 0, 15, 65504, 1, 15, 65509, 1, 1, 65524, 0, 12, 65526, 1, 12, 65527, 1, 13, 65526, 1, 13, 65534, 0, 13, 65535, 1, 14, 65520, 0, 14, 65534, 0, 15, 65520, 1, 2, 11, 1, 2, 12, 1, 3, 11, 2, 3, 12, 2, 4, 10, 1, 7, 8, 1, 8, 10, 1, 11, 0, 0, 12, 7, 1, 12, 12, 1, 14, 7, 1, 15, 0, 1, 4, 18, 1, 5, 17, 1, 6, 31, 0, 7, 25, 2, 7, 31, 1, 8, 26, 1, 9, 23, 0, 9, 27, 1, 14, 28, 0, 15, 29, 1, 0, 37, 1, 0, 38, 1, 0, 47, 1, 6, 32, 0, 6, 33, 0, 6, 34, 0, 7, 32, 0, 7, 47, 0, 8, 47, 1, 9, 47, 1, 10, 40, 1, 11, 37, 1, 11, 38, 1, 11, 41, 1, 12, 40, 1, 12, 41, 1, 13, 41, 1, 14, 40, 0, 15, 45, 0, 16, 65519, 0, 20, 65515, 2, 22, 65506, 1, 22, 65507, 0, 24, 65510, 1, 24, 65511, 1, 25, 65510, 1, 26, 65508, 0, 26, 65509, 0, 26, 65510, 0, 26, 65511, 0, 27, 65509, 2, 27, 65510, 0, 28, 65509, 0, 28, 65510, 0, 29, 65514, 0, 20, 65530, 0, 20, 65534, 2, 21, 65530, 1, 22, 65524, 2, 23, 65524, 1, 23, 65525, 1, 24, 65533, 1, 25, 65520, 1, 25, 65533, 1, 29, 65525, 1, 29, 65526, 1, 19, 2, 0, 21, 7, 0, 22, 7, 1, 25, 1, 0, 29, 9, 1, 29, 10, 1, 29, 12, 1, 30, 2, 0, 30, 3, 0, 30, 9, 1, 16, 30, 1, 16, 31, 1, 17, 30, 0, 17, 31, 0, 20, 16, 0, 21, 17, 0, 21, 18, 0, 21, 19, 0, 22, 19, 1, 24, 26, 0, 24, 27, 0, 24, 28, 1, 24, 29, 1, 28, 30, 0, 28, 31, 0, 29, 31, 0, 30, 31, 0, 31, 31, 1, 16, 32, 2, 16, 33, 2, 17, 32, 1, 17, 33, 1, 23, 47, 1, 24, 37, 0, 24, 46, 1, 24, 47, 1, 25, 38, 1, 30, 44, 2, 31, 32, 0, 31, 34, 1, 31, 40, 0, 33, 65506, 1, 34, 65506, 1, 34, 65517, 1, 34, 65518, 1, 35, 65504, 0, 35, 65512, 1, 35, 65517, 1, 35, 65518, 1, 39, 65510, 1, 40, 65510, 0, 41, 65510, 0, 41, 65519, 1, 42, 65517, 0, 42, 65518, 0, 42, 65519, 1, 43, 65516, 0, 43, 65517, 0, 43, 65518, 0, 44, 65506, 1, 45, 65508, 1, 46, 65507, 1, 46, 65508, 1, 47, 65507, 1, 32, 65533, 1, 33, 65533, 1, 33, 65534, 1, 33, 65535, 1, 34, 65535, 2, 35, 65529, 0, 35, 65530, 1, 36, 65529, 0, 36, 65530, 0, 37, 65529, 1, 40, 65535, 1, 44, 65520, 1, 32, 11, 0, 33, 10, 0, 33, 11, 0, 36, 7, 0, 37, 7, 0, 37, 14, 2, 37, 15, 0, 38, 15, 0, 40, 0, 0, 41, 0, 0, 42, 1, 1, 43, 1, 1, 44, 2, 1, 46, 7, 2, 46, 8, 2, 47, 8, 0, 47, 10, 0, 32, 31, 1, 33, 22, 0, 36, 27, 0, 36, 28, 1, 37, 16, 0, 37, 28, 0, 38, 16, 0, 43, 19, 2, 44, 19, 0, 45, 21, 0, 45, 22, 1, 46, 17, 0, 36, 38, 0, 36, 39, 0, 37, 39, 0, 42, 33, 1, 46, 37, 1, 47, 44, 0, 47, 45, 0)
+}
+
+[node name="WorldGenerator" type="Node" parent="."]
+script = ExtResource("5_t1nic")
+radio_vision = 16
+espacio_inicial = 10.105
+frecuencia_islas = 0.195
+frecuencia_recursos = 0.017
+rareza_roja = 0.673
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("6_dmcra")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 2.0
+offset_right = 737.0
+offset_bottom = 63.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/MarginContainer"]
+layout_mode = 2
+
+[node name="EstabilidadLabel" type="Label" parent="HUD/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.28627452, 0.68235296, 0.3882353, 1)
+theme_override_constants/outline_size = 4
+
+[node name="CargaLabel" type="Label" parent="HUD/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.66786724, 0.37963545, 0.92025256, 1)
+theme_override_constants/outline_size = 4
+
+[node name="InventoryHUD" parent="HUD" instance=ExtResource("9_g1lpv")]
+
+[node name="ConstructionManager" type="Node" parent="." groups=["ConstructionManager"]]
+script = ExtResource("7_5bore")
+
+[node name="GodSiphonUI" parent="." instance=ExtResource("8_g1lpv")]
+
+[node name="ConstructorUI" parent="." instance=ExtResource("10_3vmts")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource("11_7an1d")
+
+[node name="PanelSistema" type="PanelContainer" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelSistema"]
+layout_mode = 2
+
+[node name="BtnGuardar" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
+layout_mode = 2
+text = "GUARDAR"
+
+[node name="BtnMenu" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
+layout_mode = 2
+text = "MENÚ"

@@ -1,0 +1,39 @@
+[gd_scene load_steps=9 format=3 uid="uid://cqlumo4334121"]
+
+[ext_resource type="Script" uid="uid://r1u4dtqbog4l" path="res://scripts/buildings/god_siphon.gd" id="1_gy1ee"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hmg3b"]
+
+[sub_resource type="Gradient" id="Gradient_k0mat"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_htj45"]
+gradient = SubResource("Gradient_k0mat")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1x7ky"]
+albedo_color = Color(1, 0.7176471, 0.4, 1)
+metallic = 1.0
+metallic_specular = 0.52
+metallic_texture = SubResource("GradientTexture1D_htj45")
+
+[sub_resource type="BoxMesh" id="BoxMesh_43e18"]
+material = SubResource("StandardMaterial3D_1x7ky")
+
+[sub_resource type="BoxMesh" id="BoxMesh_hy1cr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3a8ui"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
+[node name="GodSiphon" type="Area3D"]
+script = ExtResource("1_gy1ee")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_hmg3b")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_43e18")
+
+[node name="CaraEmisora" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(-0.18186605, 0, 0, 0, -0.18186605, 0, 0, 0, 0.7127802, 0, 0, -0.51)
+mesh = SubResource("BoxMesh_hy1cr")
+surface_material_override/0 = SubResource("StandardMaterial3D_3a8ui")

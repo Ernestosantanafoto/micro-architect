@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://c283mtgw0v1dq"]
+
+[ext_resource type="Script" uid="uid://cdyhn4ten7b43" path="res://scripts/buildings/prism_logic.gd" id="1_mb2lt"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x82p3"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_ocklc"]
+left_to_right = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mb2lt"]
+transparency = 1
+metallic = 0.29
+roughness = 0.2
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
+[node name="PrismAngle" type="Area3D" groups=["Prismas"]]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 0, 0, 0)
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_mb2lt")
+tipo = 1
+alcance_maximo = 15
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-1, -1.7484552e-07, -8.742277e-08, 1.7484555e-07, -1, 2.6226832e-07, -8.7422805e-08, 2.6226832e-07, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_x82p3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+transform = Transform3D(-1.0000001, -8.5284813e-07, 3.462089e-07, 3.5365937e-07, 4.8082575e-07, 1, -8.528483e-07, 1.0000001, -4.8082563e-07, -0.0052490244, 0.0068969713, 0.0014648415)
+mesh = SubResource("PrismMesh_ocklc")
+surface_material_override/0 = SubResource("StandardMaterial3D_mb2lt")

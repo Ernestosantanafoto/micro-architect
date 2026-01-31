@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://dqwqutyhspslw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lbc18"]
+albedo_color = Color(0.43264696, 0.59630615, 0.18706658, 1)
+emission_enabled = true
+emission = Color(0.5019608, 0, 0.12941177, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4nnuh"]
+material = SubResource("StandardMaterial3D_lbc18")
+size = Vector3(1, 0.001, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4uhx0"]
+albedo_color = Color(0.4117647, 0.8235294, 0.27058825, 1)
+emission_enabled = true
+emission = Color(0.4117647, 0.8235294, 0.27058825, 1)
+emission_energy_multiplier = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fm2gg"]
+size = Vector3(1, 0.1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4nnuh"]
+albedo_color = Color(0.4117647, 0.41568628, 0.98039216, 1)
+emission_enabled = true
+emission = Color(0.4117647, 0.41568628, 0.98039216, 1)
+emission_energy_multiplier = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v1f6h"]
+albedo_color = Color(0.4117647, 0.41568628, 0.98039216, 1)
+emission_enabled = true
+emission = Color(0.4117647, 0.41568628, 0.98039216, 1)
+emission_energy_multiplier = 0.1
+
+[node name="TileSetSource" type="Node3D"]
+
+[node name="Tile_Estability" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_4nnuh")
+surface_material_override/0 = SubResource("StandardMaterial3D_4uhx0")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Tile_Estability"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tile_Estability/StaticBody3D"]
+shape = SubResource("BoxShape3D_fm2gg")
+
+[node name="Tile_Charge" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_4nnuh")
+surface_material_override/0 = SubResource("StandardMaterial3D_4nnuh")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Tile_Charge"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tile_Charge/StaticBody3D"]
+shape = SubResource("BoxShape3D_fm2gg")
+
+[node name="Tile_Red" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_4nnuh")
+surface_material_override/0 = SubResource("StandardMaterial3D_v1f6h")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Tile_Red"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tile_Red/StaticBody3D"]
+shape = SubResource("BoxShape3D_fm2gg")
