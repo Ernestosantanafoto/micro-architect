@@ -71,6 +71,6 @@ Retorna `{target: Node, impact_pos: Vector3}` o null.
 
 ## Deprecado
 
-- `energy_pulse.tscn` / `energy_pulse.gd` – ya no se usan
+- `scenes/deprecated/energy_pulse.tscn` / `scripts/deprecated/energy_pulse.gd` – deprecado
 - `PulseValidator` – sigue activo por compatibilidad, pero no hay pulsos físicos
 - Handlers `area_entered` para grupo "Pulsos" – legacy, limpian pulsos huérfanos si existieran

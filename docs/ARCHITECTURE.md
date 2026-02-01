@@ -45,7 +45,7 @@ Manager → Building (callbacks, actualizar estado)
 
 **Modelo actual (DEPRECADO):**
 ```gdscript
-# energy_pulse.tscn instanciado como nodo
+# scenes/deprecated/energy_pulse.tscn (instanciado como nodo, deprecado)
 var pulse = PULSE_SCENE.instantiate()
 pulse.position = start_pos
 pulse.velocity = direction * speed

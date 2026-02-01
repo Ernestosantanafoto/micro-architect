@@ -9,8 +9,8 @@
 [ext_resource type="Script" uid="uid://duhtij3a37pih" path="res://scripts/managers/construction_manager.gd" id="7_5bore"]
 [ext_resource type="PackedScene" uid="uid://j8hgfoyld0e5" path="res://scenes/ui/god_siphon_ui.tscn" id="8_g1lpv"]
 [ext_resource type="PackedScene" uid="uid://5d03gyj5ss2q" path="res://scenes/ui/inventory_hud.tscn" id="9_g1lpv"]
-[ext_resource type="PackedScene" uid="uid://bnpx62uoxlkf" path="res://scenes/ui/ConstructorUI.tscn" id="10_3vmts"]
-[ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scenes/world/system_hud.gd" id="11_7an1d"]
+[ext_resource type="PackedScene" uid="uid://bnpx62uoxlkf" path="res://scenes/ui/constructor_ui.tscn" id="10_3vmts"]
+[ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scripts/ui/system_hud.gd" id="11_7an1d"]
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -96,16 +96,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HUD/MarginContainer"]
 layout_mode = 2
-
-[node name="EstabilidadLabel" type="Label" parent="HUD/MarginContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.28627452, 0.68235296, 0.3882353, 1)
-theme_override_constants/outline_size = 4
-
-[node name="CargaLabel" type="Label" parent="HUD/MarginContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.66786724, 0.37963545, 0.92025256, 1)
-theme_override_constants/outline_size = 4
+theme_override_constants/separation = 15
 
 [node name="InventoryHUD" parent="HUD" instance=ExtResource("9_g1lpv")]
 

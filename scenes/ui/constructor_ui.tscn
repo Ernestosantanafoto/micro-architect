@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxsps2i3hobv0"]
+[gd_scene load_steps=2 format=3 uid="uid://bnpx62uoxlkf"]
 
-[ext_resource type="Script" path="res://scenes/ui/constructor_ui.gd" id="1_26v4u"]
+[ext_resource type="Script" uid="uid://dhcmr5b1uohud" path="res://scripts/ui/constructor_ui.gd" id="1_26v4u"]
 
 [node name="ConstructorUI" type="CanvasLayer"]
+visible = false
 script = ExtResource("1_26v4u")
 
 [node name="FondoDetector" type="Control" parent="."]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://drv8aicywdh6k"]
 
-[ext_resource type="Script" uid="uid://kbwgh5gx36kd" path="res://scripts/world/energy_pulse.gd" id="1_qm5qy"]
+[ext_resource type="Script" uid="uid://kbwgh5gx36kd" path="res://scripts/deprecated/energy_pulse.gd" id="1_qm5qy"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_knkk2"]
 radius = 0.3

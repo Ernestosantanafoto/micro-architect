@@ -8,9 +8,18 @@ var sifon_activo: Node3D = null
 
 @onready var opt_color = %OptionColor
 @onready var opt_tipo = %OptionTipo
-@onready var spin_valor = %SpinValor
-@onready var spin_freq = %SpinFrecuencia
+@onready var slider_energia = %SliderEnergia
+@onready var lbl_energia_valor = %LblEnergiaValor
+@onready var slider_freq = %SliderFrecuencia
+@onready var lbl_freq_valor = %LblFreqValor
+@onready var lbl_preview = %LblPreview
+@onready var btn_aplicar = %BtnAplicar
+@onready var btn_resetear = %BtnResetear
 @onready var btn_cerrar = %BtnCerrar
+
+# Valores por defecto
+var default_energia = 10.0
+var default_freq = 5
 
 func _ready():
 	visible = false
@@ -29,12 +38,24 @@ func _ready():
 		opt_tipo.add_item("Quark Up", 2)
 		opt_tipo.add_item("Quark Down", 3)
 	
-	# 2. Conexiones de Señales
-	# Usamos una función anónima para que cualquier cambio en el color dispare la actualización
-	if opt_color: opt_color.item_selected.connect(func(_idx): _al_cambiar_dato(0))
+	# 2. Configurar sliders
+	if slider_energia:
+		slider_energia.min_value = 1.0
+		slider_energia.max_value = 100.0
+		slider_energia.value = default_energia
+		slider_energia.value_changed.connect(_on_energia_changed)
+	
+	if slider_freq:
+		slider_freq.min_value = 1
+		slider_freq.max_value = 20
+		slider_freq.value = default_freq
+		slider_freq.value_changed.connect(_on_freq_changed)
+	
+	# 3. Conexiones de Señales
+	if opt_color: opt_color.item_selected.connect(func(_idx): _actualizar_preview())
 	if opt_tipo: opt_tipo.item_selected.connect(_al_cambiar_tipo)
-	if spin_valor: spin_valor.value_changed.connect(_al_cambiar_dato)
-	if spin_freq: spin_freq.value_changed.connect(_al_cambiar_dato)
+	if btn_aplicar: btn_aplicar.pressed.connect(_aplicar_cambios)
+	if btn_resetear: btn_resetear.pressed.connect(_resetear_valores)
 	if btn_cerrar: btn_cerrar.pressed.connect(cerrar)
 	
 	# 3. Cierre al clicar en el fondo
@@ -47,11 +68,10 @@ func _process(_delta):
 		return
 
 	# --- ESTABILIZACIÓN DEL MENÚ ---
-	# Si estamos interactuando con la UI, congelamos el movimiento para que no se cierre el desplegable
 	if (opt_color and opt_color.get_popup().visible) or (opt_tipo and opt_tipo.get_popup().visible):
 		return
 	
-	if ventana and ventana.get_global_rect().has_point(ventana.get_global_mouse_position()):
+	if ventana and ventana.get_global_rect().has_point(get_viewport().get_mouse_position()):
 		return
 
 	# --- SEGUIMIENTO AL OBJETO 3D ---
@@ -74,8 +94,10 @@ func abrir(sifon):
 	visible = true
 	
 	# Sincronizar UI con los valores actuales del sifón
-	if spin_valor: spin_valor.set_value_no_signal(sifon.valor_energia)
-	if spin_freq: spin_freq.set_value_no_signal(sifon.ticks_por_disparo)
+	if slider_energia: slider_energia.set_value_no_signal(sifon.valor_energia)
+	if slider_freq: slider_freq.set_value_no_signal(sifon.ticks_por_disparo)
+	
+	_actualizar_preview()
 	
 	# Animación de aparición
 	if ventana:
@@ -97,17 +119,42 @@ func _on_fondo_input(event):
 
 # --- LÓGICA DE ACTUALIZACIÓN DE DATOS ---
 
+func _on_energia_changed(value: float):
+	if lbl_energia_valor:
+		lbl_energia_valor.text = "%.1f" % value
+	_actualizar_preview()
+
+func _on_freq_changed(value: float):
+	if lbl_freq_valor:
+		lbl_freq_valor.text = "%d ticks" % int(value)
+	_actualizar_preview()
+
 func _al_cambiar_tipo(index):
 	# Ajustes automáticos por comodidad del usuario
-	if spin_valor:
+	if slider_energia:
 		match index:
-			0: spin_valor.value = 1
-			1: spin_valor.value = 10
-			2, 3: spin_valor.value = 100
-	_al_cambiar_dato(0)
+			0: slider_energia.value = 1
+			1: slider_energia.value = 10
+			2, 3: slider_energia.value = 100
+	_actualizar_preview()
 
-func _al_cambiar_dato(_val):
-	if not is_instance_valid(sifon_activo): return
+func _actualizar_preview():
+	if not lbl_preview:
+		return
+	
+	var idx_color = opt_color.selected if opt_color else 0
+	var idx_tipo = opt_tipo.selected if opt_tipo else 0
+	var energia = slider_energia.value if slider_energia else default_energia
+	var freq = slider_freq.value if slider_freq else default_freq
+	
+	var tipo_texto = ["Energía básica", "Comprimida", "Quark Up", "Quark Down"][idx_tipo]
+	var color_texto = ["Stability", "Charge"][idx_color]
+	
+	lbl_preview.text = "VISTA PREVIA:\nProducción: %.1f %s/seg\nTipo: %s\nFrecuencia: %d ticks" % [energia, color_texto, tipo_texto, int(freq)]
+
+func _aplicar_cambios():
+	if not is_instance_valid(sifon_activo):
+		return
 	
 	var idx_color = opt_color.selected if opt_color else 0
 	var idx_tipo = opt_tipo.selected if opt_tipo else 0
@@ -143,6 +190,15 @@ func _al_cambiar_dato(_val):
 		recurso, 
 		color, 
 		escala, 
-		int(spin_valor.value) if spin_valor else 1, 
-		int(spin_freq.value) if spin_freq else 5
+		int(slider_energia.value) if slider_energia else 1, 
+		int(slider_freq.value) if slider_freq else 5
 	)
+	
+	cerrar()
+
+func _resetear_valores():
+	if slider_energia: slider_energia.value = default_energia
+	if slider_freq: slider_freq.value = default_freq
+	if opt_color: opt_color.selected = 0
+	if opt_tipo: opt_tipo.selected = 0
+	_actualizar_preview()

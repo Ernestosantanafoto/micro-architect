@@ -28,34 +28,35 @@ var menu_data = {
 
 func _ready():
 	vertical_stack.visible = false
+	
+	# Configurar botones con tooltips
 	for child in category_box.get_children():
 		if child is Button:
 			child.pressed.connect(_on_category_pressed.bind(child))
+			_setup_tooltip(child)
 
 func _on_category_pressed(boton: Button):
-	# Limpiamos el texto para comparar
 	var txt = boton.text.to_upper().strip_edges()
 	
-	# LÓGICA DE EXCLUSIÓN: Diferenciamos por nombre de nodo si el texto es ambiguo
-	if txt == "GUARDAR" and "RECOGER" in boton.name.to_upper():
-		_ejecutar_devolucion()
+	# Acciones especiales (no son categorías de construcción)
+	match txt:
+		"SOLTAR":
+			_ejecutar_devolucion()
+			return
+		"ELIMINAR":
+			if construction_manager: 
+				construction_manager.destruir_item_en_mano()
+			return
+	
+	# Categorías de construcción
+	if not menu_data.has(txt):
 		return
-	elif txt == "SOLTAR":
-		_ejecutar_devolucion()
-		return
-	elif txt == "ELIMINAR":
-		if construction_manager: construction_manager.destruir_item_en_mano()
-		return
-	elif txt == "GUARDAR": # Este es el de guardar partida
-		if SaveSystem: SaveSystem.guardar_partida()
-		return
-
-	if not menu_data.has(txt): return
-
+	
+	# Toggle: si el menú ya está abierto, cerrarlo
 	if vertical_stack.visible and vertical_stack.get_meta("cat_activa", "") == txt:
 		_cerrar_menu()
 		return
-
+	
 	_construir_items_verticales(txt, boton)
 
 func _ejecutar_devolucion():
@@ -108,3 +109,17 @@ func _on_item_seleccionado(ruta_escena, nombre_inventario):
 func _cerrar_menu():
 	vertical_stack.visible = false
 	vertical_stack.set_meta("cat_activa", "")
+
+func _setup_tooltip(boton: Button):
+	var txt = boton.text.to_upper().strip_edges()
+	var tooltips = {
+		"SIFONES": "Extractores de energía (Siphons)",
+		"PRISMAS": "Redirigen haces de energía",
+		"MANIPULA": "Compresores, Fusionadores, Void Generators",
+		"CONSTR": "Constructores de edificios",
+		"SOLTAR": "Devolver edificio al inventario",
+		"ELIMINAR": "Destruir edificio en mano"
+	}
+	
+	if tooltips.has(txt):
+		boton.tooltip_text = tooltips[txt]

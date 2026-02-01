@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dm0f43vbctqt0"]
 
-[ext_resource type="Script" uid="uid://dctjljh4stpj6" path="res://main_menu.gd" id="1_06t4h"]
+[ext_resource type="Script" uid="uid://dctjljh4stpj6" path="res://scripts/ui/main_menu.gd" id="1_06t4h"]
 
 [node name="MainMenu" type="CanvasLayer"]
 script = ExtResource("1_06t4h")
@@ -59,6 +59,7 @@ theme_override_font_sizes/font_size = 50
 text = "SALIR"
 
 [node name="OptionsMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]

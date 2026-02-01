@@ -2,22 +2,15 @@ extends CanvasLayer
 
 @export var ESCENA_JUEGO : String = "res://scenes/world/main_game_3d.tscn"
 
-# Referencias
-var main_container : Control
-var options_container : Control
-var volume_slider : HSlider
+# Referencias (rutas explícitas)
+@onready var main_container: Control = $ColorRect/CenterContainer/MainMenuContainer
+@onready var options_container: Control = $ColorRect/CenterContainer/OptionsMenuContainer
+@onready var volume_slider: HSlider = $ColorRect/CenterContainer/OptionsMenuContainer/VolumeSlider
 
 func _ready():
-	print("[DEBUG-MENU] === INICIANDO MENÚ PRINCIPAL ===")
-	
-	# Localizamos los contenedores
-	main_container = find_child("MainMenuContainer", true, false)
-	options_container = find_child("OptionsMenuContainer", true, false)
-	volume_slider = find_child("VolumeSlider", true, false)
-	
-	# Estado inicial
-	if main_container: main_container.visible = true
-	if options_container: options_container.visible = false
+	# Estado inicial (opciones ocultas por defecto en .tscn)
+	main_container.visible = true
+	options_container.visible = false
 	
 	# Configurar Audio
 	if volume_slider:

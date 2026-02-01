@@ -322,6 +322,7 @@ git push
 
 ## 📝 Notas
 
+- **Protocolo de archivos:** ver `docs/FILE_PROTOCOL.md` (snake_case, scripts en scripts/, deprecados en deprecated/)
 - Este plan es flexible, ajustar según necesidad
 - Priorizar funcionalidad sobre visuales
 - Documentar decisiones importantes
@@ -347,6 +348,8 @@ git push
 ---
 
 ## 🎯 Siguiente Feature (v0.5)
+
+Ver **`docs/FUTURE_PLAN.md`** para el plan detallado.
 
 | Opción | Esfuerzo | Descripción |
 |--------|----------|-------------|

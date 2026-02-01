@@ -38,22 +38,80 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="LabelValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SpinValor" type="SpinBox" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="LabelEnergia" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
+text = "Energía por segundo:"
+
+[node name="HBoxEnergia" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SliderEnergia" type="HSlider" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblEnergiaValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "10.0"
 
 [node name="LabelFreq" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Ticks (Velocidad)"
+text = "Frecuencia (ticks):"
 
-[node name="SpinFrecuencia" type="SpinBox" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="HBoxFreq" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="BtnCerrar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="SliderFrecuencia" type="HSlider" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblFreqValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "5 ticks"
+
+[node name="HSeparator2" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LblPreview" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "VISTA PREVIA:
+Producción: 10.0 Stability/seg
+Tipo: Energía básica
+Frecuencia: 5 ticks"
+autowrap_mode = 3
+
+[node name="HSeparator3" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxButtons" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BtnAplicar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+text = "APLICAR"
+
+[node name="BtnResetear" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "RESETEAR"
+
+[node name="BtnCerrar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "CERRAR"

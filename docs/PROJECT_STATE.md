@@ -60,7 +60,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 - Energía fluye como datos (EnergyManager + EnergyFlow)
 - Visuales opcionales (PulseVisual) sin afectar lógica
-- `energy_pulse.tscn` deprecado (ya no se usa)
+- `scenes/deprecated/energy_pulse.tscn` deprecado (ya no se usa)
 
 ---
 
@@ -77,4 +77,4 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 **Refactor completado.** Arquitectura de energía numérica estable.
 
-Siguiente: features (electrones, protones...) o pulido de UX.
+Ver **`docs/FUTURE_PLAN.md`** para roadmap detallado (electrones, protones, pulido UX).
