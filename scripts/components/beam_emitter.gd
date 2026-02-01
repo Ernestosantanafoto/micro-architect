@@ -60,7 +60,9 @@ func _crear_segmento(pos, dir, col, esc):
 	seg.scale.z = esc
 	if dir.length() > 0.1: seg.look_at(pos + dir, Vector3.UP)
 	
-	var mesh = seg.get_node("MeshInstance3D")
+	var mesh = seg.get_node_or_null("MeshInstance3D")
+	if not mesh:
+		return
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = col
 	mat.albedo_color.a = GameConstants.HAZ_ALPHA_TRANSPARENCIA

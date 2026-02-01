@@ -156,7 +156,10 @@ func _reconstruir_mundo():
 		if SaveSystem: SaveSystem.reconstruir_edificios()
 
 func _posicionar_camara():
-	var cam_pivot = get_tree().current_scene.find_child("CameraPivot", true, false)
+	var escena = get_tree().current_scene
+	if not escena:
+		return
+	var cam_pivot = escena.find_child("CameraPivot", true, false)
 	if cam_pivot and GlobalInventory.datos_camara["pos"] != Vector3.ZERO:
 		cam_pivot.global_position = GlobalInventory.datos_camara["pos"]
 		var cam_node = cam_pivot.find_child("Camera3D", true, false)

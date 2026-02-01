@@ -2,11 +2,13 @@ extends Control
 
 # Sistema dinámico de recursos ORGANIZADO POR CATEGORÍAS
 @onready var resource_container = $PanelRecursos/MarginContainer/HBoxContainer
+@onready var panel_recursos = $PanelRecursos
 
 # Categorías de recursos
 var resource_categories = {
 	"ENERGÍA": ["Stability", "Charge", "Compressed-Stability", "Compressed-Charge"],
 	"QUARKS": ["Up-Quark", "Down-Quark"],
+	"PARTÍCULAS": ["Electron"],
 	"EDIFICIOS": ["Sifón", "Sifón T2", "Prisma Recto", "Prisma Angular", 
 				  "Prisma Recto T2", "Prisma Angular T2", "Compresor", 
 				  "Compresor T2", "Fusionador", "Constructor", "Void Generator"]
@@ -40,17 +42,28 @@ var resource_colors = {
 	"Compressed-Stability": Color(0.4, 1.0, 0.4),
 	"Compressed-Charge": Color(0.67, 0.4, 1.0),
 	"Up-Quark": Color(1.0, 1.0, 0.4),   # Amarillo
-	"Down-Quark": Color(1.0, 0.65, 0.3) # Naranja
+	"Down-Quark": Color(1.0, 0.65, 0.3), # Naranja
+	"Electron": Color(0.2, 0.85, 1.0)   # Cyan (GameConstants.COLOR_ELECTRON)
 }
 
 # Colores por categoría
 var category_colors = {
 	"ENERGÍA": Color(0.4, 1.0, 0.4),  # Verde
 	"QUARKS": Color(1.0, 0.8, 0.2),   # Amarillo
+	"PARTÍCULAS": Color(0.2, 0.85, 1.0), # Cyan (electrones)
 	"EDIFICIOS": Color(0.6, 0.8, 1.0) # Azul claro
 }
 
 func _ready():
+	# HUD ocupa todo el viewport para que el centrado del panel funcione
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	# Centrar barra de recursos en la parte superior (y al redimensionar ventana si la señal existe)
+	var vp = get_viewport()
+	if vp.has_signal("size_changed"):
+		vp.size_changed.connect(_centrar_panel_recursos)
+	_centrar_panel_recursos()
+	
 	# Conectar a señal de cambio de inventario si existe
 	if GlobalInventory.has_signal("inventory_changed"):
 		GlobalInventory.inventory_changed.connect(_update_resources)
@@ -64,13 +77,24 @@ func _ready():
 	
 	_update_resources()
 
+func _centrar_panel_recursos() -> void:
+	if not panel_recursos:
+		return
+	var vp_size = get_viewport().get_visible_rect().size
+	var ancho_panel := 640.0
+	panel_recursos.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	panel_recursos.offset_left = (vp_size.x - ancho_panel) / 2.0
+	panel_recursos.offset_top = 0.0
+	panel_recursos.offset_right = panel_recursos.offset_left + ancho_panel
+	panel_recursos.offset_bottom = 63.0
+
 func _update_resources():
 	# Limpiar contenedor
 	for child in resource_container.get_children():
 		child.queue_free()
 	
-	# Crear secciones por categoría (siempre mostrar ENERGÍA y QUARKS para ver producción)
-	for category in ["ENERGÍA", "QUARKS", "EDIFICIOS"]:
+	# Crear secciones por categoría (siempre mostrar ENERGÍA, QUARKS y PARTÍCULAS para ver producción)
+	for category in ["ENERGÍA", "QUARKS", "PARTÍCULAS", "EDIFICIOS"]:
 		var has_items = false
 		
 		for resource_name in resource_categories[category]:
@@ -78,8 +102,8 @@ func _update_resources():
 				has_items = true
 				break
 		
-		# EDIFICIOS: solo si hay al menos uno; ENERGÍA y QUARKS: siempre mostrar
-		var always_show = (category == "ENERGÍA" or category == "QUARKS")
+		# EDIFICIOS: solo si hay al menos uno; ENERGÍA, QUARKS y PARTÍCULAS: siempre mostrar
+		var always_show = (category == "ENERGÍA" or category == "QUARKS" or category == "PARTÍCULAS")
 		if not has_items and not always_show:
 			continue
 		

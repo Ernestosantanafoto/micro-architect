@@ -60,7 +60,8 @@ func guardar_partida():
 		print("[SAVE] - ", edificio.name, " en ", edificio.global_position)
 	
 	# Obtener datos de cámara
-	var cam_pivot = get_tree().current_scene.find_child("CameraPivot", true, false)
+	var escena_actual = get_tree().current_scene
+	var cam_pivot = escena_actual.find_child("CameraPivot", true, false) if escena_actual else null
 	var c_pos = Vector3.ZERO
 	var c_size = 100.0
 	if cam_pivot:
@@ -174,6 +175,9 @@ func reconstruir_edificios():
 		return
 	
 	var raiz = get_tree().current_scene
+	if not raiz:
+		print("[SAVE] ERROR: current_scene es null, no se pueden reconstruir edificios.")
+		return
 	
 	for datos in edificios:
 		var ruta_escena = datos.get("scene", "")
@@ -225,7 +229,8 @@ func reconstruir_edificios():
 
 ## Genera una partida de test con ~100 edificios en tiles válidos. F9 en partida.
 func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
-	var wg = get_tree().current_scene.find_child("WorldGenerator", true, false)
+	var escena = get_tree().current_scene
+	var wg = escena.find_child("WorldGenerator", true, false) if escena else null
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	if not map or not (map is GridMap):
 		print("[SAVE] ERROR: No se encontró GridMap.")

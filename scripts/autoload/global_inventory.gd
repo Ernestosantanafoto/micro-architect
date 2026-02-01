@@ -23,7 +23,8 @@ var stock = {
 	"Fusionador": 0,
 	"Constructor": 1,
 	"GodSiphon": 0,
-	"Void Generator": 0
+	"Void Generator": 0,
+	"Electron": 0
 }
 
 # --- GESTIÓN DE ESTADOS DE EDIFICIOS ---

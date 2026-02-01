@@ -28,7 +28,8 @@ func _actualizar_texto():
 func _on_pressed():
 	if not GameConstants.RECETAS.has(item_name): return
 	var ruta_escena = GameConstants.RECETAS[item_name]["output_scene"]
-	var manager = get_tree().current_scene.find_child("ConstructionManager", true, false)
+	var escena_actual = get_tree().current_scene
+	var manager = escena_actual.find_child("ConstructionManager", true, false) if escena_actual else null
 	if manager:
 		var escena = load(ruta_escena)
 		if escena:

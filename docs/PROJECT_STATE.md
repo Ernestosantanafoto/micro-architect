@@ -4,6 +4,10 @@
 **Versión:** 0.4-alpha  
 **Godot:** 4.x
 
+### ✅ Mejoras recientes (robustez y UX)
+- **Barra de recursos superior centrada** en pantalla (HUD: full rect + `_centrar_panel_recursos` en ready y al redimensionar).
+- **Correcciones null-safety:** beam_emitter (MeshInstance3D con get_node_or_null), god_siphon (current_scene antes de has_signal), save_system (raiz/current_scene en guardar/reconstruir/generar_partida_test), world_generator (_posicionar_camara), inventory_button (current_scene), hud (size_changed solo si existe).
+
 ### ⚠️ Conocidos (dev / test)
 - **Menús popup (God Siphon, Constructor):** En algunos entornos puede verse un recuadro gris hasta el borde inferior de la pantalla. No afecta a la jugabilidad; dejado como mejora futura para dev/test.
 
@@ -48,6 +52,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - [x] Menús (principal, guardar/cargar)
 - [x] Música de fondo
 - [x] **Selección múltiple por arrastre:** Solo en casillas vacías, hold threshold, rectángulo fantasma azul, zoom dinámico (solo aleja), acciones R (reembolso) y ELIMINAR; modo activable/desactivable con botón SELECCIÓN (panel inferior izq.); botón ELIMINAR en esquina inferior derecha. Pendiente: pulir layout/visual del HUD.
+- [x] **Recurso Electron (v0.5):** GameConstants (RECURSO_ELECTRON, COLOR_ELECTRON), GlobalInventory (stock + STARTER_PACK), HUD (categoría PARTÍCULAS, icono ⚛️, color cyan). Pendiente: edificio que produzca electrones desde quarks.
 
 ---
 
@@ -87,4 +92,4 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 **Bloques 1–3 completados.** Bugs menores, pulido UX y técnico (RECETAS unificado, deprecated eliminado, merger 3x1 footprint, starter pack, God Siphon solo DEV) aplicados.
 
-**Siguiente:** Bloque 4 – Electrones (v0.5). Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.
+**Siguiente:** Bloque 4.2 – Edificio Electrón (consumir quarks, producir Electron). Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.

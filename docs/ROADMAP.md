@@ -4,7 +4,7 @@
 **Base:** v0.4-alpha (energía numérica, Polish UI aplicado)  
 **Última actualización:** 2025-01-31
 
-**Hecho reciente (fuera de bloques):** Hotkeys 1-9 (output_scene), clic central en edificio/suelo (misma orientación, colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint (validación/registro multi-celda), RECETAS unificado en HUD (HUD_CATEGORIAS/HUD_LABELS), deprecated eliminado (energy_pulse). Prismas T1/T2 apagado, bolas al quitar sifón, tamaños bolas. **Sistema de selección múltiple por arrastre:** SelectionManager (hold threshold, rectángulo fantasma, zoom fit solo aleja, margen), modo selección activable con botón SELECCIÓN (mismo estilo que GUARDAR/MENÚ), botón ELIMINAR en esquina inferior derecha, márgenes HUD (panel superior e inferior izq.) para que no se salgan por la izquierda.
+**Hecho reciente (fuera de bloques):** Hotkeys 1-9 (output_scene), clic central en edificio/suelo (misma orientación, colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint (validación/registro multi-celda), RECETAS unificado en HUD (HUD_CATEGORIAS/HUD_LABELS), deprecated eliminado (energy_pulse). Prismas T1/T2 apagado, bolas al quitar sifón, tamaños bolas. **Sistema de selección múltiple por arrastre:** SelectionManager (hold threshold, rectángulo fantasma, zoom fit solo aleja, margen), modo selección activable con botón SELECCIÓN (mismo estilo que GUARDAR/MENÚ), botón ELIMINAR en esquina inferior derecha, márgenes HUD (panel superior e inferior izq.). **Barra de recursos superior centrada** (HUD script: `_centrar_panel_recursos`, full rect, `size_changed` si existe). **Análisis de código y correcciones null-safety:** beam_emitter (`get_node_or_null` + check MeshInstance3D), god_siphon (check `current_scene` antes de `has_signal`), save_system (check `raiz`/`current_scene` en guardar/reconstruir/generar_partida_test), world_generator (`_posicionar_camara`), inventory_button (check `current_scene`), hud (conectar `size_changed` solo si la señal existe).
 
 **Pendiente (pulir más adelante):** Layout/visual del HUD y botones de selección/eliminar no han quedado perfectos; se mantiene el estado actual.
 
@@ -96,9 +96,9 @@
 ## 🟢 BLOQUE 4: v0.5 – Electrones
 
 ### 4.1 Recurso y constantes
-- [ ] Añadir recurso `Electron` (o nombre elegido) en `GameConstants`.
-- [ ] Definir color, icono, cadena de producción (quarks → electrón).
-- [ ] Añadir a `GlobalInventory` y HUD (categoría adecuada).
+- [x] Añadir recurso `Electron` (o nombre elegido) en `GameConstants`.
+- [x] Definir color, icono, cadena de producción (quarks → electrón).
+- [x] Añadir a `GlobalInventory` y HUD (categoría adecuada).
 
 **Archivos:** `scripts/autoload/game_constants.gd`, `scripts/autoload/global_inventory.gd`, `scripts/ui/hud.gd`.
 
@@ -136,7 +136,7 @@
 | 1. Bugs menores | ✅ Completado | 1.1, 1.2, 1.3 |
 | 2. Pulido UX    | ✅ Completado | 2.1 y 2.2 (colocar + menús) |
 | 3. Técnico      | ✅ Completado | 3.1 RECETAS/menu_data, 3.2 deprecated eliminado |
-| 4. Electrones   | ⏳ Pendiente | Tras 1–3 o en paralelo |
+| 4. Electrones   | 🔄 En curso | 4.1 recurso/constantes/HUD ✅; 4.2–4.4 pendientes |
 
 ---
 
@@ -172,4 +172,6 @@ Cuando termines un bloque, actualiza la tabla "Estado actual" y el **Última act
 | 2.2 | Mejorar menús (transiciones, versión) |
 | 3.1 | Unificar RECETAS vs menu_data en HUD |
 | 3.2 | Limpiar deprecated ✅ |
-| 4.x | Electrones (recurso + edificio + cadena) |
+| **4.1** | Recurso Electron (GameConstants, GlobalInventory, HUD) ✅ |
+| **4.2** | Edificio Electrón (escena, script, RECETAS, EnergyManager) |
+| 4.x | 4.3 Integrar en cadena, 4.4 Visuales electrón |

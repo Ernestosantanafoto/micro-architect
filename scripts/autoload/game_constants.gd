@@ -121,6 +121,10 @@ const RECURSO_DOWN_QUARK = "Down-Quark"
 const COLOR_UP_QUARK = Color(1, 1, 0)
 const COLOR_DOWN_QUARK = Color(1, 0.5, 0)
 
+# --- ELECTRONES (v0.5 – cadena quarks → electrón) ---
+const RECURSO_ELECTRON = "Electron"
+const COLOR_ELECTRON = Color(0.2, 0.85, 1.0)  # Cyan claro
+
 # --- CONSTRUCTOR ---
 const CONSTRUCTOR_RADIO = 1
 const CONSTRUCTOR_AGUJERO = false
@@ -242,5 +246,6 @@ const STARTER_PACK = {
 	"Fusionador": 0,
 	"Constructor": 1,
 	"GodSiphon": 0,
-	"Void Generator": 0
+	"Void Generator": 0,
+	"Electron": 0
 }

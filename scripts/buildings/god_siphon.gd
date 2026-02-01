@@ -21,7 +21,7 @@ func _ready():
 	
 	# Conectarse al reloj global
 	var main = get_tree().current_scene
-	if main.has_signal("game_tick"):
+	if main and main.has_signal("game_tick"):
 		main.game_tick.connect(_on_game_tick)
 	
 	# Configuración de colisión e input
