@@ -375,20 +375,44 @@ Después de completar Polish:
 ## 📊 PROGRESO
 
 - [x] ÁREA 1: UI de Edificios (100%) - God Siphon UI rediseñado con sliders y vista previa
-- [x] ÁREA 2: HUD (100%) - Sistema dinámico de recursos, tooltips, lógica simplificada
-- [ ] ÁREA 3: Menú Principal (0%) - Ya funciona bien, no crítico
-- [x] ÁREA 4: Ayuda y Tutorial (50%) - Tutorial básico implementado, falta Guía F1
+- [x] ÁREA 2: HUD (100%) - Sistema dinámico categorizado, tooltips, lógica simplificada
+- [ ] ÁREA 3: Menú Principal (N/A) - Ya funciona bien, no necesita cambios
+- [x] ÁREA 4: Ayuda y Tutorial (100%) - Tutorial básico + Panel F1 completo
 
-**Progreso total: 75%**
+**Progreso total: 100% ✅**
 
 ### ✅ Completado (2025-02-01)
+
+**HUD Mejorado:**
 - Auditoría completa del HUD
-- Sistema de recursos dinámico (muestra todos los recursos con iconos)
+- Sistema de recursos dinámico CATEGORIZADO (ENERGÍA | QUARKS | EDIFICIOS)
+- Colores por categoría (verde, amarillo, azul)
+- Separadores visuales entre categorías
 - Tooltips en botones de categorías
 - Lógica simplificada de hud_manager
-- God Siphon UI con sliders, vista previa, botones Aplicar/Resetear
-- Tutorial básico (5 pasos) con sistema de señales
 - Eliminado código duplicado (inventory_hud.gd no usado)
+
+**God Siphon UI:**
+- Sliders para energía (1-100) y frecuencia (1-20)
+- Vista previa en tiempo real de la configuración
+- Botones: Aplicar, Resetear, Cerrar
+- Labels dinámicos que muestran valores actuales
+
+**Tutorial Básico:**
+- Sistema de 5 pasos con señales
+- Intro → Colocar Siphon → Entender haces → Colocar Compressor → Primera producción
+- Checkbox "No mostrar de nuevo"
+- Botón "Saltar tutorial"
+- Overlay semi-transparente
+
+**Panel de Ayuda (F1):**
+- 4 pestañas: Recursos, Edificios, Controles, Objetivos
+- Explicación detallada de cada recurso con iconos y colores
+- Descripción completa de todos los edificios
+- Controles del juego (cámara, construcción, interacción)
+- Cadena de producción completa hasta ADN
+- Pausa el juego mientras está abierto
+- Toggle con F1
 
 ---
 
