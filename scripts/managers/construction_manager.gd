@@ -59,10 +59,16 @@ func confirmar_colocacion():
 	# PERSISTENCIA: Registrar el estado inicial en el diccionario global
 	if fantasma.has_method("_actualizar_mi_estado_global"):
 		fantasma._actualizar_mi_estado_global()
-		
-	fantasma.scale = Vector3.ONE
+	
+	# Feedback visual: pequeño "pop" al colocar (scale 1.2 → 1.08 → 1.0)
+	var edificio = fantasma
 	fantasma = null
 	nombre_item_en_mano = ""
+	if is_instance_valid(edificio):
+		edificio.scale = Vector3.ONE * 1.2
+		var t = edificio.create_tween()
+		t.tween_property(edificio, "scale", Vector3(1.08, 1.08, 1.08), 0.06)
+		t.tween_property(edificio, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK)
 	print("[CM] Edificio colocado con éxito.")
 
 # --- INTERACCIÓN CON EL MUNDO (CLIC IZQUIERDO) ---
@@ -157,6 +163,15 @@ func _limpiar_materiales_fantasma(nodo):
 	for m in nodo.find_children("*", "GeometryInstance3D", true):
 		m.material_override = null
 
+func _feedback_colocacion_invalida():
+	if not fantasma: return
+	var orig = fantasma.global_position
+	var t = fantasma.create_tween()
+	t.tween_property(fantasma, "global_position", orig + Vector3(0.08, 0, 0.08), 0.03)
+	t.tween_property(fantasma, "global_position", orig + Vector3(-0.08, 0, -0.08), 0.03)
+	t.tween_property(fantasma, "global_position", orig + Vector3(0.04, 0, 0.04), 0.03)
+	t.tween_property(fantasma, "global_position", orig, 0.03)
+
 func _preparar_fantasma_visual():
 	if fantasma.has_method("desconectar_sifon"): 
 		fantasma.desconectar_sifon()
@@ -190,7 +205,10 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if fantasma:
-				if posicion_valida_actual: confirmar_colocacion()
+				if posicion_valida_actual:
+					confirmar_colocacion()
+				else:
+					_feedback_colocacion_invalida()
 			else:
 				gestionar_clic_izquierdo()
 		

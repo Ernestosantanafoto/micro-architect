@@ -13,8 +13,8 @@ func dibujar_haz(origen: Vector3, direccion: Vector3, longitud: int, color: Colo
 	var cursor_mapa = map.local_to_map(origen)
 	var dir_mapa = Vector3i(round(direccion.x), 0, round(direccion.z))
 	
-	# SOLUCIÓN: Empezar un poco más adelante para no chocarse consigo mismo
-	var inicio = map.map_to_local(cursor_mapa) + (direccion * 0.6)
+	# Primer segmento: centro en origen+offset para que el haz arranque en el prisma (segmento 0.5 de largo)
+	var inicio = map.map_to_local(cursor_mapa) + (direccion * GameConstants.HAZ_OFFSET_ORIGEN)
 	_crear_segmento(inicio, direccion, color, 0.5)
 	
 	for i in range(longitud):

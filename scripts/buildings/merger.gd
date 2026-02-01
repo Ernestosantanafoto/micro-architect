@@ -66,6 +66,7 @@ func recibir_energia_numerica(cantidad: int, tipo_recurso: String, _origen: Node
 	else: buffer[tipo_recurso] = cantidad
 	actualizar_ui()
 	actualizar_barra()
+	_actualizar_mi_estado_global()
 	verificar_recetas()
 
 func recibir_input(pulso):
@@ -98,6 +99,7 @@ func iniciar_fusion(producto: String, costo_v: int, costo_a: int, color: Color):
 	color_pendiente = color
 	actualizar_ui()
 	actualizar_barra()
+	_actualizar_mi_estado_global()
 
 func finalizar_fusion():
 	procesando = false
@@ -115,15 +117,17 @@ func emitir_producto(nombre: String, color: Color):
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
 	var longitud = GameConstants.HAZ_LONGITUD_MAXIMA
 	const CANTIDAD_QUARKS = 100
-	var from_pos = global_position + Vector3(0, 0.5, 0) + (dir * 1.5)
+	# Salida en la cara del merger (mesh 3x1x1 → cara -Z a 0.5 del centro)
+	var from_pos = global_position + Vector3(0, 0.5, 0) + (dir * 0.5)
 	
 	if map and space and EnergyManager:
 		var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
 		var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
 		if EnergyManager.MOSTRAR_VISUAL_PULSO:
-			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self)
+			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, nombre)
 		if resultado:
 			EnergyManager.register_flow(self, resultado["target"], CANTIDAD_QUARKS, nombre, color)
+	_actualizar_mi_estado_global()
 
 func actualizar_ui():
 	if not label: return
@@ -183,6 +187,7 @@ func animar_recepcion():
 func check_ground(): 
 	collision_layer = GameConstants.LAYER_EDIFICIOS
 	esta_construido = true
+	_recuperar_estado_guardado()
 	if BuildingManager: BuildingManager.register_building(self)
 	if ui_root: ui_root.visible = true
 func desconectar_sifon(): 
@@ -192,7 +197,29 @@ func desconectar_sifon():
 	ha_disparado_una_vez = false
 	procesando = false
 	if ui_root: ui_root.visible = false
-	buffer = {"Compressed-Stability": 0, "Compressed-Charge": 0}
+	# No resetear buffer al levantar para mover: al soltar se mantiene (mejor jugable).
+	# buffer solo se pierde si se devuelve al inventario o se destruye.
 	actualizar_ui()
 func es_suelo_valido(id): return id == GameConstants.TILE_VACIO
 func recibir_luz_instantanea(_c, _r, _d): pass
+
+func _actualizar_mi_estado_global():
+	var map = get_tree().current_scene.find_child("GridMap", true, false)
+	if not map: map = get_tree().get_first_node_in_group("MapaPrincipal")
+	if map and esta_construido:
+		var datos = {
+			"buf_stab": buffer.get("Compressed-Stability", 0),
+			"buf_charg": buffer.get("Compressed-Charge", 0)
+		}
+		GlobalInventory.registrar_estado(map.local_to_map(global_position), datos)
+
+func _recuperar_estado_guardado():
+	var map = get_tree().get_first_node_in_group("MapaPrincipal")
+	if not map: map = get_tree().current_scene.find_child("GridMap", true, false)
+	if map:
+		var e = GlobalInventory.obtener_estado(map.local_to_map(global_position))
+		if e.size() > 0:
+			buffer["Compressed-Stability"] = e.get("buf_stab", 0)
+			buffer["Compressed-Charge"] = e.get("buf_charg", 0)
+			actualizar_ui()
+			actualizar_barra()

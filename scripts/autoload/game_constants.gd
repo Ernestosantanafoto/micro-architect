@@ -31,7 +31,7 @@ const UMBRAL_COMPRESION = 10
 
 # --- PULSOS ---
 const PULSO_VELOCIDAD_BASE = 2.0
-const PULSO_VELOCIDAD_VISUAL = 6.0  # Unidades/seg para visual constante
+const PULSO_VELOCIDAD_VISUAL = 1.0  # Unidades/seg para visual constante
 const PULSO_RANGO_MAXIMO = 6
 const PULSO_INTENSIDAD_BRILLO = 3.0
 const PULSO_TIEMPO_DESAPARECER = 0.2
@@ -39,7 +39,7 @@ const PULSO_TIEMPO_DESAPARECER = 0.2
 # --- HACES DE LUZ ---
 const HAZ_LONGITUD_PREVIEW = 1
 const HAZ_LONGITUD_MAXIMA = 5
-const HAZ_OFFSET_ORIGEN = 0.6
+const HAZ_OFFSET_ORIGEN = 0.25   # primer segmento: centro aquí para que el haz arranque en el prisma (0.5 de largo)
 const HAZ_SEGMENTO_OFFSET = 0.25
 const HAZ_ALPHA_TRANSPARENCIA = 0.4
 const HAZ_EMISION_ENERGIA = 3.0
@@ -55,7 +55,9 @@ const UMBRAL_REFLEXION_ANGULO = -0.5
 const TIEMPO_REBOTE_PRISMA = 0.0
 const TIEMPO_VIAJE_CENTRO = 0.15
 const PRISMA_DISTANCIA_CENTRO_MIN = 0.05
-const PRISMA_COLOR_APAGADO = Color(1, 1, 1, 0.5)
+# Apagado: T1 gris azulado muy transparente, T2 casi opaco y blanco
+const PRISMA_COLOR_APAGADO_T1 = Color(0.52, 0.58, 0.72, 0.18)   # gris azulado, mucha transparencia
+const PRISMA_COLOR_APAGADO_T2 = Color(1.0, 1.0, 1.0, 0.95)      # casi opaco, blanco
 const PRISMA_ALPHA_ENCENDIDO = 0.4               
 const PRISMA_TIEMPO_ANIMACION_COLOR = 0.2        
 const PRISMA_BRILLO_INTENSIDAD = 6.0             

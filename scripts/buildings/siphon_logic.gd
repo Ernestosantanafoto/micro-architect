@@ -81,7 +81,7 @@ func disparar():
 	var from_pos = global_position + Vector3(0, GameConstants.SIFON_OFFSET_SALIDA_Y, 0)
 	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
 	if EnergyManager.MOSTRAR_VISUAL_PULSO:
-		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self)
+		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self, recurso_actual)
 	if resultado:
 		EnergyManager.register_flow(self, resultado["target"], energia_por_disparo, recurso_actual, color_recurso)
 

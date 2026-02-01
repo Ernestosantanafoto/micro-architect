@@ -87,7 +87,7 @@ func disparar_comprimido():
 		var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
 		var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
 		if EnergyManager.MOSTRAR_VISUAL_PULSO:
-			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self)
+			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, tipo_comprimido)
 		if resultado:
 			EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
 	

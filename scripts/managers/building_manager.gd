@@ -12,6 +12,8 @@ func register_building(building: Node) -> void:
 
 func unregister_building(building: Node) -> void:
 	active_buildings.erase(building)
+	if EnergyManager:
+		EnergyManager.remove_flows_involving(building)
 
 func get_buildings_in_radius(pos: Vector3, radius: float) -> Array:
 	var result: Array[Node] = []

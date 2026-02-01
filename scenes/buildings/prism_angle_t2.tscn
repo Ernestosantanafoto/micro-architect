@@ -20,6 +20,7 @@ collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_mb2lt")
 tipo = 1
+es_tier2 = true
 alcance_maximo = 15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

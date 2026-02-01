@@ -14,12 +14,13 @@ var _rotacion_inicial: float = 0.0
 var _mesh: MeshInstance3D
 
 func _ready():
+	add_to_group("PulseVisual")
 	_mesh = MeshInstance3D.new()
 	_mesh.mesh = SphereMesh.new()
 	add_child(_mesh)
 	_actualizar_material()
 
-func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = null):
+func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = null, tipo_recurso: String = ""):
 	from_pos = from
 	to_pos = to
 	duration = dur
@@ -27,6 +28,13 @@ func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = nu
 	source_origen = origen
 	_rotacion_inicial = origen.global_rotation.y if origen else 0.0
 	global_position = from_pos
+	# Escala por tipo: elemental (1/3), condensada (2/3), resto (1)
+	var scale_factor := 1.0
+	if tipo_recurso == "Stability" or tipo_recurso == "Charge":
+		scale_factor = 1.0 / 3.0
+	elif tipo_recurso.begins_with("Compressed-"):
+		scale_factor = 2.0 / 3.0
+	scale = Vector3(scale_factor, scale_factor, scale_factor)
 	_actualizar_material()
 
 func _actualizar_material():
@@ -40,6 +48,10 @@ func _actualizar_material():
 	_mesh.set_surface_override_material(0, mat)
 
 func _process(delta: float) -> void:
+	# Si el edificio origen fue destruido, la bola desaparece
+	if source_origen != null and not is_instance_valid(source_origen):
+		queue_free()
+		return
 	# Si el edificio origen rotó, eliminamos este visual para no flotar en el aire
 	if source_origen and is_instance_valid(source_origen):
 		if abs(source_origen.global_rotation.y - _rotacion_inicial) > 0.01:

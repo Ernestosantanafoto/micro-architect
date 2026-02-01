@@ -75,7 +75,7 @@ func _procesar_energia_numerica(cantidad: int, tipo_recurso: String, dir_salida:
 	var resultado = beam_emitter.obtener_objetivo(global_position, dir_salida, alcance_maximo, map, space, self)
 	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * alcance_maximo
 	if EnergyManager.MOSTRAR_VISUAL_PULSO:
-		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self)
+		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self, tipo_recurso)
 	if resultado:
 		EnergyManager.register_flow(self, resultado["target"], cantidad, tipo_recurso, color_recurso)
 
@@ -116,11 +116,19 @@ func _calcular_rebote(dir_entrada_global: Vector3) -> Vector3:
 
 func _animar_cristal(color_objetivo: Color, encendido: bool):
 	if not material_instancia: return
-	var target_albedo = color_objetivo if encendido else GameConstants.PRISMA_COLOR_APAGADO
-	if encendido: target_albedo.a = GameConstants.PRISMA_ALPHA_ENCENDIDO
+	var target_albedo: Color
+	if encendido:
+		target_albedo = color_objetivo
+		target_albedo.a = GameConstants.PRISMA_ALPHA_ENCENDIDO
+	else:
+		target_albedo = GameConstants.PRISMA_COLOR_APAGADO_T2 if es_tier2 else GameConstants.PRISMA_COLOR_APAGADO_T1
 	var t = create_tween().set_parallel(true)
 	t.tween_property(material_instancia, "albedo_color", target_albedo, 0.2)
 	t.tween_property(material_instancia, "emission_energy_multiplier", GameConstants.PRISMA_BRILLO_INTENSIDAD if encendido else 0.0, 0.2)
+	if material_instancia is StandardMaterial3D:
+		var mat: StandardMaterial3D = material_instancia
+		var rough = 0.2 if encendido else (0.55 if es_tier2 else 0.75)  # encendido = brillo; apagado T1 mate, T2 más brillante
+		t.tween_property(mat, "roughness", rough, 0.2)
 
 func check_ground(): 
 	collision_layer = GameConstants.LAYER_EDIFICIOS

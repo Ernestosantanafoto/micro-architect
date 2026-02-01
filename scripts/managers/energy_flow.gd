@@ -29,5 +29,8 @@ func update(delta: float) -> bool:
 func _entregar():
 	if not is_instance_valid(to_building):
 		return
+	# Si el origen ya no existe (ej. sifón destruido), no entregar: la energía se pierde con el origen
+	if not is_instance_valid(from_building):
+		return
 	if to_building.has_method("recibir_energia_numerica"):
 		to_building.recibir_energia_numerica(amount, tipo_recurso, from_building)

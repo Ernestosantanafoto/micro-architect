@@ -7,6 +7,9 @@
 ### ⚠️ Conocidos (dev / test)
 - **Menús popup (God Siphon, Constructor):** En algunos entornos puede verse un recuadro gris hasta el borde inferior de la pantalla. No afecta a la jugabilidad; dejado como mejora futura para dev/test.
 
+### 📌 Pausa / recordar para futuro
+- **Merger buffer al levantar/soltar:** Dejado en pausa. Comportamiento actual: se mantiene el buffer al mover (no se resetea en `desconectar_sifon`). Revisar si se quiere otra lógica más adelante.
+
 ---
 
 ## 🎯 Concepto del Juego
@@ -80,4 +83,4 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 **Refactor + Polish UI aplicado.** Arquitectura de energía numérica estable; HUD, F1/F2, God Siphon/Constructor UI y tutorial básico completados.
 
-Ver **`docs/FUTURE_PLAN.md`** para roadmap (electrones, protones, bugs menores) o **`docs/POLISH_PLAN.md`** para detalle del pulido.
+Ver **`docs/ROADMAP.md`** para abordar poco a poco (bugs, pulido UX, técnico, electrones). Alternativa: `docs/FUTURE_PLAN.md`, `docs/POLISH_PLAN.md`.

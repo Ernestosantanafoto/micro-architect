@@ -20,6 +20,11 @@
 - Los visuales solo representan el estado
 - Si un visual desaparece antes de tiempo → no afecta la lógica
 
+**Verificación (visuales opcionales):**
+- **Pulsos (bolas):** `EnergyManager.spawn_pulse_visual()` solo se llama si `MOSTRAR_VISUAL_PULSO`; la entrega de energía es siempre `EnergyManager.register_flow()` → `EnergyFlow._entregar()` → `recibir_energia_numerica()`. Sin visual, la lógica sigue igual.
+- **Haces (beams):** `beam_emitter.dibujar_haz()` solo dibuja cilindros; no entrega energía. La entrega es numérica (EnergyFlow). `recibir_luz_instantanea()` en prismas actualiza solo dirección/color del haz dibujado, no la lógica de flujo.
+- **Dónde se spawnean visuales:** siphon_logic, god_siphon, prism_logic, compressor, merger (spawn_pulse_visual + dibujar_haz en cada uno). En todos, `register_flow` / flujo numérico es independiente del visual.
+
 ---
 
 ### 2. Managers Centrales
