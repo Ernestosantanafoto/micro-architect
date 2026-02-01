@@ -4,7 +4,6 @@ var sifon_activo: Node3D = null
 
 # --- REFERENCIAS CON ACCESO ÚNICO (%) ---
 @onready var ventana = %VentanaFlotante
-@onready var fondo_detector = %FondoDetector
 
 @onready var opt_color = %OptionColor
 @onready var opt_tipo = %OptionTipo
@@ -23,7 +22,8 @@ var default_freq = 5
 
 func _ready():
 	visible = false
-	add_to_group("VentanasUI") 
+	add_to_group("VentanasUI")
+	add_to_group("UIsEdificios") 
 	
 	# 1. Configuración de los Dropdowns
 	if opt_color:
@@ -58,40 +58,56 @@ func _ready():
 	if btn_resetear: btn_resetear.pressed.connect(_resetear_valores)
 	if btn_cerrar: btn_cerrar.pressed.connect(cerrar)
 	
-	# 3. Cierre al clicar en el fondo
-	if fondo_detector:
-		fondo_detector.gui_input.connect(_on_fondo_input)
+	set_process_input(true)
+
+func _input(event):
+	# Cerrar con LMB o RMB fuera de la ventana (misma lógica que Constructor, sin FondoDetector = sin recuadro gris)
+	if not visible or not ventana: return
+	if event is InputEventMouseButton and event.pressed:
+		var viewport_h = get_viewport().get_visible_rect().size.y
+		if get_viewport().get_mouse_position().y > viewport_h - 140:
+			return
+		if not ventana.get_global_rect().has_point(get_viewport().get_mouse_position()):
+			cerrar()
+			get_viewport().set_input_as_handled()
 
 func _process(_delta):
 	if not visible or not is_instance_valid(sifon_activo):
 		if visible: cerrar()
 		return
 
-	# --- ESTABILIZACIÓN DEL MENÚ ---
+	# --- ESTABILIZACIÓN: no mover la ventana al sacar el cursor (evitar que se amplíe/desaparezca) ---
 	if (opt_color and opt_color.get_popup().visible) or (opt_tipo and opt_tipo.get_popup().visible):
 		return
 	
-	if ventana and ventana.get_global_rect().has_point(get_viewport().get_mouse_position()):
-		return
-
-	# --- SEGUIMIENTO AL OBJETO 3D ---
 	var cam = get_viewport().get_camera_3d()
-	if cam and ventana:
+	# Solo atenuar si el edificio queda detrás de cámara; la ventana permanece fija en pantalla
+	if ventana and cam:
 		var world_pos = sifon_activo.global_position + Vector3(0, 1.5, 0)
-		if not cam.is_position_behind(world_pos):
-			ventana.modulate.a = 1
-			var target_pos = cam.unproject_position(world_pos) - (ventana.size / 2)
-			ventana.position = ventana.position.lerp(target_pos, 0.2)
-		else:
+		if cam.is_position_behind(world_pos):
 			ventana.modulate.a = 0
+		else:
+			ventana.modulate.a = 1
 
 # --- FUNCIONES DE CONTROL ---
 
 func abrir(sifon):
 	if visible and sifon_activo == sifon: return
 	
+	# Cerrar otros menús de edificios (Constructor, etc.)
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n != self and n.has_method("cerrar") and n.visible:
+			n.cerrar()
+	
 	sifon_activo = sifon
 	visible = true
+	
+	# Posicionar como el Constructor: posición inicial y luego call_deferred para ajustar con tamaño real (ventana se adapta al contenido)
+	var cam = get_viewport().get_camera_3d()
+	if cam and ventana:
+		var world_pos = sifon.global_position + Vector3(0, 1.5, 0)
+		ventana.position = cam.unproject_position(world_pos) - (ventana.size / 2)
+		call_deferred("_reposicionar_ventana_sifon")
 	
 	# Sincronizar UI con los valores actuales del sifón
 	if slider_energia: slider_energia.set_value_no_signal(sifon.valor_energia)
@@ -99,23 +115,30 @@ func abrir(sifon):
 	
 	_actualizar_preview()
 	
-	# Animación de aparición
+	# Animación de aparición elegante (igual que Constructor)
 	if ventana:
-		ventana.scale = Vector2.ONE * 0.1
+		ventana.scale = Vector2(0.88, 0.88)
+		ventana.modulate.a = 0.0
 		var t = create_tween()
-		t.tween_property(ventana, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK)
+		t.set_parallel(true)
+		t.set_ease(Tween.EASE_OUT)
+		t.set_trans(Tween.TRANS_BACK)
+		t.tween_property(ventana, "scale", Vector2.ONE, 0.22)
+		t.tween_property(ventana, "modulate:a", 1.0, 0.18)
+
+func _reposicionar_ventana_sifon():
+	if not is_instance_valid(sifon_activo) or not ventana: return
+	var cam = get_viewport().get_camera_3d()
+	if cam:
+		var world_pos = sifon_activo.global_position + Vector3(0, 1.5, 0)
+		ventana.position = cam.unproject_position(world_pos) - (ventana.size / 2)
 
 func cerrar():
-	# Bloqueo de seguridad si el desplegable está abierto
 	if opt_color and opt_color.get_popup().visible: return
 	if opt_tipo and opt_tipo.get_popup().visible: return
 	
 	sifon_activo = null
 	visible = false
-
-func _on_fondo_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		cerrar()
 
 # --- LÓGICA DE ACTUALIZACIÓN DE DATOS ---
 

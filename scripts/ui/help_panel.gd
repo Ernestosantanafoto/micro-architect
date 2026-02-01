@@ -1,8 +1,12 @@
 extends CanvasLayer
 
 @onready var panel = $Panel
+@onready var dimming = $Dimming
+@onready var backdrop = $Backdrop
 @onready var tab_container = $Panel/MarginContainer/VBoxContainer/TabContainer
 @onready var btn_close = $Panel/MarginContainer/VBoxContainer/BtnClose
+
+const DURACION_OSCURECER = 0.2
 
 # Contenido de ayuda
 var help_content = {
@@ -90,9 +94,8 @@ var help_content = {
 	"Controles": """[b]CONTROLES DEL JUEGO[/b]
 
 [b]Cámara:[/b]
-• Clic derecho + arrastrar: Rotar cámara
+• Clic izquierdo + arrastrar: Mover cámara
 • Rueda del ratón: Zoom in/out
-• Clic medio + arrastrar: Mover cámara
 
 [b]Construcción:[/b]
 • Clic izquierdo: Colocar edificio
@@ -150,24 +153,30 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 
 func _ready():
 	visible = false
-	
-	# Hacer que el panel funcione incluso cuando el juego está pausado
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group("VentanasUI")
+	add_to_group("PanelesAyuda")
 	
-	# Conectar botón de cierre
 	if btn_close:
 		btn_close.pressed.connect(hide_panel)
+	if backdrop:
+		backdrop.gui_input.connect(_on_backdrop_input)
 	
-	# Llenar tabs con contenido
 	_populate_tabs()
 	
-	# Conectar input para F1
 	set_process_input(true)
 
 func _input(event):
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F1:
 		toggle_panel()
 		get_viewport().set_input_as_handled()
+		return
+	# Cerrar al clic fuera (izq o der): si el clic no está sobre el Panel, cerrar
+	if visible and event is InputEventMouseButton and event.pressed:
+		var mp = get_viewport().get_mouse_position()
+		if panel and not panel.get_global_rect().has_point(mp):
+			hide_panel()
+			get_viewport().set_input_as_handled()
 
 func toggle_panel():
 	if visible:
@@ -176,23 +185,61 @@ func toggle_panel():
 		show_panel()
 
 func show_panel():
+	for n in get_tree().get_nodes_in_group("PanelesAyuda"):
+		if n != self and n.has_method("hide_panel") and n.visible:
+			n.hide_panel()
 	visible = true
-	# NO pausar el juego - permitir interacción con las pestañas
-	# get_tree().paused = true
+	if dimming:
+		dimming.modulate.a = 0
+		var t = create_tween()
+		t.set_ease(Tween.EASE_OUT)
+		t.set_trans(Tween.TRANS_SINE)
+		t.tween_property(dimming, "modulate:a", 1.0, DURACION_OSCURECER)
+	if tab_container:
+		tab_container.current_tab = 0
+	call_deferred("_populate_tabs")
 
 func hide_panel():
+	if dimming:
+		var t = create_tween()
+		t.set_ease(Tween.EASE_IN)
+		t.set_trans(Tween.TRANS_SINE)
+		t.tween_property(dimming, "modulate:a", 0.0, DURACION_OSCURECER)
+		t.finished.connect(_on_dimming_cerrado, CONNECT_ONE_SHOT)
+	else:
+		_cerrar_panel_definitivo()
+
+func _on_dimming_cerrado():
+	_cerrar_panel_definitivo()
+
+func _cerrar_panel_definitivo():
 	visible = false
-	# Asegurar que el juego no esté pausado
 	get_tree().paused = false
 
+func _on_backdrop_input(event):
+	# Cerrar F1 al clic izquierdo o derecho fuera del panel
+	if event is InputEventMouseButton and event.pressed:
+		hide_panel()
+		get_viewport().set_input_as_handled()
+
 func _populate_tabs():
-	# Obtener los tabs
+	# Obtener los tabs (cada tab puede ser ScrollContainer > RichTextLabel)
 	var tabs = ["Recursos", "Edificios", "Controles", "Objetivos"]
 	
 	for i in range(tab_container.get_tab_count()):
 		var tab_name = tabs[i] if i < tabs.size() else "Tab"
-		var content_node = tab_container.get_child(i)
+		var tab_page = tab_container.get_child(i)
+		var content_node = tab_page
+		if tab_page.get_child_count() > 0:
+			var first = tab_page.get_child(0)
+			# Puede ser ContentMargin > RichTextLabel o directamente RichTextLabel
+			content_node = first.get_child(0) if first is MarginContainer and first.get_child_count() > 0 else first
 		
 		if content_node is RichTextLabel:
 			content_node.bbcode_enabled = true
+			content_node.fit_content = false
+			content_node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			content_node.add_theme_color_override("default_color", Color(0.95, 0.95, 0.95))
+			content_node.add_theme_font_size_override("normal_font_size", 18)
+			content_node.add_theme_font_size_override("bold_font_size", 20)
 			content_node.text = help_content.get(tab_name, "[center]Contenido no disponible[/center]")

@@ -33,6 +33,19 @@ func _conectar_botones():
 			print("[MAIN] Botón MENÚ conectado: ", nombre)
 			break
 
+func _cerrar_cualquier_ui_abierta() -> bool:
+	# F1/F2 (PanelesAyuda)
+	for n in get_tree().get_nodes_in_group("PanelesAyuda"):
+		if n.visible and n.has_method("hide_panel"):
+			n.hide_panel()
+			return true
+	# Menús de edificios (God Siphon, Constructor)
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n.visible and n.has_method("cerrar"):
+			n.cerrar()
+			return true
+	return false
+
 func _buscar_boton(nombre: String) -> Button:
 	# Buscar en toda la escena
 	var btn = find_child(nombre, true, false)
@@ -57,8 +70,10 @@ func _unhandled_input(event):
 				# F5 = Guardar rápido
 				_on_btn_guardar_pressed()
 			KEY_ESCAPE:
-				# ESC = Cancelar construcción o volver al menú
-				if cm and cm.fantasma:
+				# ESC = Cerrar menú abierto primero; si no hay menú, cancelar construcción o menú principal
+				if _cerrar_cualquier_ui_abierta():
+					get_viewport().set_input_as_handled()
+				elif cm and cm.fantasma:
 					cm.cancelar_construccion_y_guardar()
 				else:
 					_on_btn_menu_pressed()

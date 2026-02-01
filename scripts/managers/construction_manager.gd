@@ -180,26 +180,53 @@ func _lanzar_raycast_a_edificios():
 	return get_parent().get_world_3d().direct_space_state.intersect_ray(query)
 
 # --- INPUTS ---
+# Procesar clic derecho ANTES de que lo capture el FondoDetector de los menús
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		if not fantasma and _procesar_clic_derecho_con_ui_abierta():
+			get_viewport().set_input_as_handled()
+
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if fantasma:
 				if posicion_valida_actual: confirmar_colocacion()
 			else:
-				gestionar_clic_izquierdo() # Solo para recoger
+				gestionar_clic_izquierdo()
 		
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if fantasma:
-				# Rotar el objeto en mano
 				fantasma.rotate_y(deg_to_rad(-90))
 			else:
-				# NUEVO: Intentar rotar edificio en el suelo
+				if _procesar_clic_derecho_con_ui_abierta():
+					return
 				_intentar_rotar_edificio_suelo()
 				
+func _procesar_clic_derecho_con_ui_abierta() -> bool:
+	var alguno_visible = false
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n.visible:
+			alguno_visible = true
+			break
+	if not alguno_visible:
+		return false
+	var res = _lanzar_raycast_a_edificios()
+	if res:
+		var edificio = res.collider
+		if edificio.is_in_group("AbreUIClicDerecho") and edificio.has_method("abrir_ui"):
+			edificio.abrir_ui()
+			return true
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n.has_method("cerrar") and n.visible:
+			n.cerrar()
+	return true
+
 func _intentar_rotar_edificio_suelo():
 	var res = _lanzar_raycast_a_edificios()
 	if res:
 		var edificio = res.collider
+		if edificio.is_in_group("AbreUIClicDerecho"):
+			return
 		edificio.rotate_y(deg_to_rad(-90))
 		if edificio.has_method("_actualizar_mi_estado_global"):
 			edificio._actualizar_mi_estado_global()

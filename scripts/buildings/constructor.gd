@@ -21,6 +21,7 @@ var crafteando: bool = false
 var receta_actual_datos = null
 
 func _ready():
+	add_to_group("AbreUIClicDerecho")
 	# Configuración de colisión según estado
 	var shape = find_child("CollisionShape3D", true, false)
 	if not shape:
@@ -65,6 +66,11 @@ func _process(delta):
 		_terminar_fabricacion()
 
 # --- INPUT (Abrir Menú) ---
+func abrir_ui():
+	var ui = get_tree().get_first_node_in_group("VentanaConstructor")
+	if ui and ui.has_method("abrir_menu"):
+		ui.abrir_menu(self)
+
 func _on_input_event(_camera, event, _pos, _normal, _idx):
 	if not esta_construido: return
 

@@ -5,7 +5,6 @@ var constructor_activo: Node3D = null
 # --- REFERENCIAS CON ACCESO ÚNICO (%) ---
 # Ya no importa si usas MarginContainer o no, esto los encontrará.
 @onready var ventana = $VentanaFlotante
-@onready var fondo_detector = $FondoDetector
 
 # Nodos de Datos (Asegúrate de haberles puesto el % en el editor)
 @onready var opt_recetas = %OptionButton
@@ -22,9 +21,9 @@ func _ready():
 	# Grupos
 	if not is_in_group("VentanasUI"): add_to_group("VentanasUI")
 	if not is_in_group("VentanaConstructor"): add_to_group("VentanaConstructor")
+	if not is_in_group("UIsEdificios"): add_to_group("UIsEdificios")
 	
-	# Filtros de ratón
-	if fondo_detector: fondo_detector.gui_input.connect(_on_fondo_input)
+	set_process_input(true)
 	
 	# Rellenar lista
 	if opt_recetas:
@@ -41,6 +40,17 @@ func _ready():
 
 	if btn_reclamar and not btn_reclamar.pressed.is_connected(_on_reclamar_pressed):
 		btn_reclamar.pressed.connect(_on_reclamar_pressed)
+
+func _input(event):
+	# Cerrar con LMB o RMB fuera de la ventana (sin FondoDetector = sin recuadro gris)
+	if not visible or not ventana: return
+	if event is InputEventMouseButton and event.pressed:
+		var viewport_h = get_viewport().get_visible_rect().size.y
+		if get_viewport().get_mouse_position().y > viewport_h - 140:
+			return
+		if not ventana.get_global_rect().has_point(get_viewport().get_mouse_position()):
+			cerrar()
+			get_viewport().set_input_as_handled()
 
 func _process(_delta):
 	if not visible or not is_instance_valid(constructor_activo):
@@ -66,8 +76,31 @@ func _process(_delta):
 func abrir_menu(edificio):
 	if visible and constructor_activo == edificio: return
 	
+	# Cerrar otros menús de edificios (God Siphon, etc.)
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n != self and n.has_method("cerrar") and n.visible:
+			n.cerrar()
+	
 	constructor_activo = edificio
 	visible = true
+	
+	var cam = get_viewport().get_camera_3d()
+	if cam and ventana:
+		var pos_3d = edificio.global_position + Vector3(0, GameConstants.UI_OFFSET_3D_Y, 0)
+		ventana.position = cam.unproject_position(pos_3d) - (ventana.size / 2)
+		call_deferred("_reposicionar_ventana_constructor")
+	
+	# Animación de aparición elegante (igual que God Siphon)
+	if ventana:
+		ventana.scale = Vector2(0.88, 0.88)
+		ventana.modulate.a = 0.0
+		var t = create_tween()
+		t.set_parallel(true)
+		t.set_ease(Tween.EASE_OUT)
+		t.set_trans(Tween.TRANS_BACK)
+		t.tween_property(ventana, "scale", Vector2.ONE, 0.22)
+		t.tween_property(ventana, "modulate:a", 1.0, 0.18)
+	
 	actualizar_vista()
 	
 	if opt_recetas:
@@ -78,19 +111,17 @@ func abrir_menu(edificio):
 				break
 		opt_recetas.selected = index
 	
-	if ventana:
-		ventana.scale = Vector2.ONE * 0.1
-		var t = create_tween()
-		t.tween_property(ventana, "scale", Vector2.ONE, GameConstants.UI_POP_TIME).set_trans(Tween.TRANS_BACK)
+func _reposicionar_ventana_constructor():
+	if not is_instance_valid(constructor_activo) or not ventana: return
+	var cam = get_viewport().get_camera_3d()
+	if cam:
+		var pos_3d = constructor_activo.global_position + Vector3(0, GameConstants.UI_OFFSET_3D_Y, 0)
+		ventana.position = cam.unproject_position(pos_3d) - (ventana.size / 2)
 
 func cerrar():
 	if opt_recetas and opt_recetas.get_popup().visible: return
 	constructor_activo = null
 	visible = false
-
-func _on_fondo_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		cerrar()
 
 # --- VISTA ---
 func actualizar_vista():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=17 format=3 uid="uid://cwhvblny03sya"]
 
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
@@ -13,6 +13,10 @@
 [ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scripts/ui/system_hud.gd" id="11_7an1d"]
 [ext_resource type="PackedScene" uid="uid://help_panel_001" path="res://scenes/ui/help_panel.tscn" id="12_help"]
 [ext_resource type="PackedScene" uid="uid://recipe_book_001" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.05, 0.05, 0.08, 0.85)
+corner_radius = 6
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -83,7 +87,7 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("6_dmcra")
 
-[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+[node name="PanelRecursos" type="PanelContainer" parent="HUD"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -91,12 +95,16 @@ offset_left = 180.0
 offset_right = 737.0
 offset_bottom = 63.0
 grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/PanelRecursos"]
+layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HUD/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/PanelRecursos/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
@@ -117,8 +125,16 @@ script = ExtResource("7_5bore")
 script = ExtResource("11_7an1d")
 
 [node name="PanelSistema" type="PanelContainer" parent="CanvasLayer"]
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -80.0
+offset_right = 220.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelSistema"]

@@ -41,14 +41,18 @@ func _on_category_pressed(boton: Button):
 	# Acciones especiales (no son categorías de construcción)
 	match txt:
 		"SOLTAR":
+			_cerrar_menus_edificios()
 			_ejecutar_devolucion()
 			return
 		"ELIMINAR":
+			_cerrar_menus_edificios()
 			if construction_manager: 
 				construction_manager.destruir_item_en_mano()
 			return
 	
-	# Categorías de construcción
+	# Categorías de construcción: cerrar menús de edificios para quitar fricción
+	_cerrar_menus_edificios()
+	
 	if not menu_data.has(txt):
 		return
 	
@@ -101,6 +105,8 @@ func _construir_items_verticales(categoria: String, boton_origen: Button):
 	vertical_stack.global_position = Vector2(pos_x, pos_y)
 
 func _on_item_seleccionado(ruta_escena, nombre_inventario):
+	# Cerrar menús de edificios (Constructor, God Siphon) para que el clic sirva directo
+	_cerrar_menus_edificios()
 	if construction_manager:
 		var escena = load(ruta_escena)
 		construction_manager.seleccionar_para_construir(escena, nombre_inventario)
@@ -109,6 +115,11 @@ func _on_item_seleccionado(ruta_escena, nombre_inventario):
 func _cerrar_menu():
 	vertical_stack.visible = false
 	vertical_stack.set_meta("cat_activa", "")
+
+func _cerrar_menus_edificios():
+	for n in get_tree().get_nodes_in_group("UIsEdificios"):
+		if n.has_method("cerrar") and n.visible:
+			n.cerrar()
 
 func _setup_tooltip(boton: Button):
 	var txt = boton.text.to_upper().strip_edges()

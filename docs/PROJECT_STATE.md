@@ -1,8 +1,11 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
-**Última actualización:** 2025-01-31  
+**Última actualización:** 2025-02-01  
 **Versión:** 0.4-alpha  
 **Godot:** 4.x
+
+### ⚠️ Conocidos (dev / test)
+- **Menús popup (God Siphon, Constructor):** En algunos entornos puede verse un recuadro gris hasta el borde inferior de la pantalla. No afecta a la jugabilidad; dejado como mejora futura para dev/test.
 
 ---
 
@@ -75,6 +78,6 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ## 🎯 Próximo Paso
 
-**Refactor completado.** Arquitectura de energía numérica estable.
+**Refactor + Polish UI aplicado.** Arquitectura de energía numérica estable; HUD, F1/F2, God Siphon/Constructor UI y tutorial básico completados.
 
-Ver **`docs/FUTURE_PLAN.md`** para roadmap detallado (electrones, protones, pulido UX).
+Ver **`docs/FUTURE_PLAN.md`** para roadmap (electrones, protones, bugs menores) o **`docs/POLISH_PLAN.md`** para detalle del pulido.

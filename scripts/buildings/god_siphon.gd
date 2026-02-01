@@ -15,6 +15,7 @@ var esta_construido: bool = false
 var beam_emitter: BeamEmitter
 
 func _ready():
+	add_to_group("AbreUIClicDerecho")
 	beam_emitter = BeamEmitter.new()
 	add_child(beam_emitter)
 	
@@ -75,6 +76,9 @@ func _on_input_event(_camera, event, _position, _normal, _shape_idx):
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			_gestionar_clic_derecho()
 			get_viewport().set_input_as_handled()
+
+func abrir_ui():
+	_gestionar_clic_derecho()
 
 func _gestionar_clic_derecho():
 	# Buscar la UI específica del GodSiphon

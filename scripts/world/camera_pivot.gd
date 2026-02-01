@@ -11,7 +11,7 @@ func _ready():
 	camera.position.z = GameConstants.CAMARA_ZOOM_INICIAL
 
 func _unhandled_input(event):
-	# SOLUCIÓN: Si el ratón está sobre UI, ignoramos la rueda
+	# Si el ratón está sobre UI (F1, F2, etc.), no zoom ni arrastre
 	if _is_mouse_over_ui(): return
 
 	if event is InputEventMouseButton:

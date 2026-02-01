@@ -1,7 +1,7 @@
 # 🗺️ Plan Futuro - Micro Architect
 
 **Base:** v0.4-alpha (energía numérica, protocolo archivos)  
-**Última actualización:** 2025-01-31
+**Última actualización:** 2025-02-01
 
 ---
 
@@ -18,14 +18,15 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 ---
 
 ## 📋 Fase 1: Estabilización (Corto plazo)
-
+ 
 ### Bugs menores
 - [ ] Haces visuales cortados en prismas
 - [ ] Salidas de mergers (posición/visual)
 - [ ] Verificar que visuales NO afectan lógica en todos los casos
 
 ### Pulido UX
-- [ ] Tutorial básico (primer Siphon → primer Quark)
+- [x] Tutorial básico (primer Siphon → primer Quark) — hecho en v0.4 Polish
+- [x] Guía F1 + Recetario F2 — hecho en v0.4 Polish
 - [ ] Feedback visual al colocar edificios (confirmación, error)
 - [ ] Mejorar menús (transiciones, feedback)
 

@@ -1,69 +1,72 @@
-[gd_scene load_steps=2 format=3 uid="uid://bnpx62uoxlkf"]
+[gd_scene load_steps=3 format=3 uid="uid://bnpx62uoxlkf"]
 
 [ext_resource type="Script" uid="uid://dhcmr5b1uohud" path="res://scripts/ui/constructor_ui.gd" id="1_26v4u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ventana"]
+bg_color = Color(0.18, 0.18, 0.22, 0.98)
+corner_radius = 8
 
 [node name="ConstructorUI" type="CanvasLayer"]
 visible = false
 script = ExtResource("1_26v4u")
 
-[node name="FondoDetector" type="Control" parent="."]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
 [node name="VentanaFlotante" type="PanelContainer" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ventana")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante"]
+[node name="MarginContainer" type="MarginContainer" parent="VentanaFlotante"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante/MarginContainer"]
 layout_mode = 2
 
-[node name="LabelTitulo" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "CONSTRUCTOR"
 
-[node name="OptionButton" type="OptionButton" parent="VentanaFlotante/VBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="LabelEstado" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="LabelEstado" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="BarraProgreso" type="ProgressBar" parent="VentanaFlotante/VBoxContainer"]
+[node name="BarraProgreso" type="ProgressBar" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="LabelRequisitos" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="LabelRequisitos" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HSeparator2" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="LabelAlmacen" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="LabelAlmacen" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BarraAlmacen" type="ProgressBar" parent="VentanaFlotante/VBoxContainer"]
+[node name="BarraAlmacen" type="ProgressBar" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VentanaFlotante/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="ListaRecursos" type="VBoxContainer" parent="VentanaFlotante/VBoxContainer/ScrollContainer"]
+[node name="ListaRecursos" type="VBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BotonReclamar" type="Button" parent="VentanaFlotante/VBoxContainer"]
+[node name="BotonReclamar" type="Button" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "RECLAMAR (0)"

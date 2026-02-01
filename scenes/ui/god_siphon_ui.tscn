@@ -1,88 +1,88 @@
-[gd_scene load_steps=2 format=3 uid="uid://j8hgfoyld0e5"]
+[gd_scene load_steps=3 format=3 uid="uid://j8hgfoyld0e5"]
 
 [ext_resource type="Script" uid="uid://cwd2oqv6tjqjj" path="res://scripts/ui/god_siphon_ui.gd" id="1_7b15w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ventana"]
+bg_color = Color(0.18, 0.18, 0.22, 0.98)
+corner_radius = 8
 
 [node name="GodSiphonUI" type="CanvasLayer"]
 script = ExtResource("1_7b15w")
 
-[node name="FondoDetector" type="Control" parent="."]
+[node name="VentanaFlotante" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ventana")
 
-[node name="VentanaFlotante" type="PanelContainer" parent="FondoDetector"]
-unique_name_in_owner = true
-layout_mode = 1
-offset_right = 128.0
-offset_bottom = 230.0
+[node name="MarginContainer" type="MarginContainer" parent="VentanaFlotante"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 20
 
-[node name="MarginContainer" type="MarginContainer" parent="FondoDetector/VentanaFlotante"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer"]
-layout_mode = 2
-
-[node name="LabelTitulo" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "MODO DIOS"
 
-[node name="OptionColor" type="OptionButton" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="OptionColor" type="OptionButton" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="OptionTipo" type="OptionButton" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="OptionTipo" type="OptionButton" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="LabelEnergia" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="LabelEnergia" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Energía por segundo:"
 
-[node name="HBoxEnergia" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HBoxEnergia" type="HBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SliderEnergia" type="HSlider" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
+[node name="SliderEnergia" type="HSlider" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LblEnergiaValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
+[node name="LblEnergiaValor" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxEnergia"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 text = "10.0"
 
-[node name="LabelFreq" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="LabelFreq" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Frecuencia (ticks):"
 
-[node name="HBoxFreq" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HBoxFreq" type="HBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SliderFrecuencia" type="HSlider" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
+[node name="SliderFrecuencia" type="HSlider" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LblFreqValor" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
+[node name="LblFreqValor" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxFreq"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 text = "5 ticks"
 
-[node name="HSeparator2" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="LblPreview" type="Label" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="LblPreview" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
@@ -92,25 +92,25 @@ Tipo: Energía básica
 Frecuencia: 5 ticks"
 autowrap_mode = 3
 
-[node name="HSeparator3" type="HSeparator" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxButtons" type="HBoxContainer" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="HBoxButtons" type="HBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="BtnAplicar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
+[node name="BtnAplicar" type="Button" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "APLICAR"
 
-[node name="BtnResetear" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
+[node name="BtnResetear" type="Button" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "RESETEAR"
 
-[node name="BtnCerrar" type="Button" parent="FondoDetector/VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
+[node name="BtnCerrar" type="Button" parent="VentanaFlotante/MarginContainer/VBoxContainer/HBoxButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

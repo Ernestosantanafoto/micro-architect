@@ -1,7 +1,7 @@
 extends Control
 
 # Sistema dinámico de recursos ORGANIZADO POR CATEGORÍAS
-@onready var resource_container = $MarginContainer/HBoxContainer
+@onready var resource_container = $PanelRecursos/MarginContainer/HBoxContainer
 
 # Categorías de recursos
 var resource_categories = {
@@ -69,33 +69,35 @@ func _update_resources():
 	for child in resource_container.get_children():
 		child.queue_free()
 	
-	# Crear secciones por categoría
+	# Crear secciones por categoría (siempre mostrar ENERGÍA y QUARKS para ver producción)
 	for category in ["ENERGÍA", "QUARKS", "EDIFICIOS"]:
 		var has_items = false
 		
-		# Verificar si hay items en esta categoría
 		for resource_name in resource_categories[category]:
 			if GlobalInventory.stock.has(resource_name) and GlobalInventory.stock[resource_name] > 0:
 				has_items = true
 				break
 		
-		if not has_items:
+		# EDIFICIOS: solo si hay al menos uno; ENERGÍA y QUARKS: siempre mostrar
+		var always_show = (category == "ENERGÍA" or category == "QUARKS")
+		if not has_items and not always_show:
 			continue
 		
-		# Título de categoría
+		# Título de categoría (ancho fijo para que no se mueva)
 		var category_label = Label.new()
 		category_label.text = category + ":"
 		category_label.add_theme_font_size_override("font_size", 14)
 		category_label.add_theme_color_override("font_color", category_colors[category])
+		category_label.custom_minimum_size.x = 90
 		resource_container.add_child(category_label)
 		
-		# Items de la categoría
+		# Items de la categoría (mostrar 0 para ENERGÍA/QUARKS)
 		for resource_name in resource_categories[category]:
 			if not GlobalInventory.stock.has(resource_name):
 				continue
 			
 			var amount = GlobalInventory.stock[resource_name]
-			if amount <= 0:
+			if amount <= 0 and category == "EDIFICIOS":
 				continue
 			
 			var label = Label.new()
@@ -103,8 +105,9 @@ func _update_resources():
 			label.text = "%s %d" % [icon, amount]
 			label.add_theme_font_size_override("font_size", 16)
 			label.tooltip_text = resource_name
+			# Ancho fijo para 3 dígitos (100, 99...) para que el HUD no se mueva
+			label.custom_minimum_size.x = 68
 			
-			# Aplicar color específico si existe
 			if resource_colors.has(resource_name):
 				label.add_theme_color_override("font_color", resource_colors[resource_name])
 			

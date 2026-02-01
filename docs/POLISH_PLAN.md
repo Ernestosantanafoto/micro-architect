@@ -1,8 +1,10 @@
 # 🎨 PLAN DE PULIDO - Fase UI/UX
 
 **Fecha inicio:** 2025-02-01  
-**Estado:** 📋 En planificación  
+**Estado:** 🔄 En curso (fase UI aplicada)  
 **Objetivo:** Mejorar experiencia de usuario y hacer el juego presentable
+
+**Hecho en esta fase:** HUD por categorías, F1/F2 (ayuda + recetario) con cierre por ESC/clic fuera y oscurecimiento, God Siphon/Constructor con animación de aparición y cierre por LMB/RMB fuera, márgenes y colores en paneles. **Conocido (dev):** Menús popup pueden mostrar recuadro gris a pantalla completa en algunos entornos; dejado para más adelante.
 
 ---
 
