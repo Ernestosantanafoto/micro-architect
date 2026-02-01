@@ -7,6 +7,9 @@
 ### ⚠️ Conocidos (dev / test)
 - **Menús popup (God Siphon, Constructor):** En algunos entornos puede verse un recuadro gris hasta el borde inferior de la pantalla. No afecta a la jugabilidad; dejado como mejora futura para dev/test.
 
+### 📌 Pendiente (dejado para pulir más adelante)
+- **HUD y modo selección:** Barra superior (energía/estabilización/carga), panel inferior izquierdo (GUARDAR/SELECCIÓN/MENÚ) y panel inferior derecho (ELIMINAR) funcionan pero el layout/visual no ha quedado perfecto. Se mantiene así y se deja en pendiente para un futuro pulido.
+
 ### 📌 Pausa / recordar para futuro
 - **Merger buffer al levantar/soltar:** Dejado en pausa. Comportamiento actual: se mantiene el buffer al mover (no se resetea en `desconectar_sifon`). Revisar si se quiere otra lógica más adelante.
 
@@ -44,6 +47,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - [x] Sistema visual (haces, pulsos)
 - [x] Menús (principal, guardar/cargar)
 - [x] Música de fondo
+- [x] **Selección múltiple por arrastre:** Solo en casillas vacías, hold threshold, rectángulo fantasma azul, zoom dinámico (solo aleja), acciones R (reembolso) y ELIMINAR; modo activable/desactivable con botón SELECCIÓN (panel inferior izq.); botón ELIMINAR en esquina inferior derecha. Pendiente: pulir layout/visual del HUD.
 
 ---
 

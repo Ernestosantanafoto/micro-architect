@@ -4,7 +4,9 @@
 **Base:** v0.4-alpha (energía numérica, Polish UI aplicado)  
 **Última actualización:** 2025-01-31
 
-**Hecho reciente (fuera de bloques):** Hotkeys 1-9 (output_scene), clic central en edificio/suelo (misma orientación, colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint (validación/registro multi-celda), RECETAS unificado en HUD (HUD_CATEGORIAS/HUD_LABELS), deprecated eliminado (energy_pulse). Prismas T1/T2 apagado, bolas al quitar sifón, tamaños bolas.
+**Hecho reciente (fuera de bloques):** Hotkeys 1-9 (output_scene), clic central en edificio/suelo (misma orientación, colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint (validación/registro multi-celda), RECETAS unificado en HUD (HUD_CATEGORIAS/HUD_LABELS), deprecated eliminado (energy_pulse). Prismas T1/T2 apagado, bolas al quitar sifón, tamaños bolas. **Sistema de selección múltiple por arrastre:** SelectionManager (hold threshold, rectángulo fantasma, zoom fit solo aleja, margen), modo selección activable con botón SELECCIÓN (mismo estilo que GUARDAR/MENÚ), botón ELIMINAR en esquina inferior derecha, márgenes HUD (panel superior e inferior izq.) para que no se salgan por la izquierda.
+
+**Pendiente (pulir más adelante):** Layout/visual del HUD y botones de selección/eliminar no han quedado perfectos; se mantiene el estado actual.
 
 ---
 

@@ -20,6 +20,8 @@ const CAMARA_ZOOM_INICIAL = 100.0
 const CAMARA_ZOOM_MIN = 5.0
 const CAMARA_ZOOM_MAX = 200.0
 const CAMARA_ZOOM_PASO = 3.0
+## Margen extra al encuadrar selección: la cuadrícula nunca toca los bordes (siempre un poco más de espacio).
+const CAMARA_SELECCION_MARGEN := 1.4
 
 # --- JUEGO ---
 const GAME_TICK_DURATION = 1.0 

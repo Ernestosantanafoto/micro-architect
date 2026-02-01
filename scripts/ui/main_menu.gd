@@ -2,6 +2,9 @@ extends CanvasLayer
 
 const VERSION_TEXTO := "v0.4-alpha"
 const DURACION_TRANSICION := 0.2
+const SETTINGS_PATH := "user://settings.cfg"
+const SETTINGS_SECTION := "audio"
+const SETTINGS_KEY_VOLUME := "volume"
 
 @export var ESCENA_JUEGO : String = "res://scenes/world/main_game_3d.tscn"
 
@@ -20,11 +23,11 @@ func _ready():
 	# Versión bajo el título (si hay un Label primero en MainMenuContainer)
 	_anadir_version_al_menu()
 	
-	# Configurar Audio
+	# Configurar Audio: cargar volumen guardado o usar valor por defecto
 	if volume_slider:
-		var master_bus = AudioServer.get_bus_index("Master")
-		var current_vol_linear = db_to_linear(AudioServer.get_bus_volume_db(master_bus))
-		volume_slider.value = AudioServer.get_bus_volume_linear(master_bus)
+		var vol_saved = _cargar_volumen_guardado()
+		volume_slider.value = vol_saved
+		_aplicar_volumen(vol_saved)
 		if not volume_slider.value_changed.is_connected(_on_volume_changed):
 			volume_slider.value_changed.connect(_on_volume_changed)
 
@@ -62,17 +65,26 @@ func _on_back_pressed():
 	)
 	t.tween_property(main_container, "modulate:a", 1.0, DURACION_TRANSICION)
 
-func _on_volume_changed(value: float):
+func _cargar_volumen_guardado() -> float:
+	var cfg = ConfigFile.new()
+	if cfg.load(SETTINGS_PATH) == OK and cfg.has_section_key(SETTINGS_SECTION, SETTINGS_KEY_VOLUME):
+		return clampf(cfg.get_value(SETTINGS_SECTION, SETTINGS_KEY_VOLUME, 1.0), 0.0, 1.0)
+	# Sin archivo: 1.0 (volumen completo)
+	return 1.0
+
+func _aplicar_volumen(slider_value: float) -> void:
 	var master_bus = AudioServer.get_bus_index("Master")
-	
-	# Usamos una curva de potencia (valor al cuadrado) 
-	# Esto hace que el inicio del slider sea mucho más sutil.
-	var progressive_volume = pow(value, 2) 
-	
-	# Pasamos de valor lineal (0 a 1) a decibelios
+	var progressive_volume = pow(slider_value, 2)
 	AudioServer.set_bus_volume_db(master_bus, linear_to_db(progressive_volume))
-	
-	print("[DEBUG-MENU] Valor Slider: ", value, " | Vol Real: ", int(progressive_volume * 100), "%")
+
+func _guardar_volumen(slider_value: float) -> void:
+	var cfg = ConfigFile.new()
+	cfg.set_value(SETTINGS_SECTION, SETTINGS_KEY_VOLUME, clampf(slider_value, 0.0, 1.0))
+	cfg.save(SETTINGS_PATH)
+
+func _on_volume_changed(value: float):
+	_aplicar_volumen(value)
+	_guardar_volumen(value)
 # --- LÓGICA DE PARTIDAS ---
 
 func _on_nueva_pressed():

@@ -30,6 +30,28 @@ func _unhandled_input(event):
 func _process(_delta):
 	_set_grid_zoom_fade(camera.size)
 
+## Ajusta zoom (y posición) para que el rectángulo en XZ quepa en pantalla.
+## Solo aleja el zoom, nunca acerca: mantiene la distancia máxima alcanzada.
+## Margen extra para que la cuadrícula no toque los bordes (salvo que se supere ZOOM_MAX).
+func fit_rect_in_view(center_x: float, center_z: float, size_x: float, size_z: float, margin: float = -1.0) -> void:
+	if margin < 0:
+		margin = GameConstants.CAMARA_SELECCION_MARGEN
+	var vp = get_viewport().get_visible_rect().size
+	if vp.y <= 0:
+		return
+	var aspect = vp.x / vp.y
+	var half_w = size_x / 2.0
+	var half_h = size_z / 2.0
+	var size_for_width = half_w / aspect
+	var size_for_height = half_h
+	var required = maxf(size_for_width, size_for_height) * margin
+	# Solo alejar: nunca reducir camera.size (mantener la distancia máxima hasta ese momento)
+	var new_size = maxf(camera.size, required)
+	new_size = clampf(new_size, GameConstants.CAMARA_ZOOM_MIN, GameConstants.CAMARA_ZOOM_MAX)
+	camera.size = new_size
+	position.x = center_x
+	position.z = center_z
+
 func _set_grid_zoom_fade(camera_size: float) -> void:
 	if not grid_plane: return
 	var mat = grid_plane.get_surface_override_material(0)

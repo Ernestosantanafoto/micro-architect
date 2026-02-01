@@ -1,5 +1,6 @@
-[gd_scene load_steps=17 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=18 format=3 uid="uid://cwhvblny03sya"]
 
+[ext_resource type="Script" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
 [ext_resource type="Shader" uid="uid://c4kfcb5wrqdql" path="res://main_game_3d.gdshader" id="1_ibdhq"]
@@ -66,6 +67,9 @@ mesh = SubResource("PlaneMesh_ypd6b")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("ShaderMaterial_ypd6b")
 
+[node name="SelectionManager" type="Node" parent="."]
+script = ExtResource("14_selm")
+
 [node name="GridMap" type="GridMap" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 mesh_library = ExtResource("4_ypd6b")
@@ -91,8 +95,9 @@ script = ExtResource("6_dmcra")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 180.0
-offset_right = 737.0
+offset_left = 20.0
+offset_top = 0.0
+offset_right = -20.0
 offset_bottom = 63.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
@@ -136,6 +141,7 @@ offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelSistema"]
 layout_mode = 2
@@ -144,6 +150,35 @@ layout_mode = 2
 layout_mode = 2
 text = "GUARDAR"
 
+[node name="BtnModoSeleccion" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "SELECCIÓN"
+
 [node name="BtnMenu" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
 layout_mode = 2
 text = "MENÚ"
+
+[node name="PanelEliminar" type="PanelContainer" parent="CanvasLayer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -80.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelEliminar"]
+layout_mode = 2
+
+[node name="BtnEliminar" type="Button" parent="CanvasLayer/PanelEliminar/HBoxContainer"]
+layout_mode = 2
+text = "ELIMINAR"

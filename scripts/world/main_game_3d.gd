@@ -32,6 +32,33 @@ func _conectar_botones():
 				btn.pressed.connect(_on_btn_menu_pressed)
 			print("[MAIN] Botón MENÚ conectado: ", nombre)
 			break
+	
+	# Modo selección (Button toggle_mode): mismo aspecto que GUARDAR/MENÚ
+	var btn_modo_sel = find_child("BtnModoSeleccion", true, false)
+	if btn_modo_sel and btn_modo_sel is BaseButton and btn_modo_sel.has_signal("toggled"):
+		if not btn_modo_sel.toggled.is_connected(_on_btn_modo_seleccion_toggled):
+			btn_modo_sel.toggled.connect(_on_btn_modo_seleccion_toggled)
+		var sm = find_child("SelectionManager", true, false)
+		if sm and sm.has_method("set_selection_mode_enabled"):
+			sm.selection_mode_enabled = btn_modo_sel.button_pressed
+		print("[MAIN] Botón SELECCIÓN conectado.")
+	
+	# ELIMINAR (esquina inferior derecha): borra el contenido de la selección confirmada
+	var btn_eliminar = find_child("BtnEliminar", true, false)
+	if btn_eliminar and btn_eliminar is Button:
+		if not btn_eliminar.pressed.is_connected(_on_btn_eliminar_pressed):
+			btn_eliminar.pressed.connect(_on_btn_eliminar_pressed)
+		print("[MAIN] Botón ELIMINAR conectado.")
+
+func _on_btn_modo_seleccion_toggled(button_pressed: bool) -> void:
+	var sm = find_child("SelectionManager", true, false)
+	if sm and sm.has_method("set_selection_mode_enabled"):
+		sm.set_selection_mode_enabled(button_pressed)
+
+func _on_btn_eliminar_pressed() -> void:
+	var sm = find_child("SelectionManager", true, false)
+	if sm and sm.is_selection_mode_enabled() and sm.is_confirmed():
+		sm.apply_action("delete")
 
 func _cerrar_cualquier_ui_abierta() -> bool:
 	# F1/F2 (PanelesAyuda)
@@ -61,26 +88,58 @@ func _process(delta):
 		game_tick.emit(current_tick)
 
 func _unhandled_input(event):
+	var sm = find_child("SelectionManager", true, false)
+	var cm = find_child("ConstructionManager", true, false)
+	
+	# --- Selección por arrastre (solo si modo selección activo; casillas vacías, hold threshold) ---
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				if sm and sm.is_selection_mode_enabled() and cm and not cm.fantasma:
+					var cell = sm.get_cell_under_mouse()
+					if cell != null and GridManager and not GridManager.is_cell_occupied(Vector2i(int(cell.x), int(cell.y))):
+						sm.start_hold(cell)
+						get_viewport().set_input_as_handled()
+			else:
+				if sm and sm.is_selection_mode_enabled() and sm.is_selecting():
+					sm.confirm()
+					get_viewport().set_input_as_handled()
+	
+	if event is InputEventMouseMotion:
+		if sm and sm.is_selection_mode_enabled() and sm.is_selecting() and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var cell = sm.get_cell_under_mouse()
+			if cell != null:
+				sm.update_drag(cell)
+			get_viewport().set_input_as_handled()
+	
 	# Atajos de teclado
 	if event is InputEventKey and event.pressed:
-		var cm = find_child("ConstructionManager", true, false)
+		if not cm:
+			cm = find_child("ConstructionManager", true, false)
 		
 		match event.keycode:
 			KEY_F5:
-				# F5 = Guardar rápido
 				_on_btn_guardar_pressed()
 			KEY_ESCAPE:
-				# ESC = Cerrar menú abierto primero; si no hay menú, cancelar construcción o menú principal
 				if _cerrar_cualquier_ui_abierta():
+					get_viewport().set_input_as_handled()
+				elif sm and sm.is_selection_mode_enabled() and sm.is_confirmed():
+					sm.clear_selection()
 					get_viewport().set_input_as_handled()
 				elif cm and cm.fantasma:
 					cm.cancelar_construccion_y_guardar()
 				else:
 					_on_btn_menu_pressed()
 			KEY_R:
-				# R = Rotar edificio fantasma
 				if cm and cm.fantasma:
 					cm.fantasma.rotate_y(deg_to_rad(90))
+				elif sm and sm.is_selection_mode_enabled() and sm.is_confirmed():
+					sm.apply_action("refund")
+					get_viewport().set_input_as_handled()
+			KEY_DELETE:
+				if sm and sm.is_selection_mode_enabled() and sm.is_confirmed():
+					sm.apply_action("delete")
+					get_viewport().set_input_as_handled()
 			KEY_0, KEY_KP_0:
 				# 0 = God Siphon solo en modo DEV (no en partida normal)
 				if GameConstants.DEBUG_MODE:
