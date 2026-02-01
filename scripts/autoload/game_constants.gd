@@ -201,3 +201,44 @@ const RECETAS = {
 		"tiempo": 30.0 
 	}
 }
+
+# --- HUD: categorías y etiquetas cortas (fuente única = RECETAS) ---
+## Orden de edificios por categoría en la barra inferior. Claves = nombres en RECETAS.
+const HUD_CATEGORIAS = {
+	"SIFONES": ["Sifón", "Sifón T2"],
+	"PRISMAS": ["Prisma Recto", "Prisma Angular", "Prisma Recto T2", "Prisma Angular T2"],
+	"MANIPULA": ["Compresor", "Compresor T2", "Fusionador", "Void Generator"],
+	"CONSTR": ["Constructor"]
+}
+## Etiqueta corta para botón (si no existe, se usa el nombre de RECETA).
+const HUD_LABELS = {
+	"Sifón": "Sifón T1",
+	"Sifón T2": "Sifón T2",
+	"Prisma Recto": "Recto T1",
+	"Prisma Angular": "Ang. T1",
+	"Prisma Recto T2": "Recto T2",
+	"Prisma Angular T2": "Ang. T2",
+	"Compresor": "Compr. T1",
+	"Compresor T2": "Compr. T2",
+	"Fusionador": "Fusión",
+	"Void Generator": "Void Gen",
+	"Constructor": "Maker"
+}
+
+# --- STARTER PACK (Nueva partida) ---
+## Inventario inicial: desafiante pero sin frustración. Constructor necesario para craftear.
+## God Siphon no está en partida normal (solo herramienta DEV).
+const STARTER_PACK = {
+	"Sifón": 4,
+	"Sifón T2": 0,
+	"Prisma Recto": 8,
+	"Prisma Angular": 4,
+	"Prisma Recto T2": 0,
+	"Prisma Angular T2": 0,
+	"Compresor": 1,
+	"Compresor T2": 0,
+	"Fusionador": 0,
+	"Constructor": 1,
+	"GodSiphon": 0,
+	"Void Generator": 0
+}

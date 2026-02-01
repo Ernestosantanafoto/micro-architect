@@ -4,6 +4,8 @@ render_mode unshaded, blend_add, cull_disabled;
 uniform vec3 grid_color : source_color = vec3(0.0, 0.0, 0.0);
 uniform float grid_density = 1.0;
 uniform float line_thickness = 0.02;
+// 0 = grid visible, 1 = grid desvanecido (zoom lejano). Lo pasa el script desde la cámara.
+uniform float zoom_fade = 0.0;
 
 void fragment() {
     // Obtenemos la posición real en el mundo
@@ -19,6 +21,8 @@ void fragment() {
 
     ALBEDO = grid_color;
 
-    // Efecto de desvanecimiento suave para que no haya aliasing (puntos feos)
-    ALPHA = line * 0.8;
+    // Pulso 50%–100% de opacidad, al doble de velocidad que antes
+    float pulse = 0.5 + 0.5 * sin(TIME * 1.0);
+    // Desvanecimiento por zoom: al alejar, el grid se desvanece
+    ALPHA = line * 0.8 * pulse * (1.0 - zoom_fade);
 }

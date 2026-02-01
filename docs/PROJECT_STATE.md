@@ -66,7 +66,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 - Energía fluye como datos (EnergyManager + EnergyFlow)
 - Visuales opcionales (PulseVisual) sin afectar lógica
-- `scenes/deprecated/energy_pulse.tscn` deprecado (ya no se usa)
+- Deprecated eliminado: `scenes/deprecated/` y `scripts/deprecated/` (energy_pulse) borrados en ROADMAP 3.2
 
 ---
 

@@ -49,12 +49,16 @@ func confirmar_colocacion():
 	if fantasma.has_method("check_ground"):
 		fantasma.check_ground()
 	
-	# Registrar en GridManager
+	# Registrar en GridManager (todas las celdas del footprint si es multi-celda)
 	var map = get_parent().get_node_or_null("GridMap")
 	if map and GridManager:
 		var celda = map.local_to_map(fantasma.global_position)
 		var pos_2d = Vector2i(celda.x, celda.z)
-		GridManager.register_building(pos_2d, fantasma)
+		if fantasma.has_method("get_footprint_offsets"):
+			for off in fantasma.get_footprint_offsets():
+				GridManager.register_building(pos_2d + off, fantasma)
+		else:
+			GridManager.register_building(pos_2d, fantasma)
 	
 	# PERSISTENCIA: Registrar el estado inicial en el diccionario global
 	if fantasma.has_method("_actualizar_mi_estado_global"):
@@ -78,12 +82,10 @@ func gestionar_clic_izquierdo():
 	
 	var edificio = res.collider
 	
-	# Desregistrar de GridManager
+	# Desregistrar de GridManager (todas las celdas si es multi-celda como el merger)
+	if GridManager:
+		GridManager.unregister_building_all(edificio)
 	var map = get_parent().get_node_or_null("GridMap")
-	if map and GridManager:
-		var celda = map.local_to_map(edificio.global_position)
-		var pos_2d = Vector2i(celda.x, celda.z)
-		GridManager.unregister_building(pos_2d)
 	
 	# Eliminamos la apertura de menú de aquí para que solo sea para recoger
 	nombre_item_en_mano = _identificar_item_por_ruta(edificio.scene_file_path)
@@ -132,19 +134,30 @@ func actualizar_fantasma():
 		fantasma.global_position = map.map_to_local(map_pos)
 		fantasma.global_position.y = 0.5 # Altura visual de construcción
 		
-		# Validación 1: ¿Es el suelo correcto?
-		var id_tile = map.get_cell_item(map_pos)
-		var suelo_ok = true
-		if fantasma.has_method("es_suelo_valido"):
-			suelo_ok = fantasma.es_suelo_valido(id_tile)
-		
-		# Validación 2: ¿Está el hueco libre? (GridManager o fallback a PlacementLogic)
-		var ocupado = false
 		var pos_2d = Vector2i(map_pos.x, map_pos.z)
-		var radio = fantasma.get("radio_ocupacion") if fantasma.get("radio_ocupacion") != null else 0
+		var celdas_a_validar: Array[Vector2i] = [pos_2d]
+		if fantasma.has_method("get_footprint_offsets"):
+			celdas_a_validar.clear()
+			for off in fantasma.get_footprint_offsets():
+				celdas_a_validar.append(pos_2d + off)
+		
+		# Validación 1: ¿Es el suelo correcto en todas las celdas?
+		var suelo_ok = true
+		for cell_2d in celdas_a_validar:
+			var map_cell = Vector3i(cell_2d.x, 0, cell_2d.y)
+			var id_tile = map.get_cell_item(map_cell)
+			if fantasma.has_method("es_suelo_valido"):
+				suelo_ok = suelo_ok and fantasma.es_suelo_valido(id_tile)
+		
+		# Validación 2: ¿Están las celdas libres?
+		var ocupado = false
 		if GridManager:
-			ocupado = GridManager.hay_edificio_en_radio(pos_2d, radio)
+			for cell_2d in celdas_a_validar:
+				if GridManager.is_cell_occupied(cell_2d):
+					ocupado = true
+					break
 		else:
+			var radio = fantasma.get("radio_ocupacion") if fantasma.get("radio_ocupacion") != null else 0
 			var espacio = get_parent().get_world_3d().direct_space_state
 			ocupado = PlacementLogic.esta_celda_ocupada(fantasma.global_position, espacio, fantasma, radio)
 		
@@ -211,6 +224,43 @@ func _unhandled_input(event):
 					_feedback_colocacion_invalida()
 			else:
 				gestionar_clic_izquierdo()
+		
+		elif event.button_index == MOUSE_BUTTON_MIDDLE:
+			var res = _lanzar_raycast_a_edificios()
+			if res:
+				# Clic central en edificio puesto: obtener uno igual en mano con la misma orientación
+				var edificio = res.collider
+				var nombre = _identificar_item_por_ruta(edificio.scene_file_path)
+				if nombre == "":
+					pass
+				elif nombre == "GodSiphon" and GameConstants.DEBUG_MODE:
+					seleccionar_para_construir(god_siphon_escena, "GodSiphon")
+					if fantasma:
+						fantasma.rotation.y = edificio.rotation.y
+				elif GlobalInventory.get_amount(nombre) > 0:
+					var receta = GameConstants.RECETAS.get(nombre)
+					if receta and receta.has("output_scene"):
+						var escena = load(receta["output_scene"])
+						if escena:
+							seleccionar_para_construir(escena, nombre)
+							if fantasma:
+								fantasma.rotation.y = edificio.rotation.y
+			else:
+				# Sin edificio bajo el cursor: colocar el que tengo en mano y quedarse con otro (si hay en inventario)
+				if fantasma and posicion_valida_actual:
+					var nombre = nombre_item_en_mano
+					var rot_y = fantasma.rotation.y
+					var escena: PackedScene = null
+					if nombre == "GodSiphon":
+						escena = god_siphon_escena
+					elif GameConstants.RECETAS.has(nombre):
+						escena = load(GameConstants.RECETAS[nombre]["output_scene"]) as PackedScene
+					if escena:
+						confirmar_colocacion()
+						if (nombre == "GodSiphon" and GameConstants.DEBUG_MODE) or GlobalInventory.get_amount(nombre) > 0:
+							seleccionar_para_construir(escena, nombre)
+							if fantasma:
+								fantasma.rotation.y = rot_y
 		
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if fantasma:

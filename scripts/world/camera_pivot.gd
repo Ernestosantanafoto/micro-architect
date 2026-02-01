@@ -3,6 +3,7 @@ extends Node3D
 @export var move_sensitivity = GameConstants.CAMARA_SENSIBILIDAD
 @onready var elevation = $CameraElevation
 @onready var camera = $CameraElevation/Camera3D
+@onready var grid_plane = $MeshInstance3D
 
 var _is_dragging = false
 
@@ -25,6 +26,20 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion and _is_dragging:
 		var movement = Vector3(-event.relative.x, 0, -event.relative.y)
 		position += movement * move_sensitivity
+
+func _process(_delta):
+	_set_grid_zoom_fade(camera.size)
+
+func _set_grid_zoom_fade(camera_size: float) -> void:
+	if not grid_plane: return
+	var mat = grid_plane.get_surface_override_material(0)
+	if not mat or not (mat is ShaderMaterial): return
+	# Desvanecer grid entre tamaño 70 y zoom máximo (cotas máximas = alejado)
+	var fade_start = 70.0
+	var fade_end = float(GameConstants.CAMARA_ZOOM_MAX)
+	var t = (camera_size - fade_start) / (fade_end - fade_start)
+	var zoom_fade = clampf(t, 0.0, 1.0)
+	mat.set_shader_parameter("zoom_fade", zoom_fade)
 
 func _is_mouse_over_ui() -> bool:
 	var ventanas = get_tree().get_nodes_in_group("VentanasUI")

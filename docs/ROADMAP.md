@@ -61,9 +61,9 @@
 ---
 
 ### 2.2 Mejorar menús (transiciones, feedback)
-- [ ] Menú principal: transición suave al abrir/cerrar (fade o slide).
-- [ ] Botones: hover/pressed más claros (scale o color).
-- [ ] Opcional: mostrar versión (v0.4) en menú o HUD.
+- [x] Menú principal: transición suave al cambiar Main/Opciones (fade con modulate).
+- [x] Botones: hover scale 1.05, pressed scale 0.98→1.
+- [x] Versión "v0.4-alpha" bajo el título en menú principal.
 
 **Archivos probables:** `scenes/ui/main_menu.tscn`, `scripts/ui/main_menu.gd`, temas/estilos.
 
@@ -72,20 +72,20 @@
 ## 🟡 BLOQUE 3: Técnico / cleanup
 
 ### 3.1 Unificar fuentes de escenas (RECETAS vs menu_data)
-- [ ] Listar dónde se usa `GameConstants.RECETAS` y dónde `menu_data` en HUD.
-- [ ] Elegir fuente única (recomendado: RECETAS).
-- [ ] Eliminar o derivar `menu_data` desde RECETAS en `hud_manager.gd`.
-- [ ] Probar que todas las categorías y edificios aparecen bien.
+- [x] Listar dónde se usa `GameConstants.RECETAS` y dónde `menu_data` en HUD.
+- [x] Elegir fuente única (recomendado: RECETAS).
+- [x] Eliminar o derivar `menu_data` desde RECETAS en `hud_manager.gd`.
+- [ ] Probar que todas las categorías y edificios aparecen bien (recomendado en juego).
 
 **Archivos probables:** `scripts/autoload/game_constants.gd`, `scripts/managers/hud_manager.gd`.
 
 ---
 
 ### 3.2 Limpiar deprecated
-- [ ] Confirmar que nada referencia `scenes/deprecated/` ni `scripts/deprecated/`.
-- [ ] Si hay referencias, migrar o eliminar.
-- [ ] Borrar carpetas/archivos deprecated.
-- [ ] Actualizar PROJECT_STATE.md y este doc.
+- [x] Confirmar que nada referencia `scenes/deprecated/` ni `scripts/deprecated/`.
+- [x] Si hay referencias, migrar o eliminar (no había referencias en código).
+- [x] Borrar carpetas/archivos deprecated (energy_pulse.tscn, energy_pulse.gd eliminados).
+- [x] Actualizar PROJECT_STATE.md y este doc.
 
 **Referencia:** `docs/PROJECT_STATE.md` (energy_pulse deprecado).
 
@@ -132,8 +132,8 @@
 | Bloque | Estado      | Notas |
 |--------|-------------|--------|
 | 1. Bugs menores | ✅ Completado | 1.1, 1.2, 1.3 |
-| 2. Pulido UX    | 🔄 En curso | 2.1 hecho (feedback al colocar) |
-| 3. Técnico      | ⏳ Pendiente | — |
+| 2. Pulido UX    | ✅ Completado | 2.1 y 2.2 (colocar + menús) |
+| 3. Técnico      | ✅ Completado | 3.1 RECETAS/menu_data, 3.2 deprecated eliminado |
 | 4. Electrones   | ⏳ Pendiente | Tras 1–3 o en paralelo |
 
 ---
@@ -166,5 +166,5 @@ Cuando termines un bloque, actualiza la tabla "Estado actual" y el **Última act
 | 2.1 | Feedback visual al colocar edificios |
 | 2.2 | Mejorar menús (transiciones, versión) |
 | 3.1 | Unificar RECETAS vs menu_data en HUD |
-| 3.2 | Limpiar deprecated |
+| 3.2 | Limpiar deprecated ✅ |
 | 4.x | Electrones (recurso + edificio + cadena) |

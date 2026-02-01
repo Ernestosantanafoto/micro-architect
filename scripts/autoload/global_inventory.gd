@@ -8,32 +8,22 @@ var edificios_para_reconstruir : Array = []
 var estados_edificios : Dictionary = {}
 var datos_camara : Dictionary = {"pos": Vector3.ZERO, "size": 100.0}
 
+# Valores por defecto = STARTER_PACK. God Siphon = 0 (solo DEV). Constructor = 1 para poder craftear.
 var stock = {
-	# Recursos
-	"Stability": 0, 
-	"Charge": 0, 
-	
-	# Sifones
-	"Sifón": 5, 
-	"Sifón T2": 2,
-	
-	# Prismas T1
-	"Prisma Recto": 20, 
-	"Prisma Angular": 10,
-	
-	# Prismas T2
-	"Prisma Recto T2": 2, 
-	"Prisma Angular T2": 2,
-	
-	# Compresores
-	"Compresor": 2, 
+	"Stability": 0,
+	"Charge": 0,
+	"Sifón": 4,
+	"Sifón T2": 0,
+	"Prisma Recto": 8,
+	"Prisma Angular": 4,
+	"Prisma Recto T2": 0,
+	"Prisma Angular T2": 0,
+	"Compresor": 1,
 	"Compresor T2": 0,
-	
-	# Otros
-	"Fusionador": 1, 
+	"Fusionador": 0,
 	"Constructor": 1,
-	"GodSiphon": 3, 
-	"Void Generator": 1
+	"GodSiphon": 0,
+	"Void Generator": 0
 }
 
 # --- GESTIÓN DE ESTADOS DE EDIFICIOS ---
@@ -88,16 +78,8 @@ func limpiar_inventario():
 
 func cargar_starter_pack():
 	limpiar_inventario()
-	# 100 edificios de cada tipo
-	add_item("Sifón", 100)
-	add_item("Sifón T2", 100)
-	add_item("Prisma Recto", 100)
-	add_item("Prisma Angular", 100)
-	add_item("Prisma Recto T2", 100)
-	add_item("Prisma Angular T2", 100)
-	add_item("Compresor", 100)
-	add_item("Compresor T2", 100)
-	add_item("Fusionador", 100)
-	add_item("Constructor", 100)
-	add_item("GodSiphon", 100)
-	add_item("Void Generator", 100)
+	for item in GameConstants.STARTER_PACK:
+		set_amount(item, GameConstants.STARTER_PACK[item])
+	# God Siphon solo en modo DEV (herramienta de desarrollo, no partida normal)
+	if GameConstants.DEBUG_MODE:
+		set_amount("GodSiphon", 3)

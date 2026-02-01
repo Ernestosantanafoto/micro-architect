@@ -4,27 +4,21 @@ extends Control
 @onready var category_box = $BottomBar/CategoryBox
 @onready var construction_manager = get_tree().get_first_node_in_group("ConstructionManager")
 
-var menu_data = {
-	"SIFONES": [
-		{"inv_name": "Sifón", "label": "Sifón T1", "scene": "res://scenes/buildings/siphon_t1.tscn"},
-		{"inv_name": "Sifón T2", "label": "Sifón T2", "scene": "res://scenes/buildings/siphon_t2.tscn"}
-	],
-	"PRISMAS": [
-		{"inv_name": "Prisma Recto", "label": "Recto T1", "scene": "res://scenes/buildings/prism_straight.tscn"},
-		{"inv_name": "Prisma Angular", "label": "Ang. T1", "scene": "res://scenes/buildings/prism_angle.tscn"},
-		{"inv_name": "Prisma Recto T2", "label": "Recto T2", "scene": "res://scenes/buildings/prism_straight_t2.tscn"},
-		{"inv_name": "Prisma Angular T2","label": "Ang. T2", "scene": "res://scenes/buildings/prism_angle_t2.tscn"}
-	],
-	"MANIPULA": [
-		{"inv_name": "Compresor", "label": "Compr. T1", "scene": "res://scenes/buildings/compressor.tscn"},
-		{"inv_name": "Compresor T2", "label": "Compr. T2", "scene": "res://scenes/buildings/compressor_t2.tscn"},
-		{"inv_name": "Fusionador", "label": "Fusión", "scene": "res://scenes/buildings/merger.tscn"},
-		{"inv_name": "Void Generator", "label": "Void Gen", "scene": "res://scenes/buildings/void_generator.tscn"}
-	],
-	"CONSTR": [
-		{"inv_name": "Constructor", "label": "Maker", "scene": "res://scenes/buildings/constructor.tscn"}
-	]
-}
+## Menú derivado de GameConstants.RECETAS + HUD_CATEGORIAS + HUD_LABELS (fuente única).
+func _get_menu_data() -> Dictionary:
+	var data = {}
+	for cat in GameConstants.HUD_CATEGORIAS:
+		data[cat] = []
+		for inv_name in GameConstants.HUD_CATEGORIAS[cat]:
+			if GameConstants.RECETAS.has(inv_name):
+				var receta = GameConstants.RECETAS[inv_name]
+				if receta.has("output_scene"):
+					data[cat].append({
+						"inv_name": inv_name,
+						"label": GameConstants.HUD_LABELS.get(inv_name, inv_name),
+						"scene": receta["output_scene"]
+					})
+	return data
 
 func _ready():
 	vertical_stack.visible = false
@@ -53,6 +47,7 @@ func _on_category_pressed(boton: Button):
 	# Categorías de construcción: cerrar menús de edificios para quitar fricción
 	_cerrar_menus_edificios()
 	
+	var menu_data = _get_menu_data()
 	if not menu_data.has(txt):
 		return
 	
@@ -71,6 +66,7 @@ func _ejecutar_devolucion():
 func _construir_items_verticales(categoria: String, boton_origen: Button):
 	for child in vertical_stack.get_children(): child.queue_free()
 	
+	var menu_data = _get_menu_data()
 	var items = menu_data[categoria]
 	var botones_creados = 0
 	

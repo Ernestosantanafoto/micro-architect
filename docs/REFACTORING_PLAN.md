@@ -322,7 +322,7 @@ git push
 
 ## 📝 Notas
 
-- **Protocolo de archivos:** ver `docs/FILE_PROTOCOL.md` (snake_case, scripts en scripts/, deprecados en deprecated/)
+- **Protocolo de archivos:** ver `docs/FILE_PROTOCOL.md` (snake_case, scripts en scripts/; deprecated eliminado en ROADMAP 3.2)
 - Este plan es flexible, ajustar según necesidad
 - Priorizar funcionalidad sobre visuales
 - Documentar decisiones importantes

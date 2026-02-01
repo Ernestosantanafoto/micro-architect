@@ -28,13 +28,12 @@ scenes/           # Solo escenas .tscn
 ├── ui/
 └── world/
 
-scenes/deprecated/   # Escenas obsoletas (energy_pulse.tscn)
-scripts/deprecated/  # Scripts obsoletos (energy_pulse.gd)
+# deprecated/ eliminado (ROADMAP 3.2): energy_pulse ya no existe
 ```
 
 ## Reglas
 
 1. **Scripts siempre en scripts/**: Las escenas referencian scripts por `res://scripts/...`. No hay scripts dentro de `scenes/`.
 2. **Escenas en scenes/**: Solo archivos .tscn y recursos de escena.
-3. **Deprecados**: Archivos que ya no se usan van a `*_deprecated/` para conservarlos sin romper referencias.
+3. **Deprecados**: Si en el futuro se depreca algo, usar `*_deprecated/` temporalmente; luego eliminar (ver ROADMAP 3.2).
 4. **Consistencia**: Nombre de escena = nombre de script principal. `constructor_ui.tscn` → `constructor_ui.gd`.

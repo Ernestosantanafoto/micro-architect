@@ -48,13 +48,9 @@ Manager → Building (callbacks, actualizar estado)
 
 ### 3. Sistema de Energía (Target)
 
-**Modelo actual (DEPRECADO):**
+**Modelo antiguo (eliminado en ROADMAP 3.2):**
 ```gdscript
-# scenes/deprecated/energy_pulse.tscn (instanciado como nodo, deprecado)
-var pulse = PULSE_SCENE.instantiate()
-pulse.position = start_pos
-pulse.velocity = direction * speed
-# Movimiento físico en _physics_process
+# Antes: energy_pulse.tscn como nodo físico. Ya no existe; solo modelo numérico.
 ```
 
 **Modelo objetivo (NUMÉRICO):**

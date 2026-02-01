@@ -350,10 +350,14 @@ func _activar_edificios_reconstruidos(raiz: Node):
 			if edificio.get("esta_construido") != null:
 				edificio.esta_construido = true
 			
-			# Registrar en GridManager
+			# Registrar en GridManager (todas las celdas del footprint si es multi-celda)
 			if map and GridManager:
 				var celda = map.local_to_map(edificio.global_position)
 				var pos_2d = Vector2i(celda.x, celda.z)
-				GridManager.register_building(pos_2d, edificio)
+				if edificio.has_method("get_footprint_offsets"):
+					for off in edificio.get_footprint_offsets():
+						GridManager.register_building(pos_2d + off, edificio)
+				else:
+					GridManager.register_building(pos_2d, edificio)
 			
 			if GameConstants.DEBUG_MODE: print("[SAVE] Activado: ", edificio.name)

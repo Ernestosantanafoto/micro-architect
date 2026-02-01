@@ -16,6 +16,15 @@ func unregister_building(pos: Vector2i) -> void:
 	"""Elimina un edificio de una posición del grid"""
 	occupied_cells.erase(pos)
 
+func unregister_building_all(building) -> void:
+	"""Elimina todas las celdas que ocupa este edificio (para edificios multi-celda como el merger)."""
+	var to_erase: Array[Vector2i] = []
+	for pos in occupied_cells:
+		if occupied_cells[pos] == building:
+			to_erase.append(pos)
+	for pos in to_erase:
+		occupied_cells.erase(pos)
+
 func is_cell_occupied(pos: Vector2i) -> bool:
 	"""Verifica si una celda está ocupada"""
 	return occupied_cells.has(pos)

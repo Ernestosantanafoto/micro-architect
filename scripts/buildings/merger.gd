@@ -201,6 +201,16 @@ func desconectar_sifon():
 	# buffer solo se pierde si se devuelve al inventario o se destruye.
 	actualizar_ui()
 func es_suelo_valido(id): return id == GameConstants.TILE_VACIO
+
+## Devuelve los offsets de celdas (2D) que ocupa el merger (3x1) respecto al centro, según su rotación Y.
+func get_footprint_offsets() -> Array[Vector2i]:
+	var c = cos(rotation.y)
+	var s = sin(rotation.y)
+	return [
+		Vector2i(int(round(-c)), int(round(-s))),
+		Vector2i(0, 0),
+		Vector2i(int(round(c)), int(round(s)))
+	]
 func recibir_luz_instantanea(_c, _r, _d): pass
 
 func _actualizar_mi_estado_global():

@@ -101,8 +101,10 @@ var help_content = {
 • Clic izquierdo: Colocar edificio
 • R: Rotar edificio antes de colocar
 • ESC: Cancelar construcción
-• Teclas 1-9: Acceso rápido a edificios
-• Tecla 0: Seleccionar God Siphon
+• Teclas 1-9: Acceso rápido a edificios (por orden en inventario)
+• Tecla 0: God Siphon (solo modo desarrollo / DEV)
+• Clic central en edificio puesto: Obtener uno igual en mano (misma orientación; si tienes en inventario)
+• Clic central en suelo válido con objeto en mano: Colocar y quedarte con otro en mano (si te queda en inventario)
 
 [b]Interacción:[/b]
 • Clic en edificio: Abrir UI (si tiene)

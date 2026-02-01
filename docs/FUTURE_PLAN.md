@@ -32,7 +32,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ### Técnico
 - [ ] Unificar fuentes de escenas (RECETAS vs menu_data en HUD)
-- [ ] Eliminar `scenes/deprecated/` y `scripts/deprecated/` cuando no se necesiten
+- [x] Eliminar `scenes/deprecated/` y `scripts/deprecated/` (hecho en ROADMAP 3.2)
 
 ---
 
