@@ -416,6 +416,26 @@ Después de completar Polish:
 - Pausa el juego mientras está abierto
 - Toggle con F1
 
+### ✅ Pulido Estético (2025-02-01)
+
+**Semana 1 - HUD y paneles:**
+- Barra recursos superior: StyleBox dedicado, bordes, espaciado, categorías más claras
+- Panel inferior izq (GUARDAR, SELECCIÓN, MENÚ): estilos unificados, feedback hover/pressed
+- Panel inferior der (ELIMINAR): estilo alineado con panel izquierdo
+- Barra categorías (SIFONES, PRISMAS, MANIPULA, CONSTR): estilos, tooltips actualizados
+
+**Semana 2 - Menús popup y contenido:**
+- Menús popup: Eliminado FondoDetector (recuadro gris corregido), estilos consistentes
+- F1: Fabricador Hadrón, Proton, Neutron añadidos
+- F2: Fabricador Hadrón en TechTree, receta inputs mostrada
+
+**Semana 3:**
+- Menú principal: separación entre botones
+- Starter pack: revertido a valores balanceados
+
+**Semana 4:**
+- Documentación: PROJECT_STATE, ROADMAP, POLISH_PLAN actualizados con Fabricador Hadrón
+
 ---
 
 **Última actualización:** 2025-02-01

@@ -125,6 +125,19 @@ const COLOR_DOWN_QUARK = Color(1, 0.5, 0)
 const RECURSO_ELECTRON = "Electron"
 const COLOR_ELECTRON = Color(0.2, 0.85, 1.0)  # Cyan claro
 
+# --- NUCLEONES: Protón (2U+1D) y Neutrón (1U+2D) ---
+const RECURSO_PROTON = "Proton"
+const RECURSO_NEUTRON = "Neutron"
+const COLOR_PROTON = Color(0.9, 0.35, 0.35)   # Rojo suave
+const COLOR_NEUTRON = Color(0.7, 0.7, 0.75)   # Gris neutro
+
+# --- FABRICADOR HADRÓN (quarks → protón/neutrón) ---
+const HADRON_COSTO_PROTON_UP = 2
+const HADRON_COSTO_PROTON_DOWN = 1
+const HADRON_COSTO_NEUTRON_UP = 1
+const HADRON_COSTO_NEUTRON_DOWN = 2
+const HADRON_TIEMPO_PROCESO = 12.0
+
 # --- CONSTRUCTOR ---
 const CONSTRUCTOR_RADIO = 1
 const CONSTRUCTOR_AGUJERO = false
@@ -205,6 +218,11 @@ const RECETAS = {
 		"inputs": { "Up-Quark": 50, "Down-Quark": 50 }, 
 		"output_scene": "res://scenes/buildings/constructor.tscn", 
 		"tiempo": 30.0 
+	},
+	"Fabricador Hadrón": { 
+		"inputs": { "Up-Quark": 40, "Down-Quark": 40 }, 
+		"output_scene": "res://scenes/buildings/hadron_factory.tscn", 
+		"tiempo": 15.0 
 	}
 }
 
@@ -213,7 +231,7 @@ const RECETAS = {
 const HUD_CATEGORIAS = {
 	"SIFONES": ["Sifón", "Sifón T2"],
 	"PRISMAS": ["Prisma Recto", "Prisma Angular", "Prisma Recto T2", "Prisma Angular T2"],
-	"MANIPULA": ["Compresor", "Compresor T2", "Fusionador", "Void Generator"],
+	"MANIPULA": ["Compresor", "Compresor T2", "Fusionador", "Fabricador Hadrón", "Void Generator"],
 	"CONSTR": ["Constructor"]
 }
 ## Etiqueta corta para botón (si no existe, se usa el nombre de RECETA).
@@ -228,12 +246,13 @@ const HUD_LABELS = {
 	"Compresor T2": "Compr. T2",
 	"Fusionador": "Fusión",
 	"Void Generator": "Void Gen",
-	"Constructor": "Maker"
+	"Constructor": "Maker",
+	"Fabricador Hadrón": "Hadrón"
 }
 
 # --- STARTER PACK (Nueva partida) ---
-## Inventario inicial: desafiante pero sin frustración. Constructor necesario para craftear.
-## God Siphon no está en partida normal (solo herramienta DEV).
+## Inventario inicial: desafiante pero jugable. Constructor necesario para craftear.
+## God Siphon solo en modo DEV.
 const STARTER_PACK = {
 	"Sifón": 4,
 	"Sifón T2": 0,
@@ -247,5 +266,8 @@ const STARTER_PACK = {
 	"Constructor": 1,
 	"GodSiphon": 0,
 	"Void Generator": 0,
-	"Electron": 0
+	"Electron": 0,
+	"Fabricador Hadrón": 0,
+	"Proton": 0,
+	"Neutron": 0
 }

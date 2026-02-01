@@ -34,5 +34,3 @@ func _on_pressed():
 		var escena = load(ruta_escena)
 		if escena:
 			manager.seleccionar_para_construir(escena, item_name)
-		else:
-			print("Error cargando escena: ", ruta_escena)

@@ -1,18 +1,15 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
 **Última actualización:** 2025-01-31  
-**Versión:** 0.4-alpha  
+**Versión:** 0.5-alpha  
 **Godot:** 4.x
 
-### ✅ Mejoras recientes (robustez y UX)
-- **Barra de recursos superior centrada** en pantalla (HUD: full rect + `_centrar_panel_recursos` en ready y al redimensionar).
-- **Correcciones null-safety:** beam_emitter (MeshInstance3D con get_node_or_null), god_siphon (current_scene antes de has_signal), save_system (raiz/current_scene en guardar/reconstruir/generar_partida_test), world_generator (_posicionar_camara), inventory_button (current_scene), hud (size_changed solo si existe).
-
-### ⚠️ Conocidos (dev / test)
-- **Menús popup (God Siphon, Constructor):** En algunos entornos puede verse un recuadro gris hasta el borde inferior de la pantalla. No afecta a la jugabilidad; dejado como mejora futura para dev/test.
-
-### 📌 Pendiente (dejado para pulir más adelante)
-- **HUD y modo selección:** Barra superior (energía/estabilización/carga), panel inferior izquierdo (GUARDAR/SELECCIÓN/MENÚ) y panel inferior derecho (ELIMINAR) funcionan pero el layout/visual no ha quedado perfecto. Se mantiene así y se deja en pendiente para un futuro pulido.
+### ✅ Mejoras recientes (estética y pulido)
+- **Fabricador Hadrón:** Edificio que convierte quarks en nucleones (Protón: 2U+1D; Neutrón: 1U+2D). Recibe pulsos, añade productos al inventario.
+- **Colocación de edificios:** HUD con `mouse_filter = IGNORE` para que los clics lleguen al mapa. Botón SELECCIÓN desactivado por defecto.
+- **Pulido HUD:** Barra recursos superior (StyleBox dedicado, bordes, espaciado). Paneles inferior izq/der con estilos unificados. Barra categorías con tooltips actualizados.
+- **Menús popup:** Eliminado FondoDetector de ConstructorUI (recuadro gris corregido). Estilos consistentes en God Siphon y Constructor.
+- **F1/F2:** Fabricador Hadrón, Proton, Neutron añadidos a ayuda y recetario. TechTree actualizado.
 
 ### 📌 Pausa / recordar para futuro
 - **Merger buffer al levantar/soltar:** Dejado en pausa. Comportamiento actual: se mantiene el buffer al mover (no se resetea en `desconectar_sifon`). Revisar si se quiere otra lógica más adelante.
@@ -51,8 +48,8 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - [x] Sistema visual (haces, pulsos)
 - [x] Menús (principal, guardar/cargar)
 - [x] Música de fondo
-- [x] **Selección múltiple por arrastre:** Solo en casillas vacías, hold threshold, rectángulo fantasma azul, zoom dinámico (solo aleja), acciones R (reembolso) y ELIMINAR; modo activable/desactivable con botón SELECCIÓN (panel inferior izq.); botón ELIMINAR en esquina inferior derecha. Pendiente: pulir layout/visual del HUD.
-- [x] **Recurso Electron (v0.5):** GameConstants (RECURSO_ELECTRON, COLOR_ELECTRON), GlobalInventory (stock + STARTER_PACK), HUD (categoría PARTÍCULAS, icono ⚛️, color cyan). Pendiente: edificio que produzca electrones desde quarks.
+- [x] **Selección múltiple por arrastre:** Solo en casillas vacías, hold threshold, rectángulo fantasma azul, zoom dinámico (solo aleja), acciones R (reembolso) y ELIMINAR; modo activable/desactivable con botón SELECCIÓN (panel inferior izq.); botón ELIMINAR en esquina inferior derecha.
+- [x] **Fabricador Hadrón (v0.5):** Convierte quarks en protones/neutrones. Recetas: Protón 2U+1D, Neutrón 1U+2D. UI flotante U:X D:Y, barra de progreso. F1/F2 y TechTree actualizados.
 
 ---
 
@@ -84,7 +81,7 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - **Tiempo desarrollo:** ~1 semana
 - **Archivos:** 95
 - **Líneas código:** ~4,805
-- **Edificios implementados:** 7 tipos
+- **Edificios implementados:** 8 tipos (incl. Fabricador Hadrón)
 
 ---
 
@@ -92,4 +89,4 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 **Bloques 1–3 completados.** Bugs menores, pulido UX y técnico (RECETAS unificado, deprecated eliminado, merger 3x1 footprint, starter pack, God Siphon solo DEV) aplicados.
 
-**Siguiente:** Bloque 4.2 – Edificio Electrón (consumir quarks, producir Electron). Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.
+**Siguiente:** Bloque 4.2 – Edificio Electrón (consumir quarks, producir Electron) si se desea extender la cadena. Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.

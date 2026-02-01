@@ -104,22 +104,23 @@
 
 ---
 
-### 4.2 Edificio "Electrón"
-- [ ] Diseñar comportamiento: consume quarks (Up/Down según receta), produce Electrones.
-- [ ] Crear escena `electron_builder.tscn` (o similar) y script.
-- [ ] Registrar en RECETAS, restricciones de loseta si aplica.
-- [ ] Integrar con EnergyManager/recibir_energia_numerica para recibir quarks y emitir electrones al inventario o siguiente edificio.
+### 4.2 Edificio "Electrón" / Fabricador Hadrón
+- [x] Fabricador Hadrón (nucleones): consume quarks (2U+1D→Protón, 1U+2D→Neutrón), produce Proton/Neutron al inventario.
+- [x] Crear escena `hadron_factory.tscn` y script.
+- [x] Registrar en RECETAS (40U+40D), restricciones TILE_VACIO, placement_logic.
+- [x] Integrar con recibir_energia_numerica (quarks), añadir producto a GlobalInventory.
+- [ ] Edificio Electrón (quarks→Electron): pendiente si se desea extender la cadena.
 
-**Archivos:** nuevo edificio en `scenes/buildings/`, `scripts/buildings/`, `game_constants.gd`, `construction_manager.gd` / placement.
+**Archivos:** `scenes/buildings/hadron_factory.tscn`, `scripts/buildings/hadron_factory.gd`, `game_constants.gd`, `placement_logic.gd`.
 
 ---
 
 ### 4.3 Integrar en cadena
-- [ ] Merger o Constructor puede alimentar al edificio de electrones.
-- [ ] Flujo: Quarks → edificio Electrón → recurso Electrón (inventario o siguiente paso).
-- [ ] Actualizar F1/F2 (ayuda y recetario) con Electrón.
+- [x] Fusionador puede alimentar al Fabricador Hadrón (pulsos de quarks).
+- [x] Flujo: Quarks → Fabricador Hadrón → Proton/Neutron (inventario).
+- [x] Actualizar F1/F2 (ayuda y recetario) con Fabricador Hadrón, Proton, Neutron.
 
-**Archivos:** edificio nuevo, `scripts/ui/help_panel.gd` (o contenido), `scripts/ui/recipe_book.gd`, TechTree si aplica.
+**Archivos:** `scripts/ui/help_panel.gd`, `scripts/ui/recipe_book.gd`, `tech_tree.gd`.
 
 ---
 
@@ -136,7 +137,7 @@
 | 1. Bugs menores | ✅ Completado | 1.1, 1.2, 1.3 |
 | 2. Pulido UX    | ✅ Completado | 2.1 y 2.2 (colocar + menús) |
 | 3. Técnico      | ✅ Completado | 3.1 RECETAS/menu_data, 3.2 deprecated eliminado |
-| 4. Electrones   | 🔄 En curso | 4.1 recurso/constantes/HUD ✅; 4.2–4.4 pendientes |
+| 4. Nucleones (Hadrón) | ✅ Completado | 4.2 Fabricador Hadrón ✅; 4.3 F1/F2 ✅; 4.4 visuales opcionales |
 
 ---
 

@@ -164,7 +164,8 @@ func _create_tech_entry(tech_info: Dictionary):
 		# Receta (si está en GameConstants.RECETAS)
 		if GameConstants.RECETAS.has(tech_info["name"]):
 			var receta = GameConstants.RECETAS[tech_info["name"]]
-			if receta.has("coste"):
+			var inputs = receta.get("inputs", receta.get("coste", {}))
+			if inputs.size() > 0:
 				var recipe_rtl = RichTextLabel.new()
 				recipe_rtl.bbcode_enabled = true
 				recipe_rtl.fit_content = true
@@ -172,8 +173,8 @@ func _create_tech_entry(tech_info: Dictionary):
 				recipe_rtl.add_theme_font_size_override("normal_font_size", 16)
 				
 				var parts = []
-				for item in receta["coste"]:
-					parts.append("%dx %s" % [receta["coste"][item], _color_nombre_recurso(item)])
+				for item in inputs:
+					parts.append("%dx %s" % [inputs[item], _color_nombre_recurso(item)])
 				recipe_rtl.text = "Receta: " + ", ".join(parts)
 				recipe_rtl.add_theme_color_override("default_color", Color(0.4, 1.0, 0.4))
 				vbox.add_child(recipe_rtl)
@@ -203,6 +204,7 @@ func _get_tech_icon(tech_name: String) -> String:
 		"Compresor T2": "🔧+",
 		"Fusionador": "🔀",
 		"Constructor": "🏭",
+		"Fabricador Hadrón": "⚛",
 		"Void Generator": "🌀"
 	}
 	return icons.get(tech_name, "📦")

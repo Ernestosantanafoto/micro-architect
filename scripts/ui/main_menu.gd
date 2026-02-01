@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-const VERSION_TEXTO := "v0.4-alpha"
+const VERSION_TEXTO := "v0.5-alpha"
 const DURACION_TRANSICION := 0.2
 const SETTINGS_PATH := "user://settings.cfg"
 const SETTINGS_SECTION := "audio"

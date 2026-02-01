@@ -24,6 +24,7 @@ grow_vertical = 2
 [node name="MainMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 16
 
 [node name="Label" type="Label" parent="ColorRect/CenterContainer/MainMenuContainer"]
 layout_mode = 2

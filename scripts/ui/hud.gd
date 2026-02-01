@@ -8,10 +8,10 @@ extends Control
 var resource_categories = {
 	"ENERGÍA": ["Stability", "Charge", "Compressed-Stability", "Compressed-Charge"],
 	"QUARKS": ["Up-Quark", "Down-Quark"],
-	"PARTÍCULAS": ["Electron"],
+	"PARTÍCULAS": ["Electron", "Proton", "Neutron"],
 	"EDIFICIOS": ["Sifón", "Sifón T2", "Prisma Recto", "Prisma Angular", 
 				  "Prisma Recto T2", "Prisma Angular T2", "Compresor", 
-				  "Compresor T2", "Fusionador", "Constructor", "Void Generator"]
+				  "Compresor T2", "Fusionador", "Fabricador Hadrón", "Constructor", "Void Generator"]
 }
 
 # Iconos y colores para cada tipo de recurso
@@ -32,7 +32,8 @@ var resource_icons = {
 	"Compresor T2": "🔧+",
 	"Fusionador": "🔀",
 	"Constructor": "🏭",
-	"Void Generator": "🌀"
+	"Void Generator": "🌀",
+	"Fabricador Hadrón": "⚛"
 }
 
 # Colores específicos por recurso
@@ -43,7 +44,9 @@ var resource_colors = {
 	"Compressed-Charge": Color(0.67, 0.4, 1.0),
 	"Up-Quark": Color(1.0, 1.0, 0.4),   # Amarillo
 	"Down-Quark": Color(1.0, 0.65, 0.3), # Naranja
-	"Electron": Color(0.2, 0.85, 1.0)   # Cyan (GameConstants.COLOR_ELECTRON)
+	"Electron": Color(0.2, 0.85, 1.0),   # Cyan
+	"Proton": Color(0.9, 0.35, 0.35),    # Rojo suave
+	"Neutron": Color(0.7, 0.7, 0.75)     # Gris neutro
 }
 
 # Colores por categoría
@@ -57,6 +60,7 @@ var category_colors = {
 func _ready():
 	# HUD ocupa todo el viewport para que el centrado del panel funcione
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+
 	
 	# Centrar barra de recursos en la parte superior (y al redimensionar ventana si la señal existe)
 	var vp = get_viewport()
@@ -81,12 +85,13 @@ func _centrar_panel_recursos() -> void:
 	if not panel_recursos:
 		return
 	var vp_size = get_viewport().get_visible_rect().size
-	var ancho_panel := 640.0
+	var ancho_panel := 720.0
+	var alto_panel := 70.0
 	panel_recursos.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	panel_recursos.offset_left = (vp_size.x - ancho_panel) / 2.0
 	panel_recursos.offset_top = 0.0
 	panel_recursos.offset_right = panel_recursos.offset_left + ancho_panel
-	panel_recursos.offset_bottom = 63.0
+	panel_recursos.offset_bottom = alto_panel
 
 func _update_resources():
 	# Limpiar contenedor
@@ -110,9 +115,9 @@ func _update_resources():
 		# Título de categoría (ancho fijo para que no se mueva)
 		var category_label = Label.new()
 		category_label.text = category + ":"
-		category_label.add_theme_font_size_override("font_size", 14)
+		category_label.add_theme_font_size_override("font_size", 15)
 		category_label.add_theme_color_override("font_color", category_colors[category])
-		category_label.custom_minimum_size.x = 90
+		category_label.custom_minimum_size.x = 95
 		resource_container.add_child(category_label)
 		
 		# Items de la categoría (mostrar 0 para ENERGÍA/QUARKS)

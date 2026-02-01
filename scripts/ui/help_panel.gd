@@ -37,6 +37,16 @@ var help_content = {
 🟠 [color=#ffaa44]Down-Quark[/color] - Quark naranja
    • Se crea fusionando energías comprimidas
    • Necesario para crear neutrones
+
+[b]NUCLEONES[/b]
+
+[color=#e65959]Proton[/color] - Partícula nuclear roja
+   • Se crea en Fabricador Hadrón: 2 Up + 1 Down
+   • Base de los átomos
+
+[color=#b3b3bf]Neutron[/color] - Partícula nuclear gris
+   • Se crea en Fabricador Hadrón: 1 Up + 2 Down
+   • Junto con protones forman núcleos
 """,
 	
 	"Edificios": """[b]EXTRACTORES[/b]
@@ -77,6 +87,12 @@ var help_content = {
    • Combina 2 energías comprimidas → 1 Quark
    • Crea Up-Quark (amarillo) o Down-Quark (naranja)
    • Debe colocarse en loseta roja
+
+⚛ [b]Fabricador Hadrón[/b]
+   • Convierte quarks en nucleones
+   • Protón: 2 Up-Quark + 1 Down-Quark
+   • Neutrón: 1 Up-Quark + 2 Down-Quark
+   • Colocar en celda vacía; recibe quarks por pulsos
 
 [b]ESPECIALES[/b]
 
@@ -132,8 +148,8 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 3. [color=#ffff66]Quarks[/color] (Up/Down)
    ↓ [Fusionadores: 2 comprimidas→1 quark]
 
-4. [color=#ff6666]Protones/Neutrones[/color] (próximamente)
-   ↓ [3 quarks→1 partícula]
+4. [color=#ff6666]Protones/Neutrones[/color]
+   ↓ [Fabricador Hadrón: 2U+1D→Protón, 1U+2D→Neutrón]
 
 5. [color=#6666ff]Átomos[/color] (próximamente)
    ↓ [Protones+Neutrones+Electrones]

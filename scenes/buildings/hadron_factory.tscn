@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://c8hadron1factory"]
+
+[ext_resource type="Script" uid="uid://cctlreb0urxv" path="res://scripts/buildings/hadron_factory.gd" id="1_script"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hadron"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_main"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_main"]
+albedo_color = Color(0.5, 0.45, 0.6, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bar"]
+resource_local_to_scene = true
+size = Vector3(1, 0.08, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar"]
+albedo_color = Color(1, 1, 1, 1)
+
+[node name="HadronFactory" type="Area3D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_hadron")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_main")
+surface_material_override/0 = SubResource("StandardMaterial3D_main")
+
+[node name="UI_Root" type="Node3D" parent="."]
+
+[node name="TextoInfo" type="Label3D" parent="UI_Root"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.5)
+pixel_size = 0.01
+billboard = 1
+text = "U:0 D:0"
+font_size = 45
+
+[node name="BarraVisual" type="MeshInstance3D" parent="UI_Root"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 3.8, 0, -0.43, 0.4)
+mesh = SubResource("BoxMesh_bar")
+surface_material_override/0 = SubResource("StandardMaterial3D_bar")

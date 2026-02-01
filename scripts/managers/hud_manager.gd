@@ -22,12 +22,44 @@ func _get_menu_data() -> Dictionary:
 
 func _ready():
 	vertical_stack.visible = false
-	
-	# Configurar botones con tooltips
+	_estilizar_botones_categoria()
 	for child in category_box.get_children():
 		if child is Button:
 			child.pressed.connect(_on_category_pressed.bind(child))
 			_setup_tooltip(child)
+
+func _estilizar_botones_categoria():
+	var estilo = StyleBoxFlat.new()
+	estilo.bg_color = Color(0.12, 0.14, 0.18, 0.9)
+	estilo.corner_radius_top_left = 6
+	estilo.corner_radius_top_right = 6
+	estilo.corner_radius_bottom_left = 6
+	estilo.corner_radius_bottom_right = 6
+	estilo.border_width_left = 1
+	estilo.border_width_top = 1
+	estilo.border_width_right = 1
+	estilo.border_width_bottom = 1
+	estilo.border_color = Color(0.2, 0.35, 0.5, 0.6)
+	estilo.content_margin_left = 14.0
+	estilo.content_margin_top = 6.0
+	estilo.content_margin_right = 14.0
+	estilo.content_margin_bottom = 6.0
+	for child in category_box.get_children():
+		if child is Button:
+			child.add_theme_stylebox_override("normal", estilo.duplicate())
+			child.add_theme_stylebox_override("hover", _estilo_hover(estilo))
+			child.add_theme_stylebox_override("pressed", _estilo_pressed(estilo))
+			child.add_theme_font_size_override("font_size", 13)
+
+func _estilo_hover(base: StyleBoxFlat) -> StyleBoxFlat:
+	var s = base.duplicate()
+	s.bg_color = Color(0.18, 0.22, 0.28, 0.95)
+	return s
+
+func _estilo_pressed(base: StyleBoxFlat) -> StyleBoxFlat:
+	var s = base.duplicate()
+	s.bg_color = Color(0.08, 0.1, 0.14, 1.0)
+	return s
 
 func _on_category_pressed(boton: Button):
 	var txt = boton.text.to_upper().strip_edges()
@@ -105,7 +137,8 @@ func _on_item_seleccionado(ruta_escena, nombre_inventario):
 	_cerrar_menus_edificios()
 	if construction_manager:
 		var escena = load(ruta_escena)
-		construction_manager.seleccionar_para_construir(escena, nombre_inventario)
+		if escena:
+			construction_manager.seleccionar_para_construir(escena, nombre_inventario)
 	_cerrar_menu()
 
 func _cerrar_menu():
@@ -120,13 +153,12 @@ func _cerrar_menus_edificios():
 func _setup_tooltip(boton: Button):
 	var txt = boton.text.to_upper().strip_edges()
 	var tooltips = {
-		"SIFONES": "Extractores de energía (Siphons)",
-		"PRISMAS": "Redirigen haces de energía",
-		"MANIPULA": "Compresores, Fusionadores, Void Generators",
-		"CONSTR": "Constructores de edificios",
+		"SIFONES": "Extractores de energía (Siphons T1 y T2)",
+		"PRISMAS": "Redirigen haces de energía (Rectos y Angulares)",
+		"MANIPULA": "Compresores, Fusionador, Fabricador Hadrón, Void Generator",
+		"CONSTR": "Constructor de edificios (consume quarks)",
 		"SOLTAR": "Devolver edificio al inventario",
 		"ELIMINAR": "Destruir edificio en mano"
 	}
-	
 	if tooltips.has(txt):
 		boton.tooltip_text = tooltips[txt]

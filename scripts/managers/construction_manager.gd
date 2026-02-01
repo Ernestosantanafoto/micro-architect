@@ -129,6 +129,9 @@ func actualizar_fantasma():
 	var pos_mundo = Plane(Vector3.UP, 0).intersects_ray(cam.project_ray_origin(mouse), cam.project_ray_normal(mouse))
 	var map = get_parent().get_node_or_null("GridMap")
 	
+	if not pos_mundo or not map:
+		return
+	
 	if pos_mundo and map:
 		var map_pos = map.local_to_map(pos_mundo)
 		fantasma.global_position = map.map_to_local(map_pos)

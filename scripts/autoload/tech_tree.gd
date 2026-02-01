@@ -25,8 +25,9 @@ var tech_tree = {
 	"Prisma Angular T2": {"requires": ["Prisma Angular", "Compresor"], "unlocks": []},
 	
 	# Nivel 4 - Producción avanzada
-	"Fusionador": {"requires": ["Compresor"], "unlocks": ["Constructor"]},
+	"Fusionador": {"requires": ["Compresor"], "unlocks": ["Constructor", "Fabricador Hadrón"]},
 	"Constructor": {"requires": ["Fusionador"], "unlocks": []},
+	"Fabricador Hadrón": {"requires": ["Fusionador"], "unlocks": []},
 	
 	# Especiales
 	"Void Generator": {"requires": [], "unlocks": []},  # Siempre disponible (debug)
@@ -100,8 +101,8 @@ func can_unlock(tech_name: String) -> bool:
 	
 	return true
 
-func _check_unlock_conditions():
-	# Revisar todas las tecnologías para ver si se pueden desbloquear
+func _check_unlock_conditions(_item_name: String = "", _new_amount: int = 0):
+	# Revisar todas las tecnologías para ver si se pueden desbloquear (argumentos de inventory_changed)
 	for tech in tech_tree:
 		if can_unlock(tech):
 			unlock_tech(tech)
@@ -129,7 +130,7 @@ func get_all_techs_by_tier() -> Dictionary:
 		"Básico": ["Sifón", "Prisma Recto", "Prisma Angular", "Void Generator"],
 		"Manipulación": ["Compresor"],
 		"Avanzado": ["Sifón T2", "Compresor T2", "Prisma Recto T2", "Prisma Angular T2"],
-		"Producción": ["Fusionador", "Constructor"]
+		"Producción": ["Fusionador", "Constructor", "Fabricador Hadrón"]
 	}
 	
 	var result = {}

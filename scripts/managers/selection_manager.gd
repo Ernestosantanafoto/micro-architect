@@ -20,7 +20,7 @@ var _immediate_mesh: ImmediateMesh
 var _material: StandardMaterial3D
 var _camera_pivot: Node3D
 ## Si false, la selección por arrastre y las acciones sobre área no están disponibles.
-var selection_mode_enabled := true
+var selection_mode_enabled := false
 
 func _ready():
 	_camera_pivot = get_parent().get_node_or_null("CameraPivot")

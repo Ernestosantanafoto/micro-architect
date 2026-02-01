@@ -1,22 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxsps2i3hobv0"]
+[gd_scene load_steps=3 format=3 uid="uid://bxsps2i3hobv0"]
 
 [ext_resource type="Script" path="res://scenes/ui/constructor_ui.gd" id="1_26v4u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_constructor"]
+bg_color = Color(0.1, 0.11, 0.14, 0.97)
+corner_radius = 8
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.35, 0.5, 0.6)
 
 [node name="ConstructorUI" type="CanvasLayer"]
 script = ExtResource("1_26v4u")
 
-[node name="FondoDetector" type="Control" parent="."]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
 [node name="VentanaFlotante" type="PanelContainer" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 340.0
+offset_bottom = 320.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_constructor")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante"]
 layout_mode = 2

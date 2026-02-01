@@ -18,6 +18,9 @@ static func es_posicion_valida(grupo_o_nombre: String, id_suelo: int) -> bool:
 			
 	if "prisma" in tipo or "fusionador" in tipo:
 		return id_suelo == GameConstants.TILE_VACIO
+
+	if "hadron" in tipo or "fabricador" in tipo:
+		return id_suelo == GameConstants.TILE_VACIO
 	
 	if "void" in tipo: return true
 		
