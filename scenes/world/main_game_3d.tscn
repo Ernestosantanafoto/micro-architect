@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bnpx62uoxlkf" path="res://scenes/ui/constructor_ui.tscn" id="10_3vmts"]
 [ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scripts/ui/system_hud.gd" id="11_7an1d"]
 [ext_resource type="PackedScene" uid="uid://help_panel_001" path="res://scenes/ui/help_panel.tscn" id="12_help"]
+[ext_resource type="PackedScene" uid="uid://recipe_book_001" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -86,7 +87,7 @@ script = ExtResource("6_dmcra")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 2.0
+offset_left = 180.0
 offset_right = 737.0
 offset_bottom = 63.0
 grow_horizontal = 2
@@ -109,6 +110,8 @@ script = ExtResource("7_5bore")
 [node name="ConstructorUI" parent="." instance=ExtResource("10_3vmts")]
 
 [node name="HelpPanel" parent="." instance=ExtResource("12_help")]
+
+[node name="RecipeBook" parent="." instance=ExtResource("13_recipe")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 script = ExtResource("11_7an1d")

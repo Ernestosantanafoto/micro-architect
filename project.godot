@@ -24,6 +24,7 @@ GridManager="*res://scripts/managers/grid_manager.gd"
 PulseValidator="*res://scripts/managers/pulse_validator.gd"
 SaveSystem="*res://scripts/autoload/save_system.gd"
 MusicManager="*res://scripts/autoload/music_manager.tscn"
+TechTree="*res://scripts/autoload/tech_tree.gd"
 
 [display]
 

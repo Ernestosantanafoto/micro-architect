@@ -12,7 +12,7 @@ var resource_categories = {
 				  "Compresor T2", "Fusionador", "Constructor", "Void Generator"]
 }
 
-# Iconos para cada tipo de recurso
+# Iconos y colores para cada tipo de recurso
 var resource_icons = {
 	"Stability": "🔋",
 	"Charge": "⚡",
@@ -31,6 +31,16 @@ var resource_icons = {
 	"Fusionador": "🔀",
 	"Constructor": "🏭",
 	"Void Generator": "🌀"
+}
+
+# Colores específicos por recurso
+var resource_colors = {
+	"Stability": Color(0.4, 1.0, 0.4),  # Verde
+	"Charge": Color(0.67, 0.4, 1.0),    # Violeta
+	"Compressed-Stability": Color(0.4, 1.0, 0.4),
+	"Compressed-Charge": Color(0.67, 0.4, 1.0),
+	"Up-Quark": Color(1.0, 1.0, 0.4),   # Amarillo
+	"Down-Quark": Color(1.0, 0.65, 0.3) # Naranja
 }
 
 # Colores por categoría
@@ -93,6 +103,10 @@ func _update_resources():
 			label.text = "%s %d" % [icon, amount]
 			label.add_theme_font_size_override("font_size", 16)
 			label.tooltip_text = resource_name
+			
+			# Aplicar color específico si existe
+			if resource_colors.has(resource_name):
+				label.add_theme_color_override("font_color", resource_colors[resource_name])
 			
 			resource_container.add_child(label)
 		

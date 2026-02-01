@@ -50,21 +50,71 @@ func _process(delta):
 func _unhandled_input(event):
 	# Atajos de teclado
 	if event is InputEventKey and event.pressed:
+		var cm = find_child("ConstructionManager", true, false)
+		
 		match event.keycode:
 			KEY_F5:
 				# F5 = Guardar rápido
 				_on_btn_guardar_pressed()
 			KEY_ESCAPE:
-				# ESC = Volver al menú
-				_on_btn_menu_pressed()
+				# ESC = Cancelar construcción o volver al menú
+				if cm and cm.fantasma:
+					cm.cancelar_construccion_y_guardar()
+				else:
+					_on_btn_menu_pressed()
+			KEY_R:
+				# R = Rotar edificio fantasma
+				if cm and cm.fantasma:
+					cm.fantasma.rotate_y(deg_to_rad(90))
 			KEY_0, KEY_KP_0:
 				# 0 = Seleccionar God Siphon
 				_seleccionar_god_siphon()
+			KEY_1, KEY_KP_1:
+				_seleccionar_edificio_por_indice(0)
+			KEY_2, KEY_KP_2:
+				_seleccionar_edificio_por_indice(1)
+			KEY_3, KEY_KP_3:
+				_seleccionar_edificio_por_indice(2)
+			KEY_4, KEY_KP_4:
+				_seleccionar_edificio_por_indice(3)
+			KEY_5, KEY_KP_5:
+				_seleccionar_edificio_por_indice(4)
+			KEY_6, KEY_KP_6:
+				_seleccionar_edificio_por_indice(5)
+			KEY_7, KEY_KP_7:
+				_seleccionar_edificio_por_indice(6)
+			KEY_8, KEY_KP_8:
+				_seleccionar_edificio_por_indice(7)
+			KEY_9, KEY_KP_9:
+				_seleccionar_edificio_por_indice(8)
 
 func _seleccionar_god_siphon():
 	var cm = find_child("ConstructionManager", true, false)
 	if cm and cm.has_method("seleccionar_para_construir"):
 		cm.seleccionar_para_construir(cm.god_siphon_escena, "GodSiphon")
+
+func _seleccionar_edificio_por_indice(indice: int):
+	# Obtener lista de edificios disponibles desde GameConstants.RECETAS
+	var edificios_disponibles = []
+	
+	for nombre_item in GameConstants.RECETAS:
+		var receta = GameConstants.RECETAS[nombre_item]
+		if receta.has("escena") and GlobalInventory.get_amount(nombre_item) > 0:
+			edificios_disponibles.append({"nombre": nombre_item, "escena": receta["escena"]})
+	
+	# Verificar si el índice es válido
+	if indice >= edificios_disponibles.size():
+		print("[MAIN] Hotkey ", indice + 1, ": No hay edificio disponible")
+		return
+	
+	# Seleccionar el edificio
+	var edificio = edificios_disponibles[indice]
+	var cm = find_child("ConstructionManager", true, false)
+	if cm and cm.has_method("seleccionar_para_construir"):
+		var escena = load(edificio["escena"])
+		if escena:
+			cm.seleccionar_para_construir(escena, edificio["nombre"])
+			print("[MAIN] Hotkey ", indice + 1, ": Seleccionado ", edificio["nombre"])
 
 func _on_btn_guardar_pressed() -> void:
 	print("[MAIN] Guardando partida...")

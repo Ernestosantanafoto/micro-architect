@@ -8,19 +8,19 @@ extends CanvasLayer
 var help_content = {
 	"Recursos": """[b]RECURSOS DE ENERGÍA[/b]
 
-🔋 [color=#66ff66]Stability[/color] - Energía base verde
+🔋 [color=#66ff66]ESTABILIDAD (Stability)[/color] - Energía base verde
    • Se extrae de losetas verdes con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-⚡ [color=#aa66ff]Charge[/color] - Energía base azul
+⚡ [color=#aa66ff]CARGA (Charge)[/color] - Energía base violeta
    • Se extrae de losetas azules con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-💠 [color=#66ffff]Compressed-Stability[/color] - Energía comprimida verde
+💠 [color=#66ffff]ESTABILIDAD Comprimida[/color] - Energía comprimida verde
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
 
-⚗️ [color=#ffaa66]Compressed-Charge[/color] - Energía comprimida azul
+⚗️ [color=#aa66ff]CARGA Comprimida[/color] - Energía comprimida violeta
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
 
@@ -39,7 +39,7 @@ var help_content = {
 
 🏗️ [b]Sifón T1[/b]
    • Extrae energía de losetas de color
-   • Debe colocarse en verde (Stability) o azul (Charge)
+   • Debe colocarse en verde ([color=#66ff66]ESTABILIDAD[/color]) o azul ([color=#aa66ff]CARGA[/color])
    • Producción: 1 energía/5 ticks
 
 🏗️+ [b]Sifón T2[/b]
@@ -118,10 +118,10 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 
 [b]CADENA DE PRODUCCIÓN:[/b]
 
-1. [color=#66ff66]Energía Básica[/color] (Stability/Charge)
+1. [color=#66ff66]Energía Básica[/color] ([color=#66ff66]ESTABILIDAD[/color]/[color=#aa66ff]CARGA[/color])
    ↓ [Sifones en losetas de color]
 
-2. [color=#66ffff]Energía Comprimida[/color]
+2. [color=#66ffff]Energía Comprimida[/color] ([color=#66ff66]ESTABILIDAD[/color]/[color=#aa66ff]CARGA[/color] comprimida)
    ↓ [Compresores: 10→1 ratio]
 
 3. [color=#ffff66]Quarks[/color] (Up/Down)
@@ -151,8 +151,12 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 func _ready():
 	visible = false
 	
+	# Hacer que el panel funcione incluso cuando el juego está pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 	# Conectar botón de cierre
-	btn_close.pressed.connect(hide_panel)
+	if btn_close:
+		btn_close.pressed.connect(hide_panel)
 	
 	# Llenar tabs con contenido
 	_populate_tabs()
@@ -173,12 +177,12 @@ func toggle_panel():
 
 func show_panel():
 	visible = true
-	# Pausar el juego mientras se muestra la ayuda
-	get_tree().paused = true
+	# NO pausar el juego - permitir interacción con las pestañas
+	# get_tree().paused = true
 
 func hide_panel():
 	visible = false
-	# Reanudar el juego
+	# Asegurar que el juego no esté pausado
 	get_tree().paused = false
 
 func _populate_tabs():
