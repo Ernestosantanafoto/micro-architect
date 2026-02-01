@@ -7,3 +7,5 @@
 2. Hacer **push** a `origin` (si hay commits por subir).
 
 Así el trabajo queda guardado y sincronizado antes de seguir al día siguiente.
+
+*(Regla guardada el 2025-01-31.)*

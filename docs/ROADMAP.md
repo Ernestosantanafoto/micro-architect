@@ -2,9 +2,9 @@
 
 **Objetivo:** Un solo documento para ir abordando poco a poco.  
 **Base:** v0.4-alpha (energía numérica, Polish UI aplicado)  
-**Última actualización:** 2025-02-01
+**Última actualización:** 2025-01-31
 
-**Hecho reciente (fuera de bloques):** Prismas T1/T2 apagado (opacidad/color/roughness), bug bolas al quitar sifón (cancelar flujos + destruir PulseVisual), tamaños de bolas (elemental 1/3, condensada 2/3).
+**Hecho reciente (fuera de bloques):** Hotkeys 1-9 (output_scene), clic central en edificio/suelo (misma orientación, colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint (validación/registro multi-celda), RECETAS unificado en HUD (HUD_CATEGORIAS/HUD_LABELS), deprecated eliminado (energy_pulse). Prismas T1/T2 apagado, bolas al quitar sifón, tamaños bolas.
 
 ---
 
@@ -87,7 +87,7 @@
 - [x] Borrar carpetas/archivos deprecated (energy_pulse.tscn, energy_pulse.gd eliminados).
 - [x] Actualizar PROJECT_STATE.md y este doc.
 
-**Referencia:** `docs/PROJECT_STATE.md` (energy_pulse deprecado).
+**Referencia:** `docs/PROJECT_STATE.md`.
 
 ---
 
@@ -142,11 +142,14 @@
 
 | Doc | Para qué |
 |-----|----------|
+| `docs/README.md`   | Índice de toda la documentación |
 | `PROJECT_STATE.md` | Estado del juego, bugs, versión |
 | `FUTURE_PLAN.md`   | Visión largo plazo (protones, átomos) |
 | `POLISH_PLAN.md`   | Detalle de lo ya hecho en UI/UX |
 | `ARCHITECTURE.md`  | Reglas de arquitectura (simulación vs visual) |
 | `ENERGY_SYSTEM.md` | Flujos numéricos, EnergyManager |
+| `NOTAS_DESARROLLO.md` | Commit + push al decir "hasta mañana" |
+| `API_MANAGERS.md`  | API de GridManager, EnergyManager, BuildingManager |
 
 ---
 

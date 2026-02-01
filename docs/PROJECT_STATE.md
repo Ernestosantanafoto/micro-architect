@@ -1,6 +1,6 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
-**Última actualización:** 2025-02-01  
+**Última actualización:** 2025-01-31  
 **Versión:** 0.4-alpha  
 **Godot:** 4.x
 
@@ -55,8 +55,8 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - [ ] Estado visual ≠ estado lógico del sistema (visuales opcionales pendientes)
 
 ### Menor
-- [ ] Haces visuales ligeramente cortados en prismas
-- [ ] Problemas en salidas de mergers (detalles)
+- [x] ~~Haces visuales ligeramente cortados en prismas~~ (HAZ_OFFSET_ORIGEN 0.25)
+- [x] ~~Problemas en salidas de mergers~~ (from_pos 0.5*dir)
 
 ---
 
@@ -81,6 +81,6 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ## 🎯 Próximo Paso
 
-**Refactor + Polish UI aplicado.** Arquitectura de energía numérica estable; HUD, F1/F2, God Siphon/Constructor UI y tutorial básico completados.
+**Bloques 1–3 completados.** Bugs menores, pulido UX y técnico (RECETAS unificado, deprecated eliminado, merger 3x1 footprint, starter pack, God Siphon solo DEV) aplicados.
 
-Ver **`docs/ROADMAP.md`** para abordar poco a poco (bugs, pulido UX, técnico, electrones). Alternativa: `docs/FUTURE_PLAN.md`, `docs/POLISH_PLAN.md`.
+**Siguiente:** Bloque 4 – Electrones (v0.5). Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.

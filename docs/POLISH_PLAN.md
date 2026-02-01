@@ -4,7 +4,7 @@
 **Estado:** 🔄 En curso (fase UI aplicada)  
 **Objetivo:** Mejorar experiencia de usuario y hacer el juego presentable
 
-**Hecho en esta fase:** HUD por categorías, F1/F2 (ayuda + recetario) con cierre por ESC/clic fuera y oscurecimiento, God Siphon/Constructor con animación de aparición y cierre por LMB/RMB fuera, márgenes y colores en paneles. **Conocido (dev):** Menús popup pueden mostrar recuadro gris a pantalla completa en algunos entornos; dejado para más adelante.
+**Hecho en esta fase:** HUD por categorías (RECETAS + HUD_CATEGORIAS/HUD_LABELS), F1/F2 (ayuda + recetario), God Siphon/Constructor UI, hotkeys 1-9, clic central (edificio = mismo en mano con orientación; suelo válido = colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint, feedback al colocar (pop/shake), menú principal (transiciones, versión). **Conocido (dev):** Menús popup recuadro gris en algunos entornos; God Siphon solo en DEBUG_MODE.
 
 ---
 
@@ -227,9 +227,9 @@ El HUD está compuesto por **3 sistemas diferentes**:
 - Botones especiales: GUARDAR, SOLTAR, ELIMINAR
 - Conecta con `ConstructionManager` para colocar edificios
 
-**Problemas:**
+**Problemas (parcialmente resueltos):**
 - ⚠️ Lógica de exclusión confusa (líneas 40-51): diferencia GUARDAR partida vs SOLTAR item por nombre de nodo
-- ⚠️ `menu_data` hardcodeado - duplica info de `GameConstants.RECETAS`
+- [x] ~~`menu_data` hardcodeado~~ → **Resuelto:** menú derivado de `GameConstants.RECETAS` + HUD_CATEGORIAS + HUD_LABELS (ROADMAP 3.1)
 - ⚠️ Solo muestra items con cantidad > 0 (excepto en DEBUG_MODE)
 - ⚠️ Estilos inline (StyleBoxFlat creado en código)
 

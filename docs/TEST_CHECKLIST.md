@@ -57,15 +57,18 @@
 - [ v] **Presiona R**: El edificio fantasma rota 90°
 - [ v] **Presiona R 4 veces**: Vuelve a la posición original
 
-### Test 3.3: Tecla 0
-- [v ] **Presiona 0**: Se selecciona el God Siphon (edificio dorado)
-- [ v] **Aparece fantasma**: El edificio sigue el cursor
+### Test 3.3: Tecla 0 (solo modo DEV)
+- [ ] **Con DEBUG_MODE:** Presiona 0 → se selecciona God Siphon
+- [ ] **Sin DEBUG_MODE:** Tecla 0 no hace nada (God Siphon no en partida normal)
 
 ### Test 3.4: Teclas 1-9
-- [ x] **Presiona 1**: Selecciona el primer edificio disponible
-- [x ] **Presiona 2**: Selecciona el segundo edificio disponible
-- [ x] **Presiona 3-9**: Selecciona edificios si hay disponibles
-- [ x] **Sin edificios**: Mensaje en consola "No hay edificio disponible"
+- [ ] **Presiona 1**: Selecciona el primer edificio disponible (por orden en RECETAS)
+- [ ] **Presiona 2-9**: Selecciona edificios si hay en inventario
+- [ ] **Sin edificios**: No hace nada (sin mensaje)
+
+### Test 3.5: Clic central (ratón)
+- [ ] **Clic central en edificio puesto:** Obtienes uno igual en mano (misma orientación), si tienes en inventario
+- [ ] **Clic central en suelo válido con edificio en mano:** Colocas y te quedas con otro en mano (si queda en inventario)
 
 ---
 

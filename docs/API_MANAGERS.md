@@ -30,6 +30,9 @@ Registra un edificio en una posición del grid.
 #### `unregister_building(pos: Vector2i) -> void`
 Elimina el registro de un edificio en una posición.
 
+#### `unregister_building_all(building) -> void`
+Elimina **todas** las celdas que ocupa un edificio (para edificios multi-celda como el Merger 3×1). Usado al levantar el edificio del suelo.
+
 #### `is_cell_occupied(pos: Vector2i) -> bool`
 Indica si una celda está ocupada.
 

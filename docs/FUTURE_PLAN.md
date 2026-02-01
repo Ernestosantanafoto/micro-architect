@@ -1,7 +1,7 @@
 # 🗺️ Plan Futuro - Micro Architect
 
 **Base:** v0.4-alpha (energía numérica, protocolo archivos)  
-**Última actualización:** 2025-02-01
+**Última actualización:** 2025-01-31
 
 ---
 
@@ -20,19 +20,19 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 ## 📋 Fase 1: Estabilización (Corto plazo)
  
 ### Bugs menores
-- [ ] Haces visuales cortados en prismas
-- [ ] Salidas de mergers (posición/visual)
-- [ ] Verificar que visuales NO afectan lógica en todos los casos
+- [x] Haces visuales cortados en prismas (HAZ_OFFSET_ORIGEN)
+- [x] Salidas de mergers (posición/visual)
+- [x] Verificar que visuales NO afectan lógica (ARCHITECTURE.md)
 
 ### Pulido UX
 - [x] Tutorial básico (primer Siphon → primer Quark) — hecho en v0.4 Polish
 - [x] Guía F1 + Recetario F2 — hecho en v0.4 Polish
-- [ ] Feedback visual al colocar edificios (confirmación, error)
-- [ ] Mejorar menús (transiciones, feedback)
+- [x] Feedback visual al colocar edificios (pop + shake)
+- [x] Mejorar menús (transiciones, feedback, versión)
 
 ### Técnico
-- [ ] Unificar fuentes de escenas (RECETAS vs menu_data en HUD)
-- [x] Eliminar `scenes/deprecated/` y `scripts/deprecated/` (hecho en ROADMAP 3.2)
+- [x] Unificar fuentes de escenas (RECETAS + HUD_CATEGORIAS en HUD)
+- [x] Eliminar `scenes/deprecated/` y `scripts/deprecated/` (ROADMAP 3.2)
 
 ---
 

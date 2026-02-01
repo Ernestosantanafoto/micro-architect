@@ -118,6 +118,7 @@ class EnergyFlow:
 
 ## 📚 Documentos Relacionados
 
+- `docs/README.md` - Índice de documentación
 - `PROJECT_STATE.md` - Estado general
-- `REFACTORING_PLAN.md` - Plan de migración
-- `ENERGY_SYSTEM.md` - Sistema energía detallado (pendiente)
+- `REFACTORING_PLAN.md` - Plan de migración (completado)
+- `ENERGY_SYSTEM.md` - Sistema energía detallado (implementado)
