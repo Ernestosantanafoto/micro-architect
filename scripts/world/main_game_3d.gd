@@ -60,13 +60,6 @@ func _unhandled_input(event):
 			KEY_0, KEY_KP_0:
 				# 0 = Seleccionar God Siphon
 				_seleccionar_god_siphon()
-			KEY_F9:
-				# F9 = Generar partida test (~100 edificios)
-				_generar_partida_test()
-
-func _generar_partida_test():
-	if SaveSystem and SaveSystem.generar_partida_test(100):
-		get_tree().change_scene_to_file("res://scenes/world/main_game_3d.tscn")
 
 func _seleccionar_god_siphon():
 	var cm = find_child("ConstructionManager", true, false)

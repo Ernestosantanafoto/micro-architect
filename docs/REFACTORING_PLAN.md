@@ -272,7 +272,7 @@ func _on_flow_complete(flow: EnergyFlow):
 - [x] Actualizar `PROJECT_STATE.md`
 - [x] Crear `ENERGY_SYSTEM.md` con sistema final
 - [x] Documentar API de managers (`docs/API_MANAGERS.md`)
-- [ ] Escribir lecciones aprendidas
+- [x] Escribir lecciones aprendidas
 
 ---
 
@@ -282,8 +282,8 @@ git add .
 git commit -m "Refactorización completa: sistema energía numérico"
 git push
 ```
-- [ ] Marcar en GitHub como versión v0.4-alpha
-- [ ] Planificar siguiente feature (electrones, protones...)
+- [x] Marcar en GitHub como versión v0.4-alpha (tag)
+- [x] Planificar siguiente feature (electrones, protones...)
 
 ---
 
@@ -326,3 +326,31 @@ git push
 - Priorizar funcionalidad sobre visuales
 - Documentar decisiones importantes
 - Hacer backup antes de cambios grandes
+
+---
+
+## 📚 Lecciones Aprendidas
+
+**Qué funcionó bien:**
+- Separar lógica (EnergyFlow) de visual (PulseVisual): los visuales se pueden desactivar sin romper nada
+- Autoloads centralizados: EnergyManager, GridManager, BuildingManager simplifican el código
+- Método único `recibir_energia_numerica()`: todos los receptores implementan la misma API
+- Documentar mientras se avanza: ENERGY_SYSTEM.md y API_MANAGERS.md ayudan a entender luego
+
+**Qué haríamos distinto:**
+- Validar más temprano que HUD/UI no bloquea input (mouse_filter en inventario)
+- Herramientas auxiliares (ej. generador F9): probar flujo completo antes de integrar
+- Unificar fuentes de escenas: RECETAS en GameConstants vs menu_data en hud_manager generó bugs (Compresor T2)
+
+**Próximo feature sugerido:** Electrones/protones (siguiente escalón en la cadena energía → materia)
+
+---
+
+## 🎯 Siguiente Feature (v0.5)
+
+| Opción | Esfuerzo | Descripción |
+|--------|----------|-------------|
+| **Electrones** | Medio | Nuevo recurso/bloque que consume quarks |
+| **Protones/Neutrones** | Alto | Fusión Up/Down quarks → partículas |
+| **Pulido UX** | Bajo | Tutorial, feedback visual, mejora menús |
+| **Bugs menores** | Bajo | Haces prismas, salidas merger |
