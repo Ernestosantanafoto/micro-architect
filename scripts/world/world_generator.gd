@@ -32,6 +32,11 @@ var sectores_cargados = []
 func _ready():
 	_inicializar_ruidos()
 	if not Engine.is_editor_hint():
+		# Limpiar managers al cargar escena (nueva partida o antes de reconstruir)
+		if GridManager:
+			GridManager.limpiar()
+		if BuildingManager:
+			BuildingManager.limpiar()
 		var gm = _get_grid_map()
 		if gm: 
 			gm.add_to_group("MapaPrincipal")
@@ -131,8 +136,22 @@ func _cargar_sectores_cercanos():
 func _get_grid_map():
 	return get_parent().get_node_or_null("GridMap")
 
+## Fuerza la generación de sectores en un rango (para herramientas como generador de partida test)
+func forzar_generar_rango(sector_min_x: int, sector_max_x: int, sector_min_z: int, sector_max_z: int) -> void:
+	var gm = _get_grid_map()
+	if not gm: return
+	for sx in range(sector_min_x, sector_max_x + 1):
+		for sz in range(sector_min_z, sector_max_z + 1):
+			var clave = Vector2i(sx, sz)
+			if not sectores_cargados.has(clave):
+				_generar_sector(sx, sz, gm)
+				sectores_cargados.append(clave)
+
 func _reconstruir_mundo():
 	await get_tree().process_frame
+	# Asegurar que el centro del mapa tiene tiles ANTES de reconstruir (caso F9 / carga)
+	if GlobalInventory.edificios_para_reconstruir.size() > 0:
+		forzar_generar_rango(-6, 6, -6, 6)
 	if GlobalInventory.edificios_para_reconstruir.size() > 0:
 		if SaveSystem: SaveSystem.reconstruir_edificios()
 

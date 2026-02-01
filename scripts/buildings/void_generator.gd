@@ -275,6 +275,7 @@ func _finalizar_trabajo():
 # --- API ---
 func check_ground():
 	esta_construido = true
+	if BuildingManager: BuildingManager.register_building(self)
 	
 	# AHORA SÍ activamos colisiones para que se pueda seleccionar o borrar
 	collision_layer = GameConstants.LAYER_EDIFICIOS
@@ -286,4 +287,6 @@ func check_ground():
 	_limpiar_visuales_internas()
 
 func es_suelo_valido(_id): return true 
-func desconectar_sifon(): esta_construido = false
+func desconectar_sifon(): 
+	if BuildingManager: BuildingManager.unregister_building(self)
+	esta_construido = false

@@ -10,8 +10,7 @@ var color_recurso = Color.WHITE
 var contador_ticks = 0
 var esta_construido: bool = false
 
-var beam_emitter: BeamEmitter 
-var pulse_scene = preload("res://scenes/world/energy_pulse.tscn")
+var beam_emitter: BeamEmitter
 
 func _ready():
 	beam_emitter = BeamEmitter.new()
@@ -35,7 +34,7 @@ func _conectar_game_tick():
 	if main and main.has_signal("game_tick"):
 		if not main.game_tick.is_connected(_on_game_tick):
 			main.game_tick.connect(_on_game_tick)
-			print("[SIFON] Conectado a game_tick")
+			if GameConstants.DEBUG_MODE: print("[SIFON] Conectado a game_tick")
 
 func _process(_delta):
 	var longitud = 0
@@ -71,18 +70,20 @@ func _on_game_tick(_c):
 			contador_ticks = 0
 
 func disparar():
-	if not pulse_scene: return
-	
-	var p = pulse_scene.instantiate()
-	get_tree().current_scene.add_child(p)
-	p.global_position = global_position + Vector3(0, GameConstants.SIFON_OFFSET_SALIDA_Y, 0)
-	p.direccion = -global_transform.basis.z
-	
-	if p.has_method("configurar_pulso"):
-		p.configurar_pulso(recurso_actual, color_recurso, 1.0)
-		p.cantidad_energia = energia_por_disparo
-	
-	if PulseValidator: PulseValidator.registrar_pulso(p, self)
+	var map = get_tree().current_scene.find_child("GridMap")
+	var space = get_world_3d().direct_space_state
+	if not map or not space or not EnergyManager:
+		return
+	var dir = -global_transform.basis.z
+	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
+	var longitud = GameConstants.HAZ_LONGITUD_MAXIMA
+	var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+	var from_pos = global_position + Vector3(0, GameConstants.SIFON_OFFSET_SALIDA_Y, 0)
+	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
+	if EnergyManager.MOSTRAR_VISUAL_PULSO:
+		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self)
+	if resultado:
+		EnergyManager.register_flow(self, resultado["target"], energia_por_disparo, recurso_actual, color_recurso)
 
 func _detectar_recurso_bajo_pies():
 	var map = get_tree().current_scene.find_child("GridMap")
@@ -106,20 +107,22 @@ func check_ground():
 	# Siempre activar aunque no haya recurso (para que se pueda recoger/rotar)
 	collision_layer = GameConstants.LAYER_EDIFICIOS
 	esta_construido = true
+	if BuildingManager: BuildingManager.register_building(self)
 	
 	# Reconectar al game_tick por si acaso
 	_conectar_game_tick()
 	
 	if recurso_actual != "":
 		_actualizar_cara_visual()
-		print("[SIFON] Activado sobre: ", recurso_actual)
+		if GameConstants.DEBUG_MODE: print("[SIFON] Activado sobre: ", recurso_actual)
 	else:
-		print("[SIFON] Activado pero sin recurso debajo")
+		if GameConstants.DEBUG_MODE: print("[SIFON] Activado pero sin recurso debajo")
 
 func desconectar_sifon():
 	collision_layer = 0
 	esta_construido = false
 	contador_ticks = 0
+	if BuildingManager: BuildingManager.unregister_building(self)
 	if beam_emitter: beam_emitter.apagar()
 	if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
 	_actualizar_cara_visual()

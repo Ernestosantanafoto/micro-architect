@@ -1,22 +1,13 @@
 extends Node
 
 # --- PRECARGAS ---
-var sifon_t1_escena = preload("res://scenes/buildings/siphon_t1.tscn")
-var sifon_t2_escena = preload("res://scenes/buildings/siphon_t2.tscn")
-var prisma_recto_escena = preload("res://scenes/buildings/prism_straight.tscn")
-var prisma_recto_t2_escena = preload("res://scenes/buildings/prism_straight_t2.tscn")
-var prisma_angulo_escena = preload("res://scenes/buildings/prism_angle.tscn")
-var prisma_angulo_t2_escena = preload("res://scenes/buildings/prism_angle_t2.tscn")
-var compressor_escena = preload("res://scenes/buildings/compressor.tscn")
-var fusionador_escena = preload("res://scenes/buildings/merger.tscn")
-var constructor_escena = preload("res://scenes/buildings/constructor.tscn")
+# Solo God Siphon (atajo tecla 0); el resto usa RECETAS / HUD
 var god_siphon_escena = preload("res://scenes/buildings/god_siphon.tscn")
-var void_generator_escena = preload("res://scenes/buildings/void_generator.tscn")
 
 # --- ESTADO ---
 var fantasma = null
 var posicion_valida_actual = false
-var nombre_item_en_mano: String = "" 
+var nombre_item_en_mano: String = ""
 
 func _process(_delta):
 	if fantasma:
@@ -58,6 +49,13 @@ func confirmar_colocacion():
 	if fantasma.has_method("check_ground"):
 		fantasma.check_ground()
 	
+	# Registrar en GridManager
+	var map = get_parent().get_node_or_null("GridMap")
+	if map and GridManager:
+		var celda = map.local_to_map(fantasma.global_position)
+		var pos_2d = Vector2i(celda.x, celda.z)
+		GridManager.register_building(pos_2d, fantasma)
+	
 	# PERSISTENCIA: Registrar el estado inicial en el diccionario global
 	if fantasma.has_method("_actualizar_mi_estado_global"):
 		fantasma._actualizar_mi_estado_global()
@@ -74,10 +72,16 @@ func gestionar_clic_izquierdo():
 	
 	var edificio = res.collider
 	
+	# Desregistrar de GridManager
+	var map = get_parent().get_node_or_null("GridMap")
+	if map and GridManager:
+		var celda = map.local_to_map(edificio.global_position)
+		var pos_2d = Vector2i(celda.x, celda.z)
+		GridManager.unregister_building(pos_2d)
+	
 	# Eliminamos la apertura de menú de aquí para que solo sea para recoger
 	nombre_item_en_mano = _identificar_item_por_ruta(edificio.scene_file_path)
 	
-	var map = get_parent().get_node_or_null("GridMap")
 	if map:
 		GlobalInventory.borrar_estado(map.local_to_map(edificio.global_position))
 	
@@ -128,10 +132,15 @@ func actualizar_fantasma():
 		if fantasma.has_method("es_suelo_valido"):
 			suelo_ok = fantasma.es_suelo_valido(id_tile)
 		
-		# Validación 2: ¿Está el hueco libre?
-		var espacio = get_parent().get_world_3d().direct_space_state
+		# Validación 2: ¿Está el hueco libre? (GridManager o fallback a PlacementLogic)
+		var ocupado = false
+		var pos_2d = Vector2i(map_pos.x, map_pos.z)
 		var radio = fantasma.get("radio_ocupacion") if fantasma.get("radio_ocupacion") != null else 0
-		var ocupado = PlacementLogic.esta_celda_ocupada(fantasma.global_position, espacio, fantasma, radio)
+		if GridManager:
+			ocupado = GridManager.hay_edificio_en_radio(pos_2d, radio)
+		else:
+			var espacio = get_parent().get_world_3d().direct_space_state
+			ocupado = PlacementLogic.esta_celda_ocupada(fantasma.global_position, espacio, fantasma, radio)
 		
 		posicion_valida_actual = suelo_ok and not ocupado
 		_aplicar_color_validacion(posicion_valida_actual)

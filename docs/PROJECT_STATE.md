@@ -1,7 +1,7 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
 **Última actualización:** 2025-01-31  
-**Versión:** 0.3-alpha  
+**Versión:** 0.4-alpha  
 **Godot:** 4.x
 
 ---
@@ -44,9 +44,9 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 ## 🐛 Bugs Conocidos
 
 ### Crítico
-- [ ] Pulsos de energía continúan aunque el emisor rote
-- [ ] Pulsos persisten aunque el emisor desaparezca
-- [ ] Estado visual ≠ estado lógico del sistema
+- [x] ~~Pulsos de energía continúan aunque el emisor rote~~ (migrado a sistema numérico)
+- [x] ~~Pulsos persisten aunque el emisor desaparezca~~ (migrado a sistema numérico)
+- [ ] Estado visual ≠ estado lógico del sistema (visuales opcionales pendientes)
 
 ### Menor
 - [ ] Haces visuales ligeramente cortados en prismas
@@ -54,19 +54,13 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ---
 
-## ⚠️ DECISIÓN ARQUITECTÓNICA PENDIENTE
+## ✅ Arquitectura de Energía (MIGRADO)
 
-**Problema identificado:** Sistema de energía física (nodos `energy_pulse.tscn`)
+**Sistema numérico implementado** – ver `docs/ENERGY_SYSTEM.md`
 
-**Síntomas:**
-- Acoplamiento simulación ↔ visualización
-- Bugs dependientes del tiempo
-- Difícil de escalar
-
-**Solución recomendada:**
-- Migrar a sistema numérico (valores en managers)
-- Separar lógica de visuales
-- Ver `docs/REFACTORING_PLAN.md`
+- Energía fluye como datos (EnergyManager + EnergyFlow)
+- Visuales opcionales (PulseVisual) sin afectar lógica
+- `energy_pulse.tscn` deprecado (ya no se usa)
 
 ---
 
@@ -81,6 +75,6 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ## 🎯 Próximo Paso
 
-**NO añadir features nuevas** hasta estabilizar arquitectura base.
+**Refactor completado.** Arquitectura de energía numérica estable.
 
-Ver: `docs/REFACTORING_PLAN.md`
+Siguiente: features (electrones, protones...) o pulido de UX.

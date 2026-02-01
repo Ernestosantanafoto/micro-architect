@@ -165,6 +165,9 @@ func cargar_partida() -> bool:
 func reconstruir_edificios():
 	print("[SAVE] Reconstruyendo edificios...")
 	
+	if GridManager:
+		GridManager.limpiar()
+	
 	var edificios = GlobalInventory.edificios_para_reconstruir
 	if edificios.size() == 0:
 		print("[SAVE] No hay edificios para reconstruir.")
@@ -209,7 +212,7 @@ func reconstruir_edificios():
 		# Esperamos un frame para que el nodo esté completamente en el árbol
 		instancia.set_meta("necesita_activacion", true)
 		
-		print("[SAVE] - Reconstruido: ", instancia.name, " en ", instancia.global_position)
+		if GameConstants.DEBUG_MODE: print("[SAVE] - Reconstruido: ", instancia.name, " en ", instancia.global_position)
 	
 	# Limpiar lista
 	GlobalInventory.edificios_para_reconstruir = []
@@ -220,9 +223,116 @@ func reconstruir_edificios():
 	
 	print("[SAVE] Reconstrucción completada.")
 
+## Genera una partida de test con ~100 edificios en tiles válidos. F9 en partida.
+func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
+	var wg = get_tree().current_scene.find_child("WorldGenerator", true, false)
+	var map = get_tree().get_first_node_in_group("MapaPrincipal")
+	if not map or not (map is GridMap):
+		print("[SAVE] ERROR: No se encontró GridMap.")
+		return false
+	if wg and wg.has_method("forzar_generar_rango"):
+		wg.forzar_generar_rango(-5, 5, -5, 5)
+	var celdas_sifon: Array[Vector3i] = []
+	var celdas_compresor: Array[Vector3i] = []
+	var celdas_compresor_t2: Array[Vector3i] = []
+	var celdas_prisma: Array[Vector3i] = []
+	var celdas_constructor: Array[Vector3i] = []
+	for x in range(-70, 71):
+		for z in range(-70, 71):
+			var celda = Vector3i(x, 0, z)
+			var id_tile = map.get_cell_item(celda)
+			if id_tile == GameConstants.TILE_ESTABILIDAD or id_tile == GameConstants.TILE_CARGA:
+				celdas_sifon.append(celda)
+			elif id_tile == GameConstants.TILE_ROJO:
+				celdas_compresor.append(celda)
+				celdas_compresor_t2.append(celda)
+			elif id_tile == GameConstants.TILE_VACIO or id_tile == -1:
+				celdas_prisma.append(celda)
+				celdas_compresor_t2.append(celda)
+			if id_tile >= 0:
+				celdas_constructor.append(celda)
+	var lista_edificios: Array = []
+	var usado: Dictionary = {}
+	var _agregar = func(escena: String, celda: Vector3i) -> bool:
+		if usado.has(Vector2i(celda.x, celda.z)) or not ResourceLoader.exists(escena): return false
+		_agregar_edificio(lista_edificios, map, escena, celda, usado)
+		return true
+	var escenas_sifon = ["res://scenes/buildings/siphon_t1.tscn", "res://scenes/buildings/siphon_t2.tscn"]
+	var escenas_prisma = ["res://scenes/buildings/prism_straight.tscn", "res://scenes/buildings/prism_angle.tscn", "res://scenes/buildings/prism_straight_t2.tscn", "res://scenes/buildings/prism_angle_t2.tscn"]
+	var idx = 0
+	for celda in celdas_sifon:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call(escenas_sifon[idx % 2], celda)
+		idx += 1
+	for celda in celdas_compresor:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call("res://scenes/buildings/compressor.tscn", celda)
+	for celda in celdas_compresor_t2:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call("res://scenes/buildings/compressor_t2.tscn", celda)
+	idx = 0
+	for celda in celdas_prisma:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call(escenas_prisma[idx % 4], celda)
+		idx += 1
+	for celda in celdas_prisma:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call("res://scenes/buildings/merger.tscn", celda)
+	for celda in celdas_constructor:
+		if lista_edificios.size() >= cantidad_objetivo: break
+		_agregar.call("res://scenes/buildings/constructor.tscn", celda)
+	var stock_test = {
+		"Stability": 500, "Charge": 500,
+		"Sifón": 100, "Sifón T2": 100, "Prisma Recto": 100, "Prisma Angular": 100,
+		"Prisma Recto T2": 100, "Prisma Angular T2": 100, "Compresor": 100, "Compresor T2": 100,
+		"Fusionador": 100, "Constructor": 100, "GodSiphon": 10, "Void Generator": 10
+	}
+	var centro_x = 0.0
+	var centro_z = 0.0
+	for d in lista_edificios:
+		centro_x += d["pos"]["x"]
+		centro_z += d["pos"]["z"]
+	if lista_edificios.size() > 0:
+		centro_x /= lista_edificios.size()
+		centro_z /= lista_edificios.size()
+	var data = {
+		"semilla": GlobalInventory.semilla_mundo if GlobalInventory.semilla_mundo != 0 else randi(),
+		"stock": stock_test,
+		"mundo": lista_edificios,
+		"estados_vivos": {},
+		"cam": {"x": centro_x, "y": 0, "z": centro_z, "s": 100.0}
+	}
+	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if not file:
+		print("[SAVE] ERROR al escribir partida test.")
+		return false
+	file.store_line(JSON.stringify(data))
+	file.close()
+	GlobalInventory.semilla_mundo = data["semilla"]
+	GlobalInventory.stock = stock_test
+	GlobalInventory.edificios_para_reconstruir = lista_edificios
+	GlobalInventory.estados_edificios = {}
+	GlobalInventory.datos_camara = {"pos": Vector3(centro_x, 0, centro_z), "size": 100.0}
+	print("[SAVE] Partida test generada: ", lista_edificios.size(), " edificios. Recarga o carga desde menú.")
+	return true
+
+func _agregar_edificio(lista: Array, map: GridMap, escena: String, celda: Vector3i, usado: Dictionary) -> void:
+	if not ResourceLoader.exists(escena): return
+	var wpos = map.map_to_local(celda)
+	wpos.y = 0.5
+	var datos = {
+		"scene": escena,
+		"pos": {"x": wpos.x, "y": wpos.y, "z": wpos.z},
+		"rot": {"x": 0, "y": 0, "z": 0}
+	}
+	lista.append(datos)
+	usado[Vector2i(celda.x, celda.z)] = true
+
 func _activar_edificios_reconstruidos(raiz: Node):
 	var edificios = []
 	_buscar_edificios_recursivo(raiz, edificios)
+	
+	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	
 	for edificio in edificios:
 		if edificio.has_meta("necesita_activacion") and edificio.get_meta("necesita_activacion"):
@@ -240,4 +350,10 @@ func _activar_edificios_reconstruidos(raiz: Node):
 			if edificio.get("esta_construido") != null:
 				edificio.esta_construido = true
 			
-			print("[SAVE] Activado: ", edificio.name)
+			# Registrar en GridManager
+			if map and GridManager:
+				var celda = map.local_to_map(edificio.global_position)
+				var pos_2d = Vector2i(celda.x, celda.z)
+				GridManager.register_building(pos_2d, edificio)
+			
+			if GameConstants.DEBUG_MODE: print("[SAVE] Activado: ", edificio.name)

@@ -31,6 +31,7 @@ const UMBRAL_COMPRESION = 10
 
 # --- PULSOS ---
 const PULSO_VELOCIDAD_BASE = 2.0
+const PULSO_VELOCIDAD_VISUAL = 6.0  # Unidades/seg para visual constante
 const PULSO_RANGO_MAXIMO = 6
 const PULSO_INTENSIDAD_BRILLO = 3.0
 const PULSO_TIEMPO_DESAPARECER = 0.2
@@ -141,7 +142,6 @@ const VOID_GEN_FADE_TILES = 0.5
 const VOID_GEN_WAVE_SPEED = 0.02
 
 # --- SISTEMA DE CRAFTEO ---
-# NOTA: Compresor T2 usa la misma escena que T1, pero con valores @export diferentes
 const RECETAS = {
 	"Prisma Recto": { 
 		"inputs": { "Stability": 5, "Charge": 5 }, 
@@ -183,10 +183,9 @@ const RECETAS = {
 		"output_scene": "res://scenes/buildings/compressor.tscn", 
 		"tiempo": 8.0 
 	},
-	# Compresor T2: Usa la misma escena, configura tiempo_carga_total y grupo_placement en el Inspector
 	"Compresor T2": { 
 		"inputs": { "Compressed-Stability": 20, "Compressed-Charge": 20 }, 
-		"output_scene": "res://scenes/buildings/compressor.tscn", 
+		"output_scene": "res://scenes/buildings/compressor_t2.tscn", 
 		"tiempo": 12.0 
 	},
 	"Fusionador": { 

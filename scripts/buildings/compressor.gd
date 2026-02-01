@@ -1,13 +1,13 @@
 extends Area3D
 
 # --- CONFIGURACIÓN ---
+@export var grupo_placement: String = "Compresores"  # "CompresoresT2" para T2 (permite vacío o rojo)
 @onready var ui_root = $UI_Root
 @onready var barra_visual = %BarraVisual
 @onready var label_texto = %TextoCantidad
 
 # --- COMPONENTES ---
-var beam_emitter: BeamEmitter 
-var pulse_scene = preload("res://scenes/world/energy_pulse.tscn")
+var beam_emitter: BeamEmitter
 
 # --- ESTADO ---
 var buffer: int = 0
@@ -50,16 +50,23 @@ func _process(delta):
 			
 	_gestionar_haz(GameConstants.HAZ_LONGITUD_MAXIMA)
 
+func recibir_energia_numerica(cantidad: int, tipo_recurso: String, _origen: Node = null) -> void:
+	if not esta_construido or cargando: return
+	if tipo_recurso.begins_with(GameConstants.PREFIJO_COMPRIMIDO):
+		return
+	recurso_actual = tipo_recurso
+	buffer += cantidad
+	if buffer >= 10:
+		iniciar_secuencia_carga()
+	_actualizar_mi_estado_global()
+	actualizar_interfaz()
+
 func _on_area_entered(area):
 	if not esta_construido or cargando: return
 	if area.is_in_group("Pulsos"):
 		if not area.tipo_recurso.begins_with(GameConstants.PREFIJO_COMPRIMIDO):
-			recurso_actual = area.tipo_recurso
-			buffer += area.cantidad_energia
+			recibir_energia_numerica(area.cantidad_energia, area.tipo_recurso)
 			area.queue_free()
-			if buffer >= 10: iniciar_secuencia_carga()
-			_actualizar_mi_estado_global()
-			actualizar_interfaz()
 
 func iniciar_secuencia_carga():
 	buffer -= 10
@@ -67,17 +74,23 @@ func iniciar_secuencia_carga():
 	tiempo_restante_carga = GameConstants.COMPRESOR_TIEMPO_CARGA
 
 func disparar_comprimido():
-	var p = pulse_scene.instantiate()
-	get_tree().current_scene.add_child(p)
-	
+	var map = get_tree().current_scene.find_child("GridMap")
+	var space = get_world_3d().direct_space_state
 	var dir = -global_transform.basis.z
-	p.global_position = global_position + Vector3(0, 0.5, 0)
-	p.direccion = dir
+	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
+	var longitud = GameConstants.HAZ_LONGITUD_MAXIMA
+	var tipo_comprimido = GameConstants.PREFIJO_COMPRIMIDO + recurso_actual
+	var color = GameConstants.COLOR_STABILITY if "Stability" in recurso_actual else GameConstants.COLOR_CHARGE
+	var from_pos = global_position + Vector3(0, 0.5, 0)
 	
-	if p.has_method("configurar_pulso"):
-		var color = GameConstants.COLOR_STABILITY if "Stability" in recurso_actual else GameConstants.COLOR_CHARGE
-		p.configurar_pulso(GameConstants.PREFIJO_COMPRIMIDO + recurso_actual, color, 1.5)
-		p.cantidad_energia = 10
+	if map and space and EnergyManager:
+		var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+		var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
+		if EnergyManager.MOSTRAR_VISUAL_PULSO:
+			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self)
+		if resultado:
+			EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
+	
 	cargando = false
 	buffer = 0
 	_actualizar_mi_estado_global()
@@ -104,10 +117,18 @@ func actualizar_interfaz():
 func check_ground():
 	esta_construido = true
 	collision_layer = GameConstants.LAYER_EDIFICIOS
+	if BuildingManager: BuildingManager.register_building(self)
 	_recuperar_estado_guardado()
 
+func desconectar_sifon():
+	if BuildingManager: BuildingManager.unregister_building(self)
+	collision_layer = 0
+	esta_construido = false
+	cargando = false
+	buffer = 0
+
 func es_suelo_valido(id):
-	return id == GameConstants.TILE_ROJO
+	return PlacementLogic.es_posicion_valida(grupo_placement, id)
 
 func _actualizar_mi_estado_global():
 	var map = get_tree().current_scene.find_child("GridMap")

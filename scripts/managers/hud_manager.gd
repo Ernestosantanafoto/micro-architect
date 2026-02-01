@@ -17,7 +17,7 @@ var menu_data = {
 	],
 	"MANIPULA": [
 		{"inv_name": "Compresor", "label": "Compr. T1", "scene": "res://scenes/buildings/compressor.tscn"},
-		{"inv_name": "Compresor T2", "label": "Compr. T2", "scene": "res://scenes/buildings/compressor.tscn"},
+		{"inv_name": "Compresor T2", "label": "Compr. T2", "scene": "res://scenes/buildings/compressor_t2.tscn"},
 		{"inv_name": "Fusionador", "label": "Fusión", "scene": "res://scenes/buildings/merger.tscn"},
 		{"inv_name": "Void Generator", "label": "Void Gen", "scene": "res://scenes/buildings/void_generator.tscn"}
 	],
@@ -80,7 +80,7 @@ func _construir_items_verticales(categoria: String, boton_origen: Button):
 		
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
-		style.set_border_width_all(2) # <--- Corrección aquí
+		style.set_border_width_all(2)
 		style.border_color = Color.CYAN if "T2" not in item["label"] else Color.GOLD
 		btn.add_theme_stylebox_override("normal", style)
 		

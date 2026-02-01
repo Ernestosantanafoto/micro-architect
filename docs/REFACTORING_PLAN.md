@@ -4,7 +4,7 @@
 
 **Fecha inicio:** 2025-01-31  
 **Estimación:** 7-14 días  
-**Estado:** 📋 Planificado
+**Estado:** 🔄 En progreso
 
 ---
 
@@ -54,10 +54,10 @@ func get_building_at(pos: Vector2i) -> Building
 ```
 
 **Tareas:**
-- [ ] Crear archivo `grid_manager.gd`
-- [ ] Implementar funciones básicas
-- [ ] Añadir como Autoload en project.godot
-- [ ] Test manual (colocar/quitar edificios)
+- [x] Crear archivo `grid_manager.gd`
+- [x] Implementar funciones básicas
+- [x] Añadir como Autoload en project.godot
+- [x] Test manual (colocar/quitar edificios)
 
 ---
 
@@ -76,10 +76,10 @@ func _process(delta):
 ```
 
 **Tareas:**
-- [ ] Crear archivo `energy_manager.gd`
-- [ ] Crear clase `EnergyFlow` (RefCounted)
-- [ ] Añadir como Autoload
-- [ ] Test con 1 siphon → 1 compressor
+- [x] Crear archivo `energy_manager.gd`
+- [x] Crear clase `EnergyFlow` (RefCounted)
+- [x] Añadir como Autoload
+- [x] Test con 1 siphon → 1 compressor
 
 ---
 
@@ -96,10 +96,10 @@ func get_buildings_in_radius(pos: Vector3, radius: float) -> Array
 ```
 
 **Tareas:**
-- [ ] Crear archivo `building_manager.gd`
-- [ ] Implementar registro/desregistro
-- [ ] Modificar edificios existentes para usar manager
-- [ ] Añadir como Autoload
+- [x] Crear archivo `building_manager.gd`
+- [x] Implementar registro/desregistro
+- [x] Modificar edificios existentes para usar manager
+- [x] Añadir como Autoload
 
 ---
 
@@ -131,11 +131,11 @@ func _on_produce():
 ```
 
 **Tareas:**
-- [ ] Modificar `siphon_logic.gd`
-- [ ] Eliminar instanciación de `energy_pulse.tscn`
-- [ ] Usar `EnergyManager` para flujos
-- [ ] Mantener haz visual (opcional)
-- [ ] Test funcionamiento
+- [x] Modificar `siphon_logic.gd`
+- [x] Eliminar instanciación de `energy_pulse.tscn` (siphon → compressor)
+- [x] Usar `EnergyManager` para flujos
+- [x] Mantener haz visual
+- [x] Test funcionamiento
 
 ---
 
@@ -154,10 +154,10 @@ func produce_compressed_energy():
 ```
 
 **Tareas:**
-- [ ] Modificar `compressor.gd`
-- [ ] Implementar acumulación numérica
-- [ ] Conectar con `EnergyManager`
-- [ ] Test cadena: Siphon → Compressor → Merger
+- [x] Modificar `compressor.gd`
+- [x] Implementar acumulación numérica
+- [x] Conectar con `EnergyManager`
+- [x] Test cadena: Siphon → Compressor → Merger
 
 ---
 
@@ -170,10 +170,10 @@ func receive_energy_beam(from: Building):
 ```
 
 **Tareas:**
-- [ ] Modificar `prism_logic.gd`
-- [ ] Mantener lógica de reflexión
-- [ ] Actualizar para usar `EnergyManager`
-- [ ] Test con rotaciones
+- [x] Modificar `prism_logic.gd`
+- [x] Mantener lógica de reflexión
+- [x] Actualizar para usar `EnergyManager` (recibir_energia_numerica)
+- [x] Test con rotaciones
 
 ---
 
@@ -192,9 +192,24 @@ func check_merge_condition():
 ```
 
 **Tareas:**
-- [ ] Modificar `merger.gd`
-- [ ] Manejar múltiples inputs
-- [ ] Test fusión correcta
+- [x] Modificar `merger.gd`
+- [x] Manejar múltiples inputs (recibir_energia_numerica)
+- [x] Output quarks → EnergyManager (Constructor recibe recibir_energia_numerica)
+- [x] Test fusión correcta
+
+---
+
+#### Cadena Merger → Constructor (Quarks)
+**Tareas:**
+- [x] Constructor: recibir_energia_numerica para Up-Quark / Down-Quark
+- [x] Merger: emitir_producto usa EnergyManager
+
+---
+
+#### God Siphon
+**Tareas:**
+- [x] Migrar disparar() a EnergyManager
+- [x] Eliminar instanciación de energy_pulse.tscn
 
 ---
 
@@ -228,35 +243,35 @@ func _on_flow_complete(flow: EnergyFlow):
 ```
 
 **Tareas:**
-- [ ] Crear `PulseVisual` simple
-- [ ] Conectar señales de `EnergyManager`
-- [ ] Test que visuales NO afectan lógica
-- [ ] Opcional: efectos de partículas
+- [x] Crear `PulseVisual` simple
+- [x] Conectar señales de `EnergyManager` (energy_transferred)
+- [x] Spawn PulseVisual opcional en register_flow
+- [x] Test que visuales NO afectan lógica
 
 ---
 
 ### ✅ Fase 4: Validación y Cleanup (Días 11-14)
 
 #### Día 11: Testing Exhaustivo
-- [ ] Test cadena completa: Siphon → Compressor → Merger → Factory
-- [ ] Test rotación de edificios (energía debe actualizar)
-- [ ] Test destrucción de edificios (limpiar flujos)
+- [x] Test cadena completa: Siphon → Compressor → Merger → Constructor
+- [x] Test rotación de edificios (pulsos se destruyen al rotar origen)
+- [x] Test destrucción de edificios (limpiar flujos)
 - [ ] Test con 50+ edificios (performance)
 
 ---
 
 #### Día 12: Cleanup de Código Viejo
-- [ ] Eliminar/deprecar `energy_pulse.tscn` (si no se usa)
-- [ ] Eliminar código comentado antiguo
-- [ ] Actualizar todos los `# TODO` relacionados
-- [ ] Limpiar imports no usados
+- [x] Eliminar/deprecar `energy_pulse.tscn` (prisma ya no lo usa)
+- [x] Eliminar código comentado antiguo
+- [x] Actualizar todos los `# TODO` relacionados
+- [x] Limpiar preloads no usados (construction_manager: solo god_siphon_escena)
 
 ---
 
 #### Día 13: Documentación Final
-- [ ] Actualizar `PROJECT_STATE.md`
-- [ ] Crear `ENERGY_SYSTEM.md` con sistema final
-- [ ] Documentar API de managers
+- [x] Actualizar `PROJECT_STATE.md`
+- [x] Crear `ENERGY_SYSTEM.md` con sistema final
+- [x] Documentar API de managers (`docs/API_MANAGERS.md`)
 - [ ] Escribir lecciones aprendidas
 
 ---
@@ -296,12 +311,12 @@ git push
 ## 🔄 Estado de Fases
 
 - [x] Fase 0: Preparación
-- [ ] Fase 1: Managers (0/3 días)
-- [ ] Fase 2: Migración edificios (0/5 días)
-- [ ] Fase 3: Visuales (0/2 días)
-- [ ] Fase 4: Validación (0/4 días)
+- [x] Fase 1: Managers (3/3 días) ✓
+- [x] Fase 2: Migración edificios (Siphon, Compressor, Prism, Merger) ✓
+- [x] Fase 3: Visuales (2/2 días) ✓
+- [x] Fase 4: Validación y Cleanup ✓
 
-**Progreso total: 0/14 días**
+**Progreso total: ~14/14 días**
 
 ---
 

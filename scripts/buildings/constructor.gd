@@ -92,31 +92,25 @@ func _debug_rellenar_todo():
 	_intentar_iniciar_crafteo()
 
 # --- ENERGÍA ---
+func recibir_energia_numerica(cantidad: int, tipo_recurso: String, _origen: Node = null) -> void:
+	if not esta_construido: return
+	if total_almacenado + cantidad > CAPACIDAD_MAXIMA:
+		return
+	if inventario_interno.has(tipo_recurso):
+		inventario_interno[tipo_recurso] += cantidad
+	else:
+		inventario_interno[tipo_recurso] = cantidad
+	total_almacenado += cantidad
+	_animar_input()
+	_intentar_iniciar_crafteo()
+	_actualizar_mi_estado_global()
+	_notificar_ui()
+
 func _on_area_entered(area):
 	if not esta_construido: return
-	
 	if area.is_in_group("Pulsos"):
-		var tipo = area.tipo_recurso
-		var cantidad = area.cantidad_energia
-		
-		# Verificar capacidad
-		if total_almacenado + cantidad > CAPACIDAD_MAXIMA:
-			area.queue_free()
-			return
-
-		# Añadir al inventario
-		if inventario_interno.has(tipo):
-			inventario_interno[tipo] += cantidad
-		else:
-			inventario_interno[tipo] = cantidad
-		
-		total_almacenado += cantidad
+		recibir_energia_numerica(area.cantidad_energia, area.tipo_recurso, null)
 		area.queue_free()
-		
-		_animar_input()
-		_intentar_iniciar_crafteo()
-		_actualizar_mi_estado_global()
-		_notificar_ui()
 
 # --- CRAFTEO ---
 func cambiar_receta(nombre_receta):
@@ -290,7 +284,7 @@ func _animar_exito():
 # --- API PLACEMENT ---
 func check_ground():
 	esta_construido = true
-	
+	if BuildingManager: BuildingManager.register_building(self)
 	collision_layer = GameConstants.LAYER_EDIFICIOS
 	collision_mask = GameConstants.LAYER_PULSOS
 	monitorable = true
@@ -303,6 +297,7 @@ func check_ground():
 	_recuperar_estado_guardado()
 
 func desconectar_sifon():
+	if BuildingManager: BuildingManager.unregister_building(self)
 	esta_construido = false
 	collision_layer = 0
 	collision_mask = 0

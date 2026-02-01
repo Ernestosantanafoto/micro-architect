@@ -18,6 +18,9 @@ config/icon="res://icon.svg"
 [autoload]
 
 GlobalInventory="*res://scripts/autoload/global_inventory.gd"
+EnergyManager="*res://scripts/managers/energy_manager.gd"
+BuildingManager="*res://scripts/managers/building_manager.gd"
+GridManager="*res://scripts/managers/grid_manager.gd"
 PulseValidator="*res://scripts/managers/pulse_validator.gd"
 SaveSystem="*res://scripts/autoload/save_system.gd"
 MusicManager="*res://scripts/autoload/music_manager.tscn"

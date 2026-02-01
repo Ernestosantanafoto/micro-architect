@@ -8,8 +8,7 @@ var tiempo_restante_proceso: float = 0.0
 var producto_pendiente = ""
 var color_pendiente = Color.WHITE
 
-var beam_emitter: BeamEmitter 
-var pulse_scene = preload("res://scenes/world/energy_pulse.tscn")
+var beam_emitter: BeamEmitter
 
 var ui_root: Node3D = null
 var label: Node = null 
@@ -58,17 +57,22 @@ func _on_area_entered(area):
 		return
 	if area.is_in_group("Pulsos"): recibir_input(area)
 
+func recibir_energia_numerica(cantidad: int, tipo_recurso: String, _origen: Node = null) -> void:
+	if not esta_construido or procesando: return
+	if not tipo_recurso.begins_with(GameConstants.PREFIJO_COMPRIMIDO):
+		return
+	animar_recepcion()
+	if buffer.has(tipo_recurso): buffer[tipo_recurso] += cantidad
+	else: buffer[tipo_recurso] = cantidad
+	actualizar_ui()
+	actualizar_barra()
+	verificar_recetas()
+
 func recibir_input(pulso):
 	var tipo = pulso.tipo_recurso
 	if not tipo.begins_with(GameConstants.PREFIJO_COMPRIMIDO): return
 	pulso.queue_free()
-	animar_recepcion()
-	var cantidad = pulso.cantidad_energia
-	if buffer.has(tipo): buffer[tipo] += cantidad
-	else: buffer[tipo] = cantidad
-	actualizar_ui()
-	actualizar_barra()
-	verificar_recetas()
+	recibir_energia_numerica(pulso.cantidad_energia, tipo, null)
 
 func verificar_recetas():
 	if procesando: return
@@ -105,27 +109,21 @@ func finalizar_fusion():
 	verificar_recetas()
 
 func emitir_producto(nombre: String, color: Color):
-	var p = pulse_scene.instantiate()
-	get_tree().current_scene.add_child(p)
-	
-	# SOLUCIÓN: Asegurar grupo y colisiones
-	if not p.is_in_group("Pulsos"): p.add_to_group("Pulsos")
-	
+	var map = get_tree().current_scene.find_child("GridMap")
+	var space = get_world_3d().direct_space_state
 	var dir = -global_transform.basis.z
-	# Salir más lejos para evitar colisión con el propio edificio
-	p.global_position = global_position + Vector3(0, 0.5, 0) + (dir * 1.5)
-	p.direccion = dir
-	p.global_rotation = global_rotation
+	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
+	var longitud = GameConstants.HAZ_LONGITUD_MAXIMA
+	const CANTIDAD_QUARKS = 100
+	var from_pos = global_position + Vector3(0, 0.5, 0) + (dir * 1.5)
 	
-	if p.has_method("configurar_pulso"):
-		p.configurar_pulso(nombre, color, 1.0) 
-		p.cantidad_energia = 100 
-		
-	p.scale = Vector3(0.1, 0.1, 0.1)
-	var t = create_tween()
-	t.tween_property(p, "scale", GameConstants.MERGER_ANIM_BIRTH_SCALE, 0.3).set_trans(Tween.TRANS_BACK)
-	
-	if PulseValidator: PulseValidator.registrar_pulso(p, self)
+	if map and space and EnergyManager:
+		var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+		var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
+		if EnergyManager.MOSTRAR_VISUAL_PULSO:
+			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self)
+		if resultado:
+			EnergyManager.register_flow(self, resultado["target"], CANTIDAD_QUARKS, nombre, color)
 
 func actualizar_ui():
 	if not label: return
@@ -182,7 +180,19 @@ func animar_recepcion():
 		var t = create_tween()
 		t.tween_property(ui_root, "scale", Vector3(1.1, 1.1, 1.1), 0.1)
 		t.tween_property(ui_root, "scale", Vector3(1.0, 1.0, 1.0), 0.1)
-func check_ground(): collision_layer = GameConstants.LAYER_EDIFICIOS; esta_construido = true; if ui_root: ui_root.visible = true
-func desconectar_sifon(): collision_layer = 0; esta_construido = false; ha_disparado_una_vez = false; procesando = false; if ui_root: ui_root.visible = false; buffer = {"Compressed-Stability": 0, "Compressed-Charge": 0}; actualizar_ui()
+func check_ground(): 
+	collision_layer = GameConstants.LAYER_EDIFICIOS
+	esta_construido = true
+	if BuildingManager: BuildingManager.register_building(self)
+	if ui_root: ui_root.visible = true
+func desconectar_sifon(): 
+	if BuildingManager: BuildingManager.unregister_building(self)
+	collision_layer = 0
+	esta_construido = false
+	ha_disparado_una_vez = false
+	procesando = false
+	if ui_root: ui_root.visible = false
+	buffer = {"Compressed-Stability": 0, "Compressed-Charge": 0}
+	actualizar_ui()
 func es_suelo_valido(id): return id == GameConstants.TILE_VACIO
 func recibir_luz_instantanea(_c, _r, _d): pass

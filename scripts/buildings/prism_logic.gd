@@ -5,8 +5,7 @@ enum TipoPrisma { RECTO, ANGULO }
 @export var alcance_maximo: int = GameConstants.ALCANCE_PRISMA
 @export var es_tier2: bool = false
 
-var beam_emitter: BeamEmitter 
-var pulse_scene = preload("res://scenes/world/energy_pulse.tscn")
+var beam_emitter: BeamEmitter
 var esta_construido: bool = false
 var color_haz_actual = Color.WHITE
 var direccion_salida_fija = Vector3.FORWARD
@@ -57,6 +56,29 @@ func _process(_delta):
 		if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
 		_animar_cristal(Color.WHITE, false)
 
+func recibir_energia_numerica(cantidad: int, tipo_recurso: String, origen: Node) -> void:
+	if not esta_construido: return
+	if not is_instance_valid(origen): return
+	var dir_entrada = (global_position - origen.global_position).normalized()
+	var dir_salida = _calcular_rebote(dir_entrada)
+	if dir_salida != Vector3.ZERO:
+		_procesar_energia_numerica(cantidad, tipo_recurso, dir_salida)
+
+func _procesar_energia_numerica(cantidad: int, tipo_recurso: String, dir_salida: Vector3):
+	var map = get_tree().current_scene.find_child("GridMap")
+	var space = get_world_3d().direct_space_state
+	if not map or not space or not EnergyManager:
+		return
+	var dir_flat = Vector3(dir_salida.x, 0, dir_salida.z).normalized()
+	var color_recurso = _color_por_tipo(tipo_recurso)
+	var from_pos = global_position + (dir_salida * GameConstants.OFFSET_SPAWN_PULSO)
+	var resultado = beam_emitter.obtener_objetivo(global_position, dir_salida, alcance_maximo, map, space, self)
+	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * alcance_maximo
+	if EnergyManager.MOSTRAR_VISUAL_PULSO:
+		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self)
+	if resultado:
+		EnergyManager.register_flow(self, resultado["target"], cantidad, tipo_recurso, color_recurso)
+
 func recibir_luz_instantanea(color: Color, _recurso: String, dir_entrada_global: Vector3):
 	if not esta_construido: return
 	if scale.length_squared() < GameConstants.UMBRAL_ESCALA_MINIMA: return
@@ -70,52 +92,15 @@ func recibir_luz_instantanea(color: Color, _recurso: String, dir_entrada_global:
 
 func _on_area_entered(area):
 	if not esta_construido: return
-	
 	if area.is_in_group("Pulsos"):
-		if area.distancia_recorrida < GameConstants.UMBRAL_ESCALA_MINIMA: return
-		
-		var dir_salida = _calcular_rebote(area.direccion)
-		if dir_salida != Vector3.ZERO:
-			_procesar_secuencia_rebote(area, dir_salida)
-		else:
-			area.queue_free()
+		area.queue_free()
 
-func _procesar_secuencia_rebote(bola, dir_salida):
-	bola.set_process(false) 
-	var velocidad = GameConstants.PULSO_VELOCIDAD_BASE
-	
-	while is_instance_valid(bola) and bola.global_position.distance_to(global_position) > GameConstants.PRISMA_DISTANCIA_CENTRO_MIN:
-		var direccion_al_centro = (global_position - bola.global_position).normalized()
-		bola.global_position += direccion_al_centro * velocidad * get_process_delta_time()
-		await get_tree().process_frame
-	
-	if not is_instance_valid(bola): return
-	bola.global_position = global_position
-	
-	await get_tree().create_timer(GameConstants.TIEMPO_REBOTE_PRISMA).timeout
-	
-	if is_instance_valid(bola): 
-		_generar_bola_salida(bola, dir_salida)
-
-func _generar_bola_salida(original, nueva_dir):
-	var p = pulse_scene.instantiate()
-	get_tree().current_scene.add_child(p)
-	p.global_position = global_position + (nueva_dir * GameConstants.OFFSET_SPAWN_PULSO)
-	p.direccion = nueva_dir
-	
-	if p.has_method("configurar_pulso"):
-		var col = Color.WHITE
-		if original.mesh and original.mesh.get_active_material(0):
-			col = original.mesh.get_active_material(0).albedo_color
-		p.configurar_pulso(original.tipo_recurso, col, original.scale.x)
-		p.cantidad_energia = original.cantidad_energia
-		
-		# SOLUCIÓN: Reiniciar distancia y ampliar si es T2
-		p.distancia_recorrida = 0.0
-		p.distancia_max = 20.0 if es_tier2 else GameConstants.PULSO_RANGO_MAXIMO
-
-	if PulseValidator: PulseValidator.registrar_pulso(p, self)
-	original.queue_free()
+func _color_por_tipo(tipo_recurso: String) -> Color:
+	if "Stability" in tipo_recurso: return GameConstants.COLOR_STABILITY
+	if "Charge" in tipo_recurso: return GameConstants.COLOR_CHARGE
+	if "Up-Quark" in tipo_recurso: return GameConstants.COLOR_UP_QUARK
+	if "Down-Quark" in tipo_recurso: return GameConstants.COLOR_DOWN_QUARK
+	return GameConstants.COLOR_CHARGE
 
 func _calcular_rebote(dir_entrada_global: Vector3) -> Vector3:
 	var dir_local = (global_transform.basis.inverse() * dir_entrada_global).normalized()
@@ -139,8 +124,10 @@ func _animar_cristal(color_objetivo: Color, encendido: bool):
 
 func check_ground(): 
 	collision_layer = GameConstants.LAYER_EDIFICIOS
-	esta_construido = true 
+	esta_construido = true
+	if BuildingManager: BuildingManager.register_building(self)
 func desconectar_sifon(): 
+	if BuildingManager: BuildingManager.unregister_building(self)
 	if beam_emitter: beam_emitter.apagar()
 	collision_layer = 0
 	esta_construido = false

@@ -74,3 +74,26 @@ func _limpiar():
 	for c in contenedor.get_children(): c.queue_free()
 
 func apagar(): _limpiar()
+
+## Retorna {target: Node, impact_pos: Vector3} del primer edificio en el haz, o null. impact_pos = celda donde impacta (no centro del edificio).
+func obtener_objetivo(origen: Vector3, direccion: Vector3, longitud: int, map: GridMap, world: PhysicsDirectSpaceState3D, excluir: Node = null):
+	var cursor_mapa = map.local_to_map(origen)
+	var dir_mapa = Vector3i(round(direccion.x), 0, round(direccion.z))
+	for i in range(longitud):
+		cursor_mapa += dir_mapa
+		var pos_mundo = map.map_to_local(cursor_mapa)
+		var query = PhysicsPointQueryParameters3D.new()
+		query.position = pos_mundo
+		query.collision_mask = GameConstants.LAYER_EDIFICIOS
+		query.collide_with_areas = true
+		query.collide_with_bodies = true
+		var colisiones = world.intersect_point(query)
+		for col in colisiones:
+			var obj = col.collider
+			if obj == excluir:
+				continue
+			if obj.get("esta_construido") == false:
+				continue
+			if obj.has_method("recibir_energia_numerica") or obj.has_method("recibir_luz_instantanea"):
+				return {"target": obj, "impact_pos": pos_mundo}
+	return null
