@@ -1,18 +1,9 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
-**Última actualización:** 2025-01-31  
+**Última actualización:** 2025-02-02  
 **Versión:** 0.5-alpha  
-**Godot:** 4.x
-
-### ✅ Mejoras recientes (estética y pulido)
-- **Fabricador Hadrón:** Edificio que convierte quarks en nucleones (Protón: 2U+1D; Neutrón: 1U+2D). Recibe pulsos, añade productos al inventario.
-- **Colocación de edificios:** HUD con `mouse_filter = IGNORE` para que los clics lleguen al mapa. Botón SELECCIÓN desactivado por defecto.
-- **Pulido HUD:** Barra recursos superior (StyleBox dedicado, bordes, espaciado). Paneles inferior izq/der con estilos unificados. Barra categorías con tooltips actualizados.
-- **Menús popup:** Eliminado FondoDetector de ConstructorUI (recuadro gris corregido). Estilos consistentes en God Siphon y Constructor.
-- **F1/F2:** Fabricador Hadrón, Proton, Neutron añadidos a ayuda y recetario. TechTree actualizado.
-
-### 📌 Pausa / recordar para futuro
-- **Merger buffer al levantar/soltar:** Dejado en pausa. Comportamiento actual: se mantiene el buffer al mover (no se resetea en `desconectar_sifon`). Revisar si se quiere otra lógica más adelante.
+**Godot:** 4.x  
+**Era actual:** Tier 1 — Fase Cuántica
 
 ---
 
@@ -25,6 +16,12 @@ Juego de gestión de recursos y fábrica que simula la construcción de materia 
 energía → quarks → protones/neutrones → átomos → moléculas → ADN
 ```
 
+**4 Eras de juego** con escala creciente (ver `FUTURE_PLAN.md`):
+- Tier 1 — Cuántica (1×1, ×1) ← **ACTUAL**
+- Tier 2 — Subatómica (3×3, ×4)
+- Tier 3 — Atómica (9×9, ×16)
+- Tier 4 — Molecular (27×27, ×40)
+
 **Mecánicas Core:**
 - Grid procedural con losetas especiales (energía/gravedad)
 - Cadena de producción sin combate
@@ -34,59 +31,124 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ## ✅ Sistemas Funcionando
 
-- [x] Grid / Rejilla
-- [x] Colocación de estructuras
-- [x] Restricciones por losetas
-- [x] Generación procedural del mapa
-- [x] Siphons (extractores de energía)
-- [x] Prismas (rectos y 90°)
-- [x] Compressor (10:1 energía)
-- [x] Merger (fusión de energías)
-- [x] Factories (producción por recetas)
-- [x] Inventario
-- [x] Void Generators (limpiar terreno)
-- [x] Sistema visual (haces, pulsos)
-- [x] Menús (principal, guardar/cargar)
-- [x] Música de fondo
-- [x] **Selección múltiple por arrastre:** Solo en casillas vacías, hold threshold, rectángulo fantasma azul, zoom dinámico (solo aleja), acciones R (reembolso) y ELIMINAR; modo activable/desactivable con botón SELECCIÓN (panel inferior izq.); botón ELIMINAR en esquina inferior derecha.
-- [x] **Fabricador Hadrón (v0.5):** Convierte quarks en protones/neutrones. Recetas: Protón 2U+1D, Neutrón 1U+2D. UI flotante U:X D:Y, barra de progreso. F1/F2 y TechTree actualizados.
+### Core
+- Grid / Rejilla procedural con losetas especiales
+- Colocación de estructuras con restricciones por loseta
+- Sistema de energía numérico (EnergyManager + EnergyFlow)
+- Cadena completa: Energía → Quarks → Protones / Neutrones
+- Inventario (GlobalInventory)
+- Save / Load (edificios, inventario, cámara)
+
+### Edificios (8 tipos)
+- Sifón (extractor de energía)
+- Compresor (10:1)
+- Prisma recto y angular (redirección de haces)
+- Merger (fusión de energías → quarks)
+- Fabricador Hadrón (quarks → protones/neutrones)
+- Constructor (crafteo de edificios)
+- Void Generator (eliminar terreno)
+
+### UI / UX
+- HUD categorizado (ENERGÍA | QUARKS | EDIFICIOS) con colores
+- Barra de categorías (SIFONES, PRISMAS, MANIPULA, CONSTR)
+- God Siphon UI (sliders energía/frecuencia, vista previa)
+- Constructor UI (grid de iconos, hotkeys 1-9)
+- Panel de Ayuda F1 (4 pestañas: Recursos, Edificios, Controles, Objetivos)
+- Recetario F2 (tech tree con desbloqueos)
+- Tutorial básico (5 pasos)
+- Menú principal (nuevo, cargar, salir)
+- Hotkeys (R rotar, ESC cancelar, 0 God Siphon DEV, 1-9 edificios)
+- Clic central (copiar edificio / colocar y mantener)
+- Selección múltiple por arrastre
+- Grid guía (pulso 50-100% + desvanecimiento por zoom)
+- Feedback al colocar (pop/shake)
+
+### Visual
+- Haces de luz entre edificios
+- Pulsos visuales opcionales (PulseVisual)
+- Música de fondo
+
+---
+
+## ✅ Mejoras Recientes (v0.5)
+
+- **Fabricador Hadrón:** Quarks → Protones/Neutrones (2U+1D, 1U+2D). Recibe pulsos, añade productos al inventario.
+- **Colocación de edificios:** HUD con `mouse_filter = IGNORE` para que los clics lleguen al mapa. Botón SELECCIÓN desactivado por defecto.
+- **Save/Load corregido:** Edificios se guardan/cargan correctamente; búsqueda recursiva de Area3D en save_system; zoom de cámara se restaura; sifones se reactivan tras cargar (game_tick reconectado). **Tecnologías F2 persisten:** TechTree.save_progress/load_progress integrados en SaveSystem.
+- **Prismas corregidos:** Solo se colocan en vacío (TILE_VACIO); placement_logic separado por grupo; eliminada función duplicada en prism_logic.
+- **Void Generator:** Implementado con lógica real de borrado de tiles.
+- **Pulido estético:** StyleBox en HUD, paneles unificados, tooltips. Menús popup (ConstructorUI sin FondoDetector, estilos consistentes en God Siphon).
+- **F1/F2 actualizados:** Fabricador Hadrón, Protón, Neutrón añadidos. TechTree actualizado.
+- **Análisis null-safety:** beam_emitter, god_siphon, save_system, world_generator, inventory_button, hud.
 
 ---
 
 ## 🐛 Bugs Conocidos
 
-### Crítico
-- [x] ~~Pulsos de energía continúan aunque el emisor rote~~ (migrado a sistema numérico)
-- [x] ~~Pulsos persisten aunque el emisor desaparezca~~ (migrado a sistema numérico)
-- [ ] Estado visual ≠ estado lógico del sistema (visuales opcionales pendientes)
-
 ### Menor
-- [x] ~~Haces visuales ligeramente cortados en prismas~~ (HAZ_OFFSET_ORIGEN 0.25)
-- [x] ~~Problemas en salidas de mergers~~ (from_pos 0.5*dir)
+- Haces visuales ligeramente cortados en prismas (HAZ_OFFSET_ORIGEN 0.25)
+- Salidas de mergers: from_pos con offset ajustable
+- Menús popup: recuadro gris en algunos entornos (dejado como mejora futura)
+
+### Pendiente de verificar
+- Estado visual ≠ estado lógico del sistema (visuales opcionales pendientes)
+- Merger buffer al levantar/soltar (dejado en pausa, revisar más adelante)
 
 ---
 
-## ✅ Arquitectura de Energía (MIGRADO)
+## 📋 Inventario de bugs para T1 (priorizado)
 
-**Sistema numérico implementado** – ver `docs/ENERGY_SYSTEM.md`
+Bloqueante para considerar **T1 funcional**: crítico + altos verificados. Menores y pendientes no bloquean.
 
-- Energía fluye como datos (EnergyManager + EnergyFlow)
-- Visuales opcionales (PulseVisual) sin afectar lógica
-- Deprecated eliminado: `scenes/deprecated/` y `scripts/deprecated/` (energy_pulse) borrados en ROADMAP 3.2
+| Prioridad | Bug | Estado |
+|-----------|-----|--------|
+| **Crítico** | Tecnologías desbloqueadas no persisten al cargar | ✅ Corregido: SaveSystem guarda/carga TechTree |
+| **Alto** | Save/load con partidas complejas (20+ edificios) no verificado | Pendiente verificación manual |
+| **Alto** | Colocación de todos los edificios en tiles correctos no verificada | Pendiente: test por tipo y en bordes (TEST_CHECKLIST) |
+| **Menor** | Haces visuales cortados en prismas | HAZ_OFFSET_ORIGEN 0.25; verificar en juego |
+| **Menor** | Salidas de mergers (from_pos) | Ajuste 0.5*dir aplicado; verificar si persiste |
+| **Menor** | Recuadro gris en menús popup | Mejora futura; no bloqueante |
+| **Pendiente** | Estado visual ≠ estado lógico | No bloqueante |
+| **Pendiente** | Merger buffer al levantar/soltar | En pausa; decisión de diseño |
+
+---
+
+## 📌 Pausa / Recordar para Futuro
+
+- Merger buffer: se mantiene al mover (no se resetea en desconectar_sifon). Revisar si se quiere otra lógica más adelante.
+- God Siphon: solo disponible en DEBUG_MODE
+- Menús popup recuadro gris: mejora futura dev/test
 
 ---
 
 ## 📊 Métricas
 
-- **Tiempo desarrollo:** ~1 semana
-- **Archivos:** 95
-- **Líneas código:** ~4,805
-- **Edificios implementados:** 8 tipos (incl. Fabricador Hadrón)
+| Métrica | Valor |
+|---------|-------|
+| Tiempo desarrollo | ~2 semanas |
+| Archivos | ~95 |
+| Líneas código | ~4.800+ |
+| Edificios | 8 tipos |
+| Versión | v0.5-alpha |
+
+---
+
+## ✅ Criterios T1 funcional (definition of done)
+
+- [x] **Tech persistente:** Desbloqueos F2 persisten tras guardar y cargar (SaveSystem + TechTree).
+- [ ] **Save/Load 20+:** Partida con 20+ edificios se guarda y carga; posiciones/rotaciones y producción correctas (verificar con TEST_CHECKLIST 10.3).
+- [ ] **Colocación:** Todos los tipos solo en tiles permitidos; rotación y bordes verificados (TEST_CHECKLIST 6.5).
+- [ ] **Checklist:** TEST_CHECKLIST ejecutado; bugs críticos resueltos; resto documentado.
+- [ ] **Docs:** ROADMAP 5.1–5.3 marcados cuando verificación completada.
 
 ---
 
 ## 🎯 Próximo Paso
 
-**Bloques 1–3 completados.** Bugs menores, pulido UX y técnico (RECETAS unificado, deprecated eliminado, merger 3x1 footprint, starter pack, God Siphon solo DEV) aplicados.
+1. **Estabilizar Tier 1:** Ejecutar TEST_CHECKLIST (6.5, 10.3), verificar bugs restantes
+2. **Demo en itch.io:** Publicar Tier 1 jugable para feedback real
+3. **Tier 2 foundation:** Escala 3×3, accumulator de tiempo, electrones
 
-**Siguiente:** Bloque 4.2 – Edificio Electrón (consumir quarks, producir Electron) si se desea extender la cadena. Ver **`docs/ROADMAP.md`**. Índice de docs: **`docs/README.md`**.
+Ver `docs/ROADMAP.md` para tareas detalladas.  
+Ver `docs/FUTURE_PLAN.md` para visión completa de 4 tiers.  
+Índice de docs: `docs/README.md`.

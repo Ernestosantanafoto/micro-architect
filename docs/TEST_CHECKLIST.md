@@ -1,8 +1,8 @@
-# 🧪 CHECKLIST DE PRUEBAS - v0.4 Polish
+# 🧪 CHECKLIST DE PRUEBAS - v0.5 T1
 
-**Fecha:** 2025-02-01  
-**Versión:** 0.4-alpha  
-**Objetivo:** Verificar todas las mejoras implementadas
+**Fecha:** 2025-02-02  
+**Versión:** 0.5-alpha  
+**Objetivo:** Verificar T1 funcional (pulido, save/load, colocación, bugs conocidos)
 
 ---
 
@@ -141,6 +141,19 @@
 - [ v] **Fantasma desaparece**: Ya no hay edificio en mano
 - [ v] **Inventario restaurado**: El contador vuelve a su valor original
 
+### Test 6.5: Colocación por tipo de edificio y en bordes (T1 funcional)
+Verificar que cada edificio solo se coloca en el tile permitido y que rotación/bordes funcionan.
+
+- [ ] **Sifón**: Solo en loseta verde (Estabilidad) o azul (Carga). En vacío/rojo → fantasma rojo.
+- [ ] **Compresor**: Solo en loseta roja. En verde/azul/vacío → fantasma rojo.
+- [ ] **Prisma recto / Prisma angular**: Solo en vacío. En verde/azul/rojo → fantasma rojo.
+- [ ] **Fusionador (Merger)**: Solo en vacío. En losetas de energía → fantasma rojo.
+- [ ] **Fabricador Hadrón**: Solo en vacío. En losetas de energía → fantasma rojo.
+- [ ] **Constructor**: En cualquier tile (válido donde no haya edificio).
+- [ ] **Void Generator**: En cualquier tile.
+- [ ] **Rotación (R)**: Con cada tipo en mano, R gira el fantasma 90°; colocación respeta la rotación.
+- [ ] **Bordes del mapa**: Colocar al menos un edificio en una celda del borde (extremo del grid); no debe crashear ni permitir fuera de límites.
+
 ---
 
 ## 🔬 PARTE 7: SISTEMA DE PRODUCCIÓN
@@ -209,11 +222,19 @@
 - [ v] **Cierra el juego**: Vuelve al menú principal
 
 ### Test 10.2: Cargar Partida
-- [v ] **Abre el juego**: Clic en "CARGAR"
-- [v ] **Edificios restaurados**: Todos los edificios están en su lugar
-- [v ] **Inventario correcto**: Recursos y edificios tienen los valores guardados
-- [? ] **Tecnologías desbloqueadas**: F2 muestra el progreso guardado
-- [ v] **Producción funciona**: Los edificios siguen generando recursos
+- [ ] **Abre el juego**: Clic en "CARGAR"
+- [ ] **Edificios restaurados**: Todos los edificios están en su lugar
+- [ ] **Inventario correcto**: Recursos y edificios tienen los valores guardados
+- [ ] **Tecnologías desbloqueadas**: F2 muestra el progreso guardado (Compresor/Fusionador/etc. siguen 🔓)
+- [ ] **Producción funciona**: Los edificios siguen generando recursos
+
+### Test 10.3: Save/load con partida compleja (20+ edificios)
+- [ ] **Coloca 20+ edificios**: Varios tipos (Sifones, Compresores, Prismas, Merger, Fabricador Hadrón, Constructor, Void).
+- [ ] **GUARDAR**: Mensaje de confirmación.
+- [ ] **Salir a menú** (MENÚ o CERRAR).
+- [ ] **CARGAR**: Partida cargada.
+- [ ] **Posiciones y rotaciones**: Todos los edificios en su sitio y orientación correcta.
+- [ ] **Producción activa**: Sifones/Compresores siguen funcionando tras cargar.
 
 ---
 
@@ -280,16 +301,15 @@ _____________________________________________
 
 ## 🎯 PRÓXIMOS PASOS
 
-Si todos los tests pasan:
-1. ✅ Marcar v0.4-alpha como estable
-2. ✅ Crear tag en GitHub: `v0.4-alpha`
-3. ✅ Comenzar planificación de v0.5 (Electrones)
+Si todos los tests pasan (T1 funcional):
+1. Marcar ROADMAP Bloque 5.1 y 5.2 como verificados
+2. Considerar demo itch.io (Bloque 5.4)
+3. Planificar Bloque 6 (prep técnica T2)
 
 Si hay bugs:
-1. ❌ Documentar bugs en este archivo
-2. ❌ Crear issues en GitHub (opcional)
-3. ❌ Priorizar y arreglar bugs críticos
-4. ❌ Repetir tests
+1. Documentar en "Bugs Encontrados" más abajo
+2. Priorizar críticos (save/load, tech, colocación)
+3. Repetir tests tras correcciones
 
 ---
 

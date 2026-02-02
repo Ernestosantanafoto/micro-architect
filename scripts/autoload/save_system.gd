@@ -70,12 +70,16 @@ func guardar_partida():
 		if cam_node and cam_node.get("size") != null:
 			c_size = cam_node.size
 	
+	# Progreso del árbol tecnológico (F2)
+	var tech_data = TechTree.save_progress() if TechTree else {}
+
 	# Construir paquete de datos
 	var data = {
 		"semilla": GlobalInventory.semilla_mundo,
 		"stock": GlobalInventory.stock,
 		"mundo": lista_edificios,
 		"estados_vivos": GlobalInventory.estados_edificios,
+		"tech": tech_data,
 		"cam": {
 			"x": c_pos.x, 
 			"y": c_pos.y, 
@@ -145,6 +149,10 @@ func cargar_partida() -> bool:
 	# Restaurar estados de edificios
 	if data.has("estados_vivos"):
 		GlobalInventory.estados_edificios = data["estados_vivos"]
+	
+	# Restaurar árbol tecnológico (desbloqueos F2)
+	if data.has("tech") and TechTree:
+		TechTree.load_progress(data["tech"])
 	
 	# Guardar lista de edificios para reconstruir después del cambio de escena
 	if data.has("mundo"):

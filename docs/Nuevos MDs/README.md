@@ -1,11 +1,11 @@
 # 📚 Documentación - Micro Architect
 
 Índice de todos los documentos del proyecto.  
-**Última revisión:** 2025-02-02
+Última revisión: 2025-02-02
 
 ---
 
-## 🗺️ Planificación y estado
+## 🗺 Planificación y estado
 
 | Documento | Para qué |
 |-----------|----------|
@@ -14,9 +14,7 @@
 | **FUTURE_PLAN.md** | Visión completa: 4 tiers/eras (Cuántica → Subatómica → Atómica → Molecular), escalas 1→3→9→27, LOD semántico, análisis de referentes, roadmap largo plazo. |
 | **NOTAS_DESARROLLO.md** | Convenciones: commit + push cuando el usuario diga "hasta mañana". |
 
----
-
-## 🏗️ Arquitectura y sistemas
+## 🏗 Arquitectura y sistemas
 
 | Documento | Para qué |
 |-----------|----------|
@@ -24,8 +22,6 @@
 | **ENERGY_SYSTEM.md** | Sistema de energía: EnergyManager, EnergyFlow, tipos de recurso. |
 | **API_MANAGERS.md** | API de GridManager, EnergyManager, BuildingManager. |
 | **FILE_PROTOCOL.md** | Convenciones de nombres y carpetas (snake_case, scripts/, scenes/). |
-
----
 
 ## 🎨 UX y contenido
 
@@ -35,8 +31,6 @@
 | **REFACTORING_PLAN.md** | Migración a sistema numérico (✅ completado, referencia histórica). |
 | **UI_MOCKUPS.md** | Mockups e ideas de interfaz. |
 | **TUTORIAL_SCRIPT.md** | Guion del tutorial para nuevos jugadores. |
-
----
 
 ## 🧪 Calidad
 
@@ -52,9 +46,3 @@
 2. **PROJECT_STATE.md** → Estado actual y bugs.
 3. **FUTURE_PLAN.md** → Visión de 4 tiers y análisis de referentes.
 4. **ARCHITECTURE.md** + **ENERGY_SYSTEM.md** → Cómo funciona por dentro.
-
----
-
-## Nota sobre unificación
-
-La documentación en esta carpeta es la **versión unificada** (feb 2025) entre los MDs que había aquí y los de `docs/Nuevos MDs/`. El análisis detallado (duplicados, redefiniciones, decisiones) está en **ANALISIS_UNIFICACION_MDS.md**. La carpeta `Nuevos MDs` se conserva como referencia de la evolución del proyecto.

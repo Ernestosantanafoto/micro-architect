@@ -153,4 +153,4 @@ Cualquier edificio que pueda recibir energía debe implementar:
 func recibir_energia_numerica(cantidad: int, tipo_recurso: String, origen: Node) -> void
 ```
 
-**Implementado en:** Compressor, Merger, Prism, Constructor.
+**Implementado en:** Compressor, Merger, Prism, Constructor, Fabricador Hadrón.

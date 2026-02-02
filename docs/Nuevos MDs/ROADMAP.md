@@ -1,8 +1,8 @@
 # 🗺 ROADMAP - Micro Architect v0.5 → v0.6+
 
-**Objetivo:** Un solo documento para ir abordando poco a poco.  
-**Base:** v0.5-alpha (Tier 1 funcional, Fabricador Hadrón, save/load corregido)  
-**Última actualización:** 2025-02-02
+**Objetivo**: Un solo documento para ir abordando poco a poco.  
+**Base**: v0.5-alpha (Tier 1 funcional, Fabricador Hadrónico, save/load corregido)  
+**Última actualización**: 2025-02-02
 
 ---
 
@@ -31,7 +31,7 @@
 - 3.2 Limpiar deprecated (energy_pulse eliminado) ✅
 
 ### ~~BLOQUE 4: Nucleones~~ ✅
-- 4.2 Fabricador Hadrón ✅
+- 4.2 Fabricador Hadrónico ✅
 - 4.3 F1/F2 actualizados ✅
 
 ---
@@ -44,17 +44,17 @@ Objetivo: Tier 1 sin bugs, listo para publicar demo en itch.io.
 - [x] Edificios no se guardaban (save_system corregido)
 - [x] Zoom de cámara no se restauraba (world_generator corregido)
 - [x] Sifones no funcionaban tras cargar (game_tick + esta_construido)
-- [x] Tecnologías desbloqueadas persisten tras cargar (TechTree integrado en SaveSystem)
-- [ ] Verificar save/load con partidas complejas (20+ edificios) — TEST_CHECKLIST Parte 10.3
+- [ ] Verificar save/load con partidas complejas (20+ edificios)
+- [ ] Verificar que tecnologías desbloqueadas persisten tras cargar
 
 ### 5.2 Bugs de colocación
 - [x] Prismas se colocaban como God Siphons (placement_logic corregido)
 - [x] Void Generator era copia de construction_manager (reescrito)
-- [ ] Verificar colocación de todos los edificios en sus tiles correctos — TEST_CHECKLIST Parte 6.5
-- [ ] Test de rotación + colocación en bordes del mapa — TEST_CHECKLIST Parte 6.5
+- [ ] Verificar colocación de todos los edificios en sus tiles correctos
+- [ ] Test de rotación + colocación en bordes del mapa
 
 ### 5.3 Testing integral
-- [ ] Ejecutar TEST_CHECKLIST.md completo (v0.5: Partes 1–11, incl. 6.5 colocación y 10.3 save 20+)
+- [ ] Ejecutar TEST_CHECKLIST.md completo
 - [ ] Documentar bugs encontrados
 - [ ] Arreglar bugs críticos
 - [ ] Re-test hasta pasar todo
@@ -186,7 +186,7 @@ Objetivo: Implementar la Fase Subatómica jugable.
 | 1. Bugs menores | ✅ | HAZ_OFFSET, mergers, visuales |
 | 2. Pulido UX | ✅ | Pop/shake, menús, versión |
 | 3. Técnico | ✅ | RECETAS unificado, deprecated eliminado |
-| 4. Nucleones | ✅ | Fabricador Hadrón completo |
+| 4. Nucleones | ✅ | Fabricador Hadrónico completo |
 | 5. Estabilización v0.5 | 🔄 En curso | Save/load y prismas corregidos |
 | 6. Prep técnica T2 | ⏳ Pendiente | Accumulator, LOD, grid anidado |
 | 7. Tier 2 contenido | ⏳ Pendiente | Electrones, Condensador, Acelerador |
@@ -206,7 +206,8 @@ Objetivo: Implementar la Fase Subatómica jugable.
 | API_MANAGERS.md | API de managers |
 | NOTAS_DESARROLLO.md | Commit + push al decir "hasta mañana" |
 
-Cuando termines un bloque, actualiza la tabla "Estado actual" y el **Última actualización** arriba.
+Cuando termines un bloque, actualiza la tabla "Estado actual" y
+el `Última actualización` arriba.
 
 ---
 
