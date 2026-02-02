@@ -90,6 +90,9 @@ func disparar_comprimido():
 			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, tipo_comprimido)
 		if resultado:
 			EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
+		# Contabilizar producción en inventario global para desbloqueos (F2)
+		if GlobalInventory:
+			GlobalInventory.add_item(tipo_comprimido, 1)
 	
 	cargando = false
 	buffer = 0

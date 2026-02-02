@@ -82,10 +82,24 @@ func _populate_recipes():
 	for child in tech_container.get_children():
 		child.queue_free()
 	
+	# Una línea de ayuda: requisitos vs objetivos
+	var help = RichTextLabel.new()
+	help.bbcode_enabled = true
+	help.fit_content = true
+	help.scroll_active = false
+	help.add_theme_font_size_override("normal_font_size", 14)
+	help.add_theme_color_override("default_color", Color(0.7, 0.85, 1.0))
+	help.text = "[i]Requisitos = tecnologías previas (✓ si ya las tienes). Objetivo = producir recursos con fábricas (Compresor, Fusionador, Hadrón) para desbloquear la siguiente.[/i]"
+	tech_container.add_child(help)
+	
+	var sep0 = HSeparator.new()
+	sep0.custom_minimum_size = Vector2(0, 8)
+	tech_container.add_child(sep0)
+	
 	# Obtener tecnologías por nivel
 	var techs_by_tier = TechTree.get_all_techs_by_tier()
 	
-	for tier in ["Básico", "Manipulación", "Avanzado", "Producción"]:
+	for tier in ["Básico", "Manipulación", "Avanzado", "Producción", "Especial"]:
 		if not techs_by_tier.has(tier):
 			continue
 		
@@ -134,7 +148,7 @@ func _create_tech_entry(tech_info: Dictionary):
 	name_label.text = "[color=%s]%s %s %s[/color]" % [color, status_icon, icon, tech_info["name"]]
 	vbox.add_child(name_label)
 	
-	# Requisitos (RichTextLabel para colores Stability/Charge/quarks)
+	# Requisitos y objetivos (RichTextLabel para colores Stability/Charge/quarks)
 	if not tech_info["unlocked"]:
 		var req_rtl = RichTextLabel.new()
 		req_rtl.bbcode_enabled = true
@@ -144,19 +158,35 @@ func _create_tech_entry(tech_info: Dictionary):
 		req_rtl.add_theme_color_override("default_color", Color(0.8, 0.8, 0.8))
 		
 		var txt = ""
+		# Requisitos tecnológicos con ✓/✗
 		if tech_info["requires"].size() > 0:
-			txt = "Requiere: " + ", ".join(tech_info["requires"])
+			var parts: Array[String] = []
+			var requires_ok = tech_info.get("requires_ok", {})
+			for req in tech_info["requires"]:
+				var ok = requires_ok.get(req, false)
+				parts.append("%s %s" % ["✓" if ok else "✗", req])
+			txt = "Requisitos: " + ", ".join(parts)
 		else:
 			txt = "Disponible desde el inicio"
 		
+		# Objetivo: recurso (inventario) o cantidad de edificios colocados
 		if tech_info.has("unlock_condition"):
 			var cond = tech_info["unlock_condition"]
-			if cond["type"] == "resource":
+			if cond.get("type") == "resource":
 				var current = GlobalInventory.get_amount(cond["resource"])
 				var needed = cond["amount"]
 				var res_name = cond["resource"]
 				var res_colored = _color_nombre_recurso(res_name)
-				txt += "\nNecesita: %d %s (%d/%d)" % [needed, res_colored, current, needed]
+				txt += "\n[b]Objetivo:[/b] Producir %d %s. [b]Progreso: %d/%d[/b]" % [needed, res_colored, current, needed]
+				if tech_info.get("goal_hint", "").length() > 0:
+					txt += "\n[i]%s[/i]" % tech_info["goal_hint"]
+			elif cond.get("type") == "building_count":
+				var building_name = cond.get("building", "")
+				var needed = int(cond.get("amount", 0))
+				var current = TechTree.get_placed_building_count(building_name) if TechTree else 0
+				txt += "\n[b]Objetivo:[/b] Tener %d %s colocados. [b]Progreso: %d/%d[/b]" % [needed, building_name, current, needed]
+				if tech_info.get("goal_hint", "").length() > 0:
+					txt += "\n[i]%s[/i]" % tech_info["goal_hint"]
 		
 		req_rtl.text = txt
 		vbox.add_child(req_rtl)

@@ -127,6 +127,9 @@ func emitir_producto(nombre: String, color: Color):
 			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, nombre)
 		if resultado:
 			EnergyManager.register_flow(self, resultado["target"], CANTIDAD_QUARKS, nombre, color)
+	# Contabilizar producción en inventario global para desbloqueos (F2)
+	if GlobalInventory:
+		GlobalInventory.add_item(nombre, 1)
 	_actualizar_mi_estado_global()
 
 func actualizar_ui():

@@ -288,6 +288,14 @@ func _animar_exito():
 		t.tween_property(mesh, "scale", Vector3.ONE, 0.1)
 
 # --- API PLACEMENT ---
+func get_footprint_offsets() -> Array[Vector2i]:
+	var r = int(radio_ocupacion)
+	var out: Array[Vector2i] = []
+	for x in range(-r, r + 1):
+		for z in range(-r, r + 1):
+			out.append(Vector2i(x, z))
+	return out
+
 func check_ground():
 	esta_construido = true
 	if BuildingManager: BuildingManager.register_building(self)
@@ -314,9 +322,9 @@ func desconectar_sifon():
 	if not shape: shape = find_child("CollisionPolygon3D", true, false)
 	if shape: shape.disabled = true
 
-func es_suelo_valido(_id):
-	# Constructor puede ir en CUALQUIER suelo
-	return true 
+func es_suelo_valido(id_tile):
+	# Constructor solo en casilla vacía (no verde/azul/rojo ni ocupada)
+	return id_tile == GameConstants.TILE_VACIO 
 
 func recibir_luz_instantanea(_c, _r, _d): 
 	pass

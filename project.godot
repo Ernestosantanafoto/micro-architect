@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+GameConstants="*res://scripts/autoload/game_constants.gd"
 GlobalInventory="*res://scripts/autoload/global_inventory.gd"
 EnergyManager="*res://scripts/managers/energy_manager.gd"
 BuildingManager="*res://scripts/managers/building_manager.gd"

@@ -1,6 +1,7 @@
-class_name GameConstants
-
-const DEBUG_MODE = false 
+extends Node
+## Autoload singleton "GameConstants" (sin class_name para no ocultar el autoload).
+## Modo desarrollo: God Siphon en HUD, tecla 0, etc. Toggle en juego con botón DEBUG (panel sistema).
+var DEBUG_MODE = false 
 
 # --- TILES ---
 const TILE_VACIO = -1
@@ -251,23 +252,23 @@ const HUD_LABELS = {
 }
 
 # --- STARTER PACK (Nueva partida) ---
-## Inventario inicial: desafiante pero jugable. Constructor necesario para craftear.
-## God Siphon solo en modo DEV.
+## 100 de cada edificio para pruebas. Recursos (Electron, Proton, Neutron) en 0.
+## Para partida normal: reducir a valores equilibrados (ej. Sifón 4, Prisma Recto 8, Constructor 1, etc.).
 const STARTER_PACK = {
-	"Sifón": 4,
-	"Sifón T2": 0,
-	"Prisma Recto": 8,
-	"Prisma Angular": 4,
-	"Prisma Recto T2": 0,
-	"Prisma Angular T2": 0,
-	"Compresor": 1,
-	"Compresor T2": 0,
-	"Fusionador": 0,
-	"Constructor": 1,
-	"GodSiphon": 0,
-	"Void Generator": 0,
+	"Sifón": 100,
+	"Sifón T2": 100,
+	"Prisma Recto": 100,
+	"Prisma Angular": 100,
+	"Prisma Recto T2": 100,
+	"Prisma Angular T2": 100,
+	"Compresor": 100,
+	"Compresor T2": 100,
+	"Fusionador": 100,
+	"Constructor": 100,
+	"GodSiphon": 100,
+	"Void Generator": 100,
 	"Electron": 0,
-	"Fabricador Hadrón": 0,
+	"Fabricador Hadrón": 100,
 	"Proton": 0,
 	"Neutron": 0
 }

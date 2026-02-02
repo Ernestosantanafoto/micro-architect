@@ -8,6 +8,9 @@ var god_siphon_escena = preload("res://scenes/buildings/god_siphon.tscn")
 var fantasma = null
 var posicion_valida_actual = false
 var nombre_item_en_mano: String = ""
+# Duplicar God Siphon con clic central: copiar stats del edificio origen al nuevo
+var _god_siphon_stats_duplicado: Dictionary = {}
+var _aplicar_stats_god_siphon_duplicado: bool = false
 
 func _process(_delta):
 	if fantasma:
@@ -15,8 +18,14 @@ func _process(_delta):
 
 # --- LÓGICA DE SELECCIÓN ---
 func seleccionar_para_construir(escena: PackedScene, nombre_item: String):
+	# Guardar estado de duplicado antes de cancelar (cancelar puede borrarlo si devolvemos algo)
+	var restaurar_stats_duplicado = nombre_item == "GodSiphon" and _aplicar_stats_god_siphon_duplicado
+	var copia_stats = _god_siphon_stats_duplicado.duplicate() if restaurar_stats_duplicado else {}
 	# Si ya teníamos algo en la mano, lo devolvemos primero
 	cancelar_construccion_y_guardar()
+	if restaurar_stats_duplicado and copia_stats.size() > 0:
+		_aplicar_stats_god_siphon_duplicado = true
+		_god_siphon_stats_duplicado = copia_stats
 	
 	# Verificar stock (excepto en modo debug o GodSiphon)
 	var es_debug = (nombre_item == "GodSiphon") or GameConstants.DEBUG_MODE
@@ -37,6 +46,21 @@ func seleccionar_para_construir(escena: PackedScene, nombre_item: String):
 	if fantasma.has_method("desconectar_sifon"):
 		fantasma.desconectar_sifon()
 	
+	# God Siphon duplicado con clic central: aplicar stats del edificio origen (se mantienen para colocar varios iguales)
+	if nombre_item == "GodSiphon" and _aplicar_stats_god_siphon_duplicado and _god_siphon_stats_duplicado.size() > 0:
+		if fantasma.has_method("configurar_dios"):
+			fantasma.configurar_dios(
+				_god_siphon_stats_duplicado.get("recurso_actual", GameConstants.RECURSO_STABILITY),
+				_god_siphon_stats_duplicado.get("color_elegido", GameConstants.COLOR_STABILITY),
+				_god_siphon_stats_duplicado.get("escala_elegida", 1.0),
+				int(_god_siphon_stats_duplicado.get("valor_energia", 1)),
+				int(_god_siphon_stats_duplicado.get("ticks_por_disparo", 5))
+			)
+	
+	if nombre_item != "GodSiphon":
+		_god_siphon_stats_duplicado.clear()
+		_aplicar_stats_god_siphon_duplicado = false
+	
 	_preparar_fantasma_visual()
 
 # --- CONFIRMACIÓN Y COLOCACIÓN ---
@@ -45,9 +69,13 @@ func confirmar_colocacion():
 	
 	_limpiar_materiales_fantasma(fantasma)
 	
-	# Activar el edificio
-	if fantasma.has_method("check_ground"):
-		fantasma.check_ground()
+	# Void Generator: colocar en estado latente (clic derecho = activar, clic izquierdo = recoger)
+	var es_void = fantasma.scene_file_path and "void_generator" in fantasma.scene_file_path.to_lower()
+	if es_void and fantasma.has_method("colocar_latente"):
+		fantasma.colocar_latente()
+	else:
+		if fantasma.has_method("check_ground"):
+			fantasma.check_ground()
 	
 	# Registrar en GridManager (todas las celdas del footprint si es multi-celda)
 	var map = get_parent().get_node_or_null("GridMap")
@@ -73,6 +101,8 @@ func confirmar_colocacion():
 		var t = edificio.create_tween()
 		t.tween_property(edificio, "scale", Vector3(1.08, 1.08, 1.08), 0.06)
 		t.tween_property(edificio, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK)
+	if TechTree:
+		TechTree._check_unlock_conditions()
 	print("[CM] Edificio colocado con éxito.")
 
 # --- INTERACCIÓN CON EL MUNDO (CLIC IZQUIERDO) ---
@@ -95,6 +125,8 @@ func gestionar_clic_izquierdo():
 	
 	fantasma = edificio
 	_preparar_fantasma_visual()
+	if TechTree:
+		TechTree._check_unlock_conditions()
 
 # --- GESTIÓN DE INVENTARIO Y FANTASMA ---
 func devolver_a_inventario():
@@ -108,6 +140,8 @@ func devolver_a_inventario():
 		fantasma.queue_free()
 		fantasma = null
 		nombre_item_en_mano = ""
+		_god_siphon_stats_duplicado.clear()
+		_aplicar_stats_god_siphon_duplicado = false
 		posicion_valida_actual = false
 
 func destruir_item_en_mano():
@@ -117,6 +151,8 @@ func destruir_item_en_mano():
 		fantasma = null
 		nombre_item_en_mano = ""
 		posicion_valida_actual = false
+		_god_siphon_stats_duplicado.clear()
+		_aplicar_stats_god_siphon_duplicado = false
 
 func cancelar_construccion_y_guardar():
 	# Si es un fantasma nuevo (sacado del inventario), lo devolvemos
@@ -139,7 +175,9 @@ func actualizar_fantasma():
 		
 		var pos_2d = Vector2i(map_pos.x, map_pos.z)
 		var celdas_a_validar: Array[Vector2i] = [pos_2d]
-		if fantasma.has_method("get_footprint_offsets"):
+		# Void Generator: validar solo la celda central al colocar (el perímetro es visual)
+		var es_void = fantasma.scene_file_path and "void_generator" in fantasma.scene_file_path.to_lower()
+		if not es_void and fantasma.has_method("get_footprint_offsets"):
 			celdas_a_validar.clear()
 			for off in fantasma.get_footprint_offsets():
 				celdas_a_validar.append(pos_2d + off)
@@ -226,6 +264,14 @@ func _unhandled_input(event):
 				else:
 					_feedback_colocacion_invalida()
 			else:
+				# Comprobar si clicamos un Void latente (recoger): mismo raycast que recoger edificio
+				var res = _lanzar_raycast_a_edificios()
+				if res:
+					var edificio = res.collider
+					if edificio.scene_file_path and "void_generator" in edificio.scene_file_path.to_lower():
+						if edificio.get("esta_activado") == false:
+							# Recoger Void latente (igual que cualquier edificio)
+							pass  # gestionar_clic_izquierdo lo hace con el raycast interno
 				gestionar_clic_izquierdo()
 		
 		elif event.button_index == MOUSE_BUTTON_MIDDLE:
@@ -237,7 +283,31 @@ func _unhandled_input(event):
 				if nombre == "":
 					pass
 				elif nombre == "GodSiphon" and GameConstants.DEBUG_MODE:
+					# Guardar stats del God Siphon clicado para copiarlos al duplicado
+					if edificio.get("recurso_actual") != null:
+						_god_siphon_stats_duplicado = {
+							"recurso_actual": edificio.recurso_actual,
+							"color_elegido": edificio.color_elegido,
+							"escala_elegida": edificio.escala_elegida,
+							"valor_energia": edificio.valor_energia,
+							"ticks_por_disparo": edificio.ticks_por_disparo
+						}
+						_aplicar_stats_god_siphon_duplicado = true
 					seleccionar_para_construir(god_siphon_escena, "GodSiphon")
+					if fantasma:
+						fantasma.rotation.y = edificio.rotation.y
+				elif nombre == "GodSiphon" and GlobalInventory.get_amount(nombre) > 0:
+					# Duplicar God Siphon: copiar stats del edificio clicado
+					if edificio.get("recurso_actual") != null:
+						_god_siphon_stats_duplicado = {
+							"recurso_actual": edificio.recurso_actual,
+							"color_elegido": edificio.color_elegido,
+							"escala_elegida": edificio.escala_elegida,
+							"valor_energia": edificio.valor_energia,
+							"ticks_por_disparo": edificio.ticks_por_disparo
+						}
+						_aplicar_stats_god_siphon_duplicado = true
+					seleccionar_para_construir(god_siphon_escena, nombre)
 					if fantasma:
 						fantasma.rotation.y = edificio.rotation.y
 				elif GlobalInventory.get_amount(nombre) > 0:
@@ -267,7 +337,10 @@ func _unhandled_input(event):
 		
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if fantasma:
-				fantasma.rotate_y(deg_to_rad(-90))
+				# Void Generator es simétrico: no rota
+				var es_void = fantasma.scene_file_path and "void_generator" in fantasma.scene_file_path.to_lower()
+				if not es_void:
+					fantasma.rotate_y(deg_to_rad(-90))
 			else:
 				if _procesar_clic_derecho_con_ui_abierta():
 					return
@@ -297,6 +370,12 @@ func _intentar_rotar_edificio_suelo():
 	if res:
 		var edificio = res.collider
 		if edificio.is_in_group("AbreUIClicDerecho"):
+			return
+		# Void Generator latente: clic derecho = activar (no rota)
+		if edificio.scene_file_path and "void_generator" in edificio.scene_file_path.to_lower():
+			if edificio.get("esta_activado") == false and edificio.has_method("activar_void"):
+				edificio.activar_void()
+				get_viewport().set_input_as_handled()
 			return
 		edificio.rotate_y(deg_to_rad(-90))
 		if edificio.has_method("_actualizar_mi_estado_global"):

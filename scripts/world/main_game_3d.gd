@@ -4,24 +4,30 @@ signal game_tick(tick_count)
 
 var current_tick = 0
 var tiempo_acumulado = 0.0
-var TIEMPO_ENTRE_TICS = GameConstants.GAME_TICK_DURATION 
+var TIEMPO_ENTRE_TICS = GameConstants.GAME_TICK_DURATION
+
+# Pop-up de desbloqueo de tecnología (F2)
+var _tech_notification_layer: CanvasLayer = null
+var _tech_notification_panel: PanelContainer = null
+var _tech_notification_label: Label = null
+var _tech_notification_timer: Timer = null
+
+const TECH_NOTIFICATION_DURATION := 4.5
 
 func _ready():
 	# Buscar y conectar botones automáticamente
 	_conectar_botones()
+	_crear_popup_desbloqueo()
+	if TechTree and TechTree.has_signal("tech_unlocked"):
+		TechTree.tech_unlocked.connect(_on_tech_unlocked)
 
 func _conectar_botones():
-	# Buscamos el botón de guardado de partida REAL (el de arriba)
-	# Solo conectamos si el padre NO es la barra inferior (BottomBar)
-	var btn_save = find_child("BtnGuardar", true, false)
-	if btn_save:
-		# Si el botón está en el HUD inferior, lo ignoramos aquí
-		if "BottomBar" in btn_save.get_path().get_concatenated_names():
-			print("[MAIN] Ignorando botón de HUD inferior en conexión global.")
-		else:
-			if not btn_save.pressed.is_connected(_on_btn_guardar_pressed):
-				btn_save.pressed.connect(_on_btn_guardar_pressed)
-				print("[MAIN] Botón GUARDAR PARTIDA (Top) conectado.")
+	# Conectar todos los botones GUARDAR (PanelSistema y BottomBar) para que guardar siempre funcione
+	var btns_save = _find_all_children_by_name(self, "BtnGuardar")
+	for btn_save in btns_save:
+		if btn_save is BaseButton and not btn_save.pressed.is_connected(_on_btn_guardar_pressed):
+			btn_save.pressed.connect(_on_btn_guardar_pressed)
+			print("[MAIN] Botón GUARDAR conectado: ", btn_save.get_path())
 	
 	# Buscar botón de menú (puede llamarse BtnMenu, ButtonMenu, etc.)
 	var nombres_menu = ["BtnMenu", "ButtonMenu", "Menu", "MenuButton", "BtnSalir"]
@@ -79,6 +85,78 @@ func _buscar_boton(nombre: String) -> Button:
 	if btn and btn is Button:
 		return btn
 	return null
+
+func _find_all_children_by_name(nodo: Node, nombre: String) -> Array:
+	var out: Array = []
+	if nodo.name == nombre:
+		out.append(nodo)
+	for c in nodo.get_children():
+		out.append_array(_find_all_children_by_name(c, nombre))
+	return out
+
+func _crear_popup_desbloqueo():
+	_tech_notification_layer = CanvasLayer.new()
+	_tech_notification_layer.name = "TechNotificationLayer"
+	add_child(_tech_notification_layer)
+	
+	_tech_notification_panel = PanelContainer.new()
+	_tech_notification_panel.name = "TechNotificationPanel"
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.12, 0.2, 0.92)
+	style.corner_radius_top_left = 10
+	style.corner_radius_top_right = 10
+	style.corner_radius_bottom_left = 10
+	style.corner_radius_bottom_right = 10
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.4, 0.7, 1.0, 0.8)
+	style.content_margin_left = 24.0
+	style.content_margin_top = 16.0
+	style.content_margin_right = 24.0
+	style.content_margin_bottom = 16.0
+	_tech_notification_panel.add_theme_stylebox_override("panel", style)
+	_tech_notification_panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_tech_notification_panel.offset_left = 80.0
+	_tech_notification_panel.offset_right = -80.0
+	_tech_notification_panel.offset_top = 80.0
+	_tech_notification_panel.offset_bottom = 120.0
+	_tech_notification_panel.visible = false
+	_tech_notification_layer.add_child(_tech_notification_panel)
+	
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 20)
+	margin.add_theme_constant_override("margin_right", 20)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	_tech_notification_panel.add_child(margin)
+	
+	_tech_notification_label = Label.new()
+	_tech_notification_label.name = "TechNotificationLabel"
+	_tech_notification_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_tech_notification_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_tech_notification_label.add_theme_font_size_override("font_size", 20)
+	_tech_notification_label.add_theme_color_override("font_color", Color.WHITE)
+	_tech_notification_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tech_notification_label.text = ""
+	margin.add_child(_tech_notification_label)
+	
+	_tech_notification_timer = Timer.new()
+	_tech_notification_timer.one_shot = true
+	_tech_notification_timer.timeout.connect(_hide_tech_notification)
+	add_child(_tech_notification_timer)
+
+func _on_tech_unlocked(tech_name: String) -> void:
+	_tech_notification_label.text = "Has desbloqueado %s. Pulsa F2 para más información." % tech_name
+	_tech_notification_panel.visible = true
+	if _tech_notification_timer.time_left > 0:
+		_tech_notification_timer.stop()
+	_tech_notification_timer.start(TECH_NOTIFICATION_DURATION)
+
+func _hide_tech_notification() -> void:
+	if _tech_notification_panel:
+		_tech_notification_panel.visible = false
 
 func _process(delta):
 	tiempo_acumulado += delta
@@ -168,21 +246,25 @@ func _seleccionar_god_siphon():
 	if cm and cm.has_method("seleccionar_para_construir"):
 		cm.seleccionar_para_construir(cm.god_siphon_escena, "GodSiphon")
 
+# Orden fijo de hotkeys 1-7 (8 y 9 reservados para futuro / keybinding)
+const HOTKEY_EDIFICIOS: Array[String] = [
+	"Sifón", "Prisma Recto", "Prisma Angular", "Compresor", "Fusionador", "Constructor", "Void Generator"
+]
+
 func _seleccionar_edificio_por_indice(indice: int):
-	# Obtener lista de edificios disponibles desde GameConstants.RECETAS (orden fijo)
-	var edificios_disponibles = []
-	for nombre_item in GameConstants.RECETAS:
-		var receta = GameConstants.RECETAS[nombre_item]
-		if receta.has("output_scene") and GlobalInventory.get_amount(nombre_item) > 0:
-			edificios_disponibles.append({"nombre": nombre_item, "output_scene": receta["output_scene"]})
-	if indice >= edificios_disponibles.size():
+	if indice < 0 or indice >= HOTKEY_EDIFICIOS.size():
+		return  # 8 y 9 no hacen nada por ahora
+	var nombre_item = HOTKEY_EDIFICIOS[indice]
+	if not GameConstants.RECETAS.has(nombre_item):
 		return
-	var edificio = edificios_disponibles[indice]
+	var receta = GameConstants.RECETAS[nombre_item]
+	if not receta.has("output_scene") or GlobalInventory.get_amount(nombre_item) <= 0:
+		return
 	var cm = find_child("ConstructionManager", true, false)
 	if cm and cm.has_method("seleccionar_para_construir"):
-		var escena = load(edificio["output_scene"])
+		var escena = load(receta["output_scene"])
 		if escena:
-			cm.seleccionar_para_construir(escena, edificio["nombre"])
+			cm.seleccionar_para_construir(escena, nombre_item)
 
 func _on_btn_guardar_pressed() -> void:
 	print("[MAIN] Guardando partida...")
@@ -194,11 +276,7 @@ func _on_btn_guardar_pressed() -> void:
 
 func _on_btn_menu_pressed() -> void:
 	print("[MAIN] Volviendo al menú...")
-	
-	# Guardar antes de salir
-	if SaveSystem:
-		SaveSystem.guardar_partida()
-		print("[MAIN] Partida guardada antes de salir.")
+	# Solo se guarda cuando el jugador pulsa GUARDAR; al salir al menú no se guarda automáticamente.
 	
 	# Cambiar a la escena del menú principal
 	var ruta_menu = "res://scenes/ui/main_menu.tscn"

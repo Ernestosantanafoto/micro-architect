@@ -2,7 +2,7 @@
 
 **Objetivo:** Un solo documento para ir abordando poco a poco.  
 **Base:** v0.5-alpha (Tier 1 funcional, Fabricador Hadrón, save/load corregido)  
-**Última actualización:** 2025-02-02
+**Última actualización:** 2025-01-31 15:02
 
 ---
 

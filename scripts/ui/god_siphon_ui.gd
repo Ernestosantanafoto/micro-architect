@@ -1,6 +1,23 @@
-extends CanvasLayer
+extends Control
 
 var sifon_activo: Node3D = null
+
+# #region agent log
+const _DEBUG_LOG = "res://.cursor/debug.log"
+func _agent_log(hypothesis_id: String, location: String, message: String, data: Dictionary) -> void:
+	var payload = {"hypothesisId": hypothesis_id, "location": location, "message": message, "data": data, "timestamp": Time.get_ticks_msec(), "sessionId": "god_siphon_ui"}
+	var j = JSON.stringify(payload)
+	var d = DirAccess.open("res://")
+	if d and not d.dir_exists(".cursor"):
+		d.make_dir_recursive(".cursor")
+	var f = FileAccess.open(_DEBUG_LOG, FileAccess.READ_WRITE)
+	if f:
+		f.seek_end()
+		f.store_line(j)
+		f.close()
+	else:
+		print("[agent log] ", hypothesis_id, " ", location, " ", data)
+# #endregion
 
 # --- REFERENCIAS CON ACCESO ÚNICO (%) ---
 @onready var ventana = %VentanaFlotante
@@ -19,6 +36,7 @@ var sifon_activo: Node3D = null
 # Valores por defecto
 var default_energia = 10.0
 var default_freq = 5
+var _agent_logged_process = false
 
 func _ready():
 	visible = false
@@ -61,7 +79,7 @@ func _ready():
 	set_process_input(true)
 
 func _input(event):
-	# Cerrar con LMB o RMB fuera de la ventana (misma lógica que Constructor, sin FondoDetector = sin recuadro gris)
+	# Cerrar con LMB o RMB fuera de la ventana
 	if not visible or not ventana: return
 	if event is InputEventMouseButton and event.pressed:
 		var viewport_h = get_viewport().get_visible_rect().size.y
@@ -76,14 +94,36 @@ func _process(_delta):
 		if visible: cerrar()
 		return
 
+	# #region agent log
+	if not _agent_logged_process and ventana:
+		_agent_logged_process = true
+		var vbox = ventana.get_node_or_null("MarginContainer/VBoxContainer")
+		var lbl_rect = vbox.get_child(0).get_global_rect() if vbox and vbox.get_child_count() > 0 else Rect2()
+		_agent_log("H3", "god_siphon_ui.gd:_process", "first frame visible layout", {
+			"ventana_global": {"x": ventana.global_position.x, "y": ventana.global_position.y},
+			"ventana_size": {"x": ventana.size.x, "y": ventana.size.y},
+			"first_child_global_rect": {"x": lbl_rect.position.x, "y": lbl_rect.position.y, "w": lbl_rect.size.x, "h": lbl_rect.size.y}
+		})
+	# #endregion
+
 	# --- ESTABILIZACIÓN: no mover la ventana al sacar el cursor (evitar que se amplíe/desaparezca) ---
 	if (opt_color and opt_color.get_popup().visible) or (opt_tipo and opt_tipo.get_popup().visible):
 		return
 	
 	var cam = get_viewport().get_camera_3d()
+	if not cam:
+		return
+	# Forzar posición y tamaño 280x260 cada frame (el layout del padre full-rect estira el panel)
+	var world_pos = sifon_activo.global_position + Vector3(0, 1.5, 0)
+	var pos_2d = cam.unproject_position(world_pos) - Vector2(140, 130)
+	if ventana:
+		# Side: 0=LEFT, 1=TOP, 2=RIGHT, 3=BOTTOM
+		ventana.set_offset(0, int(pos_2d.x))
+		ventana.set_offset(1, int(pos_2d.y))
+		ventana.set_offset(2, int(pos_2d.x) + 280)
+		ventana.set_offset(3, int(pos_2d.y) + 260)
 	# Solo atenuar si el edificio queda detrás de cámara; la ventana permanece fija en pantalla
-	if ventana and cam:
-		var world_pos = sifon_activo.global_position + Vector3(0, 1.5, 0)
+	if ventana:
 		if cam.is_position_behind(world_pos):
 			ventana.modulate.a = 0
 		else:
@@ -100,14 +140,24 @@ func abrir(sifon):
 			n.cerrar()
 	
 	sifon_activo = sifon
-	visible = true
 	
-	# Posicionar como el Constructor: posición inicial y luego call_deferred para ajustar con tamaño real (ventana se adapta al contenido)
+	# Posicionar la ventana (PanelContainer hijo directo del root) ANTES de visible = true
 	var cam = get_viewport().get_camera_3d()
 	if cam and ventana:
 		var world_pos = sifon.global_position + Vector3(0, 1.5, 0)
-		ventana.position = cam.unproject_position(world_pos) - (ventana.size / 2)
+		var pos_2d = cam.unproject_position(world_pos)
+		ventana.position = pos_2d - Vector2(140, 130)
+		# #region agent log
+		_agent_log("H1", "god_siphon_ui.gd:abrir", "after set position", {
+			"ventana_pos": {"x": ventana.position.x, "y": ventana.position.y},
+			"ventana_size": {"x": ventana.size.x, "y": ventana.size.y}
+		})
+		# #endregion
 		call_deferred("_reposicionar_ventana_sifon")
+		if ventana is Container:
+			ventana.queue_sort()
+	
+	visible = true
 	
 	# Sincronizar UI con los valores actuales del sifón
 	if slider_energia: slider_energia.set_value_no_signal(sifon.valor_energia)
@@ -131,7 +181,19 @@ func _reposicionar_ventana_sifon():
 	var cam = get_viewport().get_camera_3d()
 	if cam:
 		var world_pos = sifon_activo.global_position + Vector3(0, 1.5, 0)
-		ventana.position = cam.unproject_position(world_pos) - (ventana.size / 2)
+		var pos_2d = cam.unproject_position(world_pos)
+		ventana.position = pos_2d - Vector2(140, 130)
+		ventana.custom_minimum_size = Vector2(280, 260)
+		if ventana is Container:
+			ventana.queue_sort()
+		# #region agent log
+		var gr = ventana.get_global_rect()
+		_agent_log("H2", "god_siphon_ui.gd:_reposicionar", "deferred reposition", {
+			"ventana_pos": {"x": ventana.position.x, "y": ventana.position.y},
+			"ventana_size": {"x": ventana.size.x, "y": ventana.size.y},
+			"ventana_global_rect": {"x": gr.position.x, "y": gr.position.y, "w": gr.size.x, "h": gr.size.y}
+		})
+		# #endregion
 
 func cerrar():
 	if opt_color and opt_color.get_popup().visible: return
@@ -139,6 +201,7 @@ func cerrar():
 	
 	sifon_activo = null
 	visible = false
+	_agent_logged_process = false
 
 # --- LÓGICA DE ACTUALIZACIÓN DE DATOS ---
 

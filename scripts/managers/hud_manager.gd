@@ -145,6 +145,18 @@ func _cerrar_menu():
 	vertical_stack.visible = false
 	vertical_stack.set_meta("cat_activa", "")
 
+## Llamado al cambiar DEBUG_MODE desde el botón del panel sistema; refresca el menú abierto si hay uno.
+func refresh_debug_menu():
+	if not vertical_stack.visible:
+		return
+	var cat = vertical_stack.get_meta("cat_activa", "")
+	if cat.is_empty():
+		return
+	for child in category_box.get_children():
+		if child is Button and child.text.to_upper().strip_edges() == cat:
+			_construir_items_verticales(cat, child)
+			return
+
 func _cerrar_menus_edificios():
 	for n in get_tree().get_nodes_in_group("UIsEdificios"):
 		if n.has_method("cerrar") and n.visible:

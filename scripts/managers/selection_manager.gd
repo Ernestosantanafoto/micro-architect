@@ -233,6 +233,8 @@ func _action_refund(cells: Array[Vector2i]) -> bool:
 			var celda = map.local_to_map(building.global_position)
 			GlobalInventory.borrar_estado(celda)
 		building.queue_free()
+	if TechTree:
+		TechTree.call_deferred("_check_unlock_conditions")
 	return true
 
 func _action_delete(cells: Array[Vector2i]) -> bool:
@@ -247,4 +249,6 @@ func _action_delete(cells: Array[Vector2i]) -> bool:
 			var celda = map.local_to_map(building.global_position)
 			GlobalInventory.borrar_estado(celda)
 		building.queue_free()
+	if TechTree:
+		TechTree.call_deferred("_check_unlock_conditions")
 	return true

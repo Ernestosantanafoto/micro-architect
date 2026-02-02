@@ -4,7 +4,8 @@ static func es_posicion_valida(grupo_o_nombre: String, id_suelo: int) -> bool:
 	var tipo = grupo_o_nombre.to_lower()
 	
 	if "godsiphon" in tipo: return true
-	if "constructor" in tipo: return true 
+	if "constructor" in tipo:
+		return id_suelo == GameConstants.TILE_VACIO
 	
 	if "sif" in tipo: 
 		return id_suelo == GameConstants.TILE_ESTABILIDAD or id_suelo == GameConstants.TILE_CARGA

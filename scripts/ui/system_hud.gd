@@ -4,6 +4,10 @@ const SAVE_PATH = "user://mundo_persistente.save"
 
 func _ready():
 	_estilizar_botones_paneles()
+	var btn_debug = get_node_or_null("PanelSistema/HBoxContainer/BtnDebug")
+	if btn_debug and btn_debug is BaseButton:
+		btn_debug.pressed.connect(_on_btn_debug_pressed)
+		_actualizar_texto_debug(btn_debug)
 
 func _estilizar_botones_paneles():
 	var estilo_normal = _crear_estilo_boton(Color(0.12, 0.15, 0.2, 0.95))
@@ -12,6 +16,7 @@ func _estilizar_botones_paneles():
 	for btn in [get_node_or_null("PanelSistema/HBoxContainer/BtnGuardar"),
 		get_node_or_null("PanelSistema/HBoxContainer/BtnModoSeleccion"),
 		get_node_or_null("PanelSistema/HBoxContainer/BtnMenu"),
+		get_node_or_null("PanelSistema/HBoxContainer/BtnDebug"),
 		get_node_or_null("PanelEliminar/HBoxContainer/BtnEliminar")]:
 		if btn and btn is BaseButton:
 			btn.custom_minimum_size = Vector2(90, 56)
@@ -39,6 +44,20 @@ func _crear_estilo_boton(bg: Color) -> StyleBoxFlat:
 	s.content_margin_right = 12.0
 	s.content_margin_bottom = 8.0
 	return s
+
+func _actualizar_texto_debug(btn: Button) -> void:
+	if btn:
+		btn.text = "DEBUG ON" if GameConstants.DEBUG_MODE else "DEBUG OFF"
+
+func _on_btn_debug_pressed() -> void:
+	GameConstants.DEBUG_MODE = not GameConstants.DEBUG_MODE
+	var btn_debug = get_node_or_null("PanelSistema/HBoxContainer/BtnDebug")
+	_actualizar_texto_debug(btn_debug as Button)
+	if GameConstants.DEBUG_MODE:
+		GlobalInventory.add_item("GodSiphon", 3)
+	var inventory_hud = get_parent().get_node_or_null("InventoryHUD/MainContainer")
+	if inventory_hud and inventory_hud.has_method("refresh_debug_menu"):
+		inventory_hud.refresh_debug_menu()
 
 func guardar_partida():
 	print("[DEBUG-SAVE] Iniciando volcado total...")

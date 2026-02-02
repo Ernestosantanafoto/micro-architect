@@ -91,6 +91,8 @@ func _on_nueva_pressed():
 	GlobalInventory.limpiar_inventario()
 	GlobalInventory.semilla_mundo = 0
 	GlobalInventory.cargar_starter_pack()
+	if TechTree:
+		TechTree.reset_to_initial()
 	_intentar_cambio_escena()
 
 func _on_cargar_pressed():
