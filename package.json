@@ -1,0 +1,11 @@
+{
+  "name": "micro-architect",
+  "version": "0.5.0",
+  "private": true,
+  "scripts": {
+    "docs:pdf": "node scripts/md_to_pdf.js"
+  },
+  "devDependencies": {
+    "md-to-pdf": "^5.2.5"
+  }
+}

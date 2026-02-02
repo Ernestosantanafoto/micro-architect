@@ -38,3 +38,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Node (solo para scripts de docs: pdf)
+node_modules/
