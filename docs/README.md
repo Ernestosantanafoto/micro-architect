@@ -1,7 +1,7 @@
 # 📚 Documentación - Micro Architect
 
 Índice de todos los documentos del proyecto.  
-**Última revisión:** 2025-02-02
+**Última revisión:** 2025-01-31
 
 ---
 
@@ -12,6 +12,8 @@
 | **ROADMAP.md** | Lista de tareas por bloques (bugs → UX → técnico → T2). Fuente principal de "qué hacer ahora". |
 | **PROJECT_STATE.md** | Estado actual: versión, bugs, sistemas funcionando, próximo paso. |
 | **FUTURE_PLAN.md** | Visión completa: 4 tiers/eras (Cuántica → Subatómica → Atómica → Molecular), escalas 1→3→9→27, LOD semántico, análisis de referentes, roadmap largo plazo. |
+| **RECETAS.md** | Coste de fabricación (recursos + tiempo) y cómo desbloquear cada edificio. |
+| **COSAS_POR_HACER.md** | Checklist proactiva: tareas típicas de juegos de gestión/fábrica que aún no están en el ROADMAP. |
 | **NOTAS_DESARROLLO.md** | Convenciones: commit + push cuando el usuario diga "hasta mañana". |
 
 ---
@@ -38,11 +40,12 @@
 
 ---
 
-## 🧪 Calidad
+## 🧪 Calidad y registro
 
 | Documento | Para qué |
 |-----------|----------|
-| **TEST_CHECKLIST.md** | Checklist de pruebas manuales. |
+| **TEST_CHECKLIST.md** | Checklist de pruebas manuales (T1 funcional). |
+| **MD_ACTUALIZADO.md** | Registro por sesión de MDs actualizados; ver "Últimos actualizados". |
 
 ---
 
