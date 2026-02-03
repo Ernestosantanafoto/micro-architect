@@ -14,3 +14,8 @@ Así el trabajo queda guardado y sincronizado antes de seguir al día siguiente.
 - **Puntos no tocar** (save/load, UIs edificios, menú INFRAESTRUCTURA): mismo documento; no refactorizar salvo petición explícita.
 
 *(Regla commit/push guardada 2025-01-31; reglas universales añadidas 2025-01-31.)*
+
+## Edificios en mano (fantasma)
+
+- **Posición:** Solo se actualizan **X y Z** desde el mapa (grid). La **Y** no se sobrescribe: se mantiene la que tenga la escena del edificio (p. ej. en la raíz del Hadron o Constructor). Así puedes ajustar la altura en el .tscn y se respeta en juego.
+- **Escala:** El fantasma usa `scale = 1.0` (mismo tamaño que al estar colocado en suelo).

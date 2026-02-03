@@ -85,6 +85,8 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 - **Menú INFRAESTRUCTURA (ex RECURSOS):** Botón renombrado a INFRAESTRUCTURA; al abrir: oscurecer todo + ocultar red y tiles; tiles/red siguen ocultos al elegir ítem; conteo desde BuildingManager. Restaurar solo al cerrar.
 - **F1/F2 actualizados:** Fabricador Hadrón, Protón, Neutrón. TechTree actualizado.
 - **Análisis null-safety:** beam_emitter, god_siphon, save_system, world_generator, inventory_button, hud.
+- **Fabricador Hadrón 12×12:** Forma visual y CollisionShape 12×12; `get_footprint_offsets()` devuelve 144 celdas. Doc: [HADRON_6x6_CSG.md](HADRON_6x6_CSG.md) (contenido actualizado a 12×12).
+- **Edificios en mano (fantasma):** Sin escala (scale = 1.0, mismo tamaño que en suelo). Posición: solo X y Z desde el mapa; la **Y** se mantiene como en la escena del edificio (respeta la posición que dejes en el .tscn).
 
 ---
 

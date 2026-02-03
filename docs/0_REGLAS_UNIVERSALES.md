@@ -50,6 +50,10 @@ Estas reglas aplican a **todo** el proyecto. Cualquier cambio (UI, texto, balanc
 - Conteo de edificios colocados desde BuildingManager para el menú INFRAESTRUCTURA (y TechTree).
 - Restauración de visibilidad y materiales solo al cerrar el panel / menú.
 
+### Edificios en mano (fantasma)
+- Sin escala: el fantasma usa `scale = 1.0` (mismo tamaño que en suelo).
+- Posición: solo X y Z se actualizan desde el mapa; la **Y** se mantiene como en la escena del edificio (no sobrescribir; respetar la posición del .tscn).
+
 ### Otros
 - Constructor: `_recuperar_estado_guardado` con guarda `is_inside_tree()`; `check_ground` llamado de forma diferida desde save_system al activar edificios reconstruidos.
 - Main menu / main_game_3d: cambio de escena sin acumular escenas (quitar del árbol y queue_free antes de añadir la nueva).
