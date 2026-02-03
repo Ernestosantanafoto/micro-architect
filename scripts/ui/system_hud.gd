@@ -148,6 +148,15 @@ func _conectar_menu_dropdown():
 	if btn_debug and btn_debug is BaseButton:
 		(btn_debug as BaseButton).pressed.connect(_on_btn_debug_pressed)
 		_actualizar_texto_debug(btn_debug as Button)
+	var btn_actualizar_visual = vbox.get_node_or_null("BtnActualizarVisual")
+	if btn_actualizar_visual and btn_actualizar_visual is BaseButton:
+		(btn_actualizar_visual as BaseButton).pressed.connect(_on_btn_actualizar_visual_pressed)
+
+func _on_btn_actualizar_visual_pressed() -> void:
+	# Recarga pulse_visual_material.tres y reaplica a todas las bolas en escena (ver cambios sin reiniciar)
+	for node in get_tree().get_nodes_in_group("PulseVisual"):
+		if node is PulseVisual and node.has_method("refresh_material_from_resource"):
+			node.refresh_material_from_resource()
 
 func _conectar_recursos_dropdown():
 	var btn_recursos = get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos")
@@ -360,11 +369,13 @@ func _oscurecer_y_ocultar_grilla_y_tiles(ocultar: bool) -> void:
 	if camera_pivot:
 		var grid_plane = camera_pivot.get_node_or_null("MeshInstance3D")
 		if grid_plane and grid_plane is MeshInstance3D and ocultar:
-			_grid_plane_visible = grid_plane.visible
+			if grid_plane.visible:
+				_grid_plane_visible = true
 			grid_plane.visible = false
 	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
 	if gridmap and gridmap is Node3D and ocultar:
-		_gridmap_visible = gridmap.visible
+		if gridmap.visible:
+			_gridmap_visible = true
 		gridmap.visible = false
 
 func _restaurar_visibilidad_grilla_y_tiles() -> void:
@@ -373,10 +384,12 @@ func _restaurar_visibilidad_grilla_y_tiles() -> void:
 	if camera_pivot:
 		var grid_plane = camera_pivot.get_node_or_null("MeshInstance3D")
 		if grid_plane and grid_plane is MeshInstance3D:
-			grid_plane.visible = _grid_plane_visible
+			grid_plane.visible = true
 	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
 	if gridmap and gridmap is Node3D:
-		gridmap.visible = _gridmap_visible
+		gridmap.visible = true
+	_grid_plane_visible = true
+	_gridmap_visible = true
 
 func _oscurecer_particulas_y_haces(_root: Node, _scene_path_highlight: String):
 	# PulseVisual y Beams se actualizan cada frame en _reaplicar_dim_elementos_volatiles

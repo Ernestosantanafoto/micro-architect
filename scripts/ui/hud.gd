@@ -82,9 +82,12 @@ func _ready():
 	_update_resources()
 
 func _centrar_panel_recursos() -> void:
-	if not panel_recursos:
+	if not panel_recursos or not is_inside_tree():
 		return
-	var vp_size = get_viewport().get_visible_rect().size
+	var vp = get_viewport()
+	if not vp:
+		return
+	var vp_size = vp.get_visible_rect().size
 	var ancho_panel := 720.0
 	var alto_panel := 70.0
 	panel_recursos.set_anchors_preset(Control.PRESET_TOP_LEFT)

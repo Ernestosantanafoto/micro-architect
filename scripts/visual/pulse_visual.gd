@@ -1,7 +1,10 @@
 # Visual opcional para flujos de energía (NO afecta lógica)
 # Si source_origen está definido y rota, este visual se destruye para no flotar en el aire
+# Apariencia base: edita assets/pulse_visual_material.tres en el Inspector (color/emisión se aplican por tipo en runtime).
 class_name PulseVisual
 extends Node3D
+
+const MATERIAL_BASE_PATH := "res://assets/pulse_visual_material.tres"
 
 var from_pos: Vector3
 var to_pos: Vector3
@@ -40,12 +43,28 @@ func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = nu
 func _actualizar_material():
 	if not _mesh:
 		return
-	var mat = StandardMaterial3D.new()
+	var mat: StandardMaterial3D
+	var base_mat: StandardMaterial3D = load(MATERIAL_BASE_PATH) as StandardMaterial3D if ResourceLoader.exists(MATERIAL_BASE_PATH) else null
+	if base_mat:
+		mat = base_mat.duplicate()
+	else:
+		mat = StandardMaterial3D.new()
+		mat.emission_enabled = true
+		mat.emission_energy_multiplier = 3.0
 	mat.albedo_color = color
-	mat.emission_enabled = true
 	mat.emission = color
-	mat.emission_energy_multiplier = 3.0
 	_mesh.set_surface_override_material(0, mat)
+
+## Recarga el material desde el .tres (ignorando caché) y lo reaplica. Llamar desde botón "Actualizar visual" para ver cambios sin reiniciar.
+func refresh_material_from_resource() -> void:
+	if not _mesh:
+		return
+	var base_mat: StandardMaterial3D = ResourceLoader.load(MATERIAL_BASE_PATH, "StandardMaterial3D", ResourceLoader.CACHE_MODE_IGNORE) as StandardMaterial3D
+	if base_mat:
+		var mat := base_mat.duplicate()
+		mat.albedo_color = color
+		mat.emission = color
+		_mesh.set_surface_override_material(0, mat)
 
 func _process(delta: float) -> void:
 	# Si el edificio origen fue destruido, la bola desaparece

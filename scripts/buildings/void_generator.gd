@@ -86,7 +86,7 @@ func _process(delta):
 	# 1. POSICIÓN VISUAL: misma que la cuadrícula (centro de celda del GridMap en mundo)
 	var target_x = 0.0
 	var target_z = 0.0
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 
 	if not esta_construido:
 		grid_visual.visible = true
@@ -288,7 +288,7 @@ func _limpiar_visuales_internas():
 func _añadir_cuadrito_rojo(pos_local: Vector3i):
 	# Tamaño = 1 celda del GridMap (normalmente 1,1,1); cuadrito centrado en (ix, 0, iz), inset para no solapar
 	var cell_sz := Vector3(1.0, 1.0, 1.0)
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map_node and map_node is GridMap:
 		cell_sz = (map_node as GridMap).cell_size
 	const INSET := 0.02
@@ -311,7 +311,7 @@ func _limpiar_siguiente_tile():
 		_finalizar_trabajo()
 		return
 	
-	var map = get_tree().current_scene.find_child("GridMap")
+	var map = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map:
 		var tile_local = tiles_a_limpiar.pop_front()
 		
@@ -429,7 +429,7 @@ func colocar_latente():
 	input_ray_pickable = true
 	if not input_event.is_connected(_on_void_input_event):
 		input_event.connect(_on_void_input_event)
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map_node:
 		var map_pos = map_node.local_to_map(global_position)
 		var local_center = map_node.map_to_local(map_pos)
@@ -469,7 +469,7 @@ func _mostrar_visual_latente():
 	grid_visual.set_as_top_level(true)
 	perimeter_visual.set_as_top_level(true)
 	set_process(true)
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map_node:
 		var map_pos = map_node.local_to_map(global_position)
 		var local_center = map_node.map_to_local(map_pos)
@@ -502,7 +502,7 @@ func activar_void():
 	_quitar_pulso_cuerpo()
 	if BuildingManager:
 		BuildingManager.register_building(self)
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map_node:
 		var map_pos = map_node.local_to_map(global_position)
 		var local_center = map_node.map_to_local(map_pos)
@@ -524,7 +524,7 @@ func check_ground():
 		BuildingManager.register_building(self)
 	collision_layer = GameConstants.LAYER_EDIFICIOS
 	collision_mask = GameConstants.LAYER_EDIFICIOS
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if map_node:
 		var map_pos = map_node.local_to_map(global_position)
 		var local_center = map_node.map_to_local(map_pos)
@@ -540,7 +540,7 @@ func check_ground():
 	_aplicar_tiles_ya_limpiados_si_cargado()
 
 func _actualizar_mi_estado_global():
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if not map_node or not esta_construido:
 		return
 	var tiles_ser: Array = []
@@ -576,7 +576,7 @@ func _aplicar_tiles_ya_limpiados_si_cargado():
 		for z in range(-radio, radio + 1):
 			if Vector2(x, z).length() <= radio:
 				full_list.append(Vector3i(x, 0, z))
-	var map_node = get_tree().current_scene.find_child("GridMap", true, false) if get_tree() else null
+	var map_node = get_tree().get_first_node_in_group("MapaPrincipal") if get_tree() else null
 	if not map_node:
 		return
 	for t in full_list:

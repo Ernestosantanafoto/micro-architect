@@ -170,8 +170,10 @@ func actualizar_fantasma():
 	
 	if pos_mundo and map:
 		var map_pos = map.local_to_map(pos_mundo)
-		fantasma.global_position = map.map_to_local(map_pos)
-		fantasma.global_position.y = 0.5 # Altura visual de construcción
+		var map_local = map.map_to_local(map_pos)
+		fantasma.global_position.x = map_local.x
+		fantasma.global_position.z = map_local.z
+		# Y se mantiene como en la escena del edificio (posición que dejaste)
 		
 		var pos_2d = Vector2i(map_pos.x, map_pos.z)
 		var celdas_a_validar: Array[Vector2i] = [pos_2d]
@@ -229,7 +231,7 @@ func _feedback_colocacion_invalida():
 func _preparar_fantasma_visual():
 	if fantasma.has_method("desconectar_sifon"): 
 		fantasma.desconectar_sifon()
-	fantasma.scale = Vector3.ONE * 1.2 # Efecto de "levantado"
+	fantasma.scale = Vector3.ONE
 
 # --- HELPERS ---
 func _normalizar_ruta(p: String) -> String:

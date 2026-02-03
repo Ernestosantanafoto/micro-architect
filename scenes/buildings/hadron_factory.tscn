@@ -1,36 +1,64 @@
-[gd_scene load_steps=7 format=3 uid="uid://c8hadron1factory"]
+[gd_scene load_steps=6 format=3 uid="uid://cm4yje03puimc"]
 
 [ext_resource type="Script" uid="uid://cctlreb0urxv" path="res://scripts/buildings/hadron_factory.gd" id="1_script"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_hadron"]
-size = Vector3(1, 1, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_main"]
-size = Vector3(1, 1, 1)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_main"]
 albedo_color = Color(0.5, 0.45, 0.6, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hadron"]
+size = Vector3(12, 1, 12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bar"]
 resource_local_to_scene = true
 size = Vector3(1, 0.08, 0.04)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar"]
-albedo_color = Color(1, 1, 1, 1)
 
 [node name="HadronFactory" type="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_script")
 
+[node name="ShapeVisual" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+size = Vector3(12, 1, 12)
+material = SubResource("StandardMaterial3D_main")
+
+[node name="Hole" type="CSGBox3D" parent="ShapeVisual"]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+operation = 2
+size = Vector3(12, 1, 12)
+material = SubResource("StandardMaterial3D_main")
+
+[node name="ShapeVisual2" type="CSGBox3D" parent="."]
+transform = Transform3D(0.5071067, 0, -0.5071067, 0, 1, 0, 0.5071067, 0, 0.5071067, -0.5, 0, 0.5)
+size = Vector3(12, 1, 12)
+material = SubResource("StandardMaterial3D_main")
+
+[node name="Hole" type="CSGBox3D" parent="ShapeVisual2"]
+transform = Transform3D(0.7071058, 0, 0.7071058, 0, 1, 0, -0.7071058, 0, 0.7071058, 0, 0, 0)
+operation = 2
+size = Vector3(10, 1, 10)
+material = SubResource("StandardMaterial3D_main")
+
+[node name="ShapeVisual3" type="CSGBox3D" parent="."]
+transform = Transform3D(0.71715707, 0, 0, 0, 1, 0, 0, 0, 0.71715707, -0.5, 0, 0.5)
+size = Vector3(14.8, 1, 14.8)
+material = SubResource("StandardMaterial3D_main")
+
+[node name="Hole" type="CSGBox3D" parent="ShapeVisual3"]
+transform = Transform3D(-3.934025e-08, 0, 0.9, 0, 1, 0, -0.9, 0, -3.934025e-08, 0, 0, 0)
+operation = 2
+size = Vector3(14.4, 1, 14.4)
+material = SubResource("StandardMaterial3D_main")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
 shape = SubResource("BoxShape3D_hadron")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_main")
-surface_material_override/0 = SubResource("StandardMaterial3D_main")
-
 [node name="UI_Root" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
 
 [node name="TextoInfo" type="Label3D" parent="UI_Root"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.5)

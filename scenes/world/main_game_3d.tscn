@@ -207,6 +207,11 @@ text = "DEBUG OFF"
 layout_mode = 2
 text = "RECETAS"
 
+[node name="BtnActualizarVisual" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+tooltip_text = "Recarga el material de las bolas de energía (pulse_visual_material.tres) sin reiniciar"
+text = "ACTUALIZAR VISUAL"
+
 [node name="BtnMúsica" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
 layout_mode = 2
 text = "MÚSICA"

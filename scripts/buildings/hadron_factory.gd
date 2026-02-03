@@ -179,7 +179,12 @@ func es_suelo_valido(id: int) -> bool:
 	return id == GameConstants.TILE_VACIO
 
 func get_footprint_offsets() -> Array[Vector2i]:
-	return [Vector2i(0, 0)]
+	# Edificio 12×12: ocupa celdas desde (-6,-6) hasta (5,5) respecto al centro
+	var out: Array[Vector2i] = []
+	for x in range(-6, 6):
+		for z in range(-6, 6):
+			out.append(Vector2i(x, z))
+	return out
 
 func recibir_luz_instantanea(_c, _r, _d):
 	pass
