@@ -47,10 +47,10 @@
 
 | Si quieres… | Abre |
 |-------------|------|
-| **Qué hacer ahora** (tareas concretas) | [TASKLIST.md](TASKLIST.md) |
-| Plan detallado por bloques | [ROADMAP.md](ROADMAP.md) |
-| Bugs, versión, sistemas funcionando | [PROJECT_STATE.md](PROJECT_STATE.md) |
-| Pruebas manuales para T1 | [TEST_CHECKLIST.md](TEST_CHECKLIST.md) |
-| Ideas/backlog (opciones, guardado, UX) | [COSAS_POR_HACER.md](COSAS_POR_HACER.md) |
-| Visión 4 tiers y escalas | [FUTURE_PLAN.md](FUTURE_PLAN.md) |
-| Índice de toda la documentación | [README.md](README.md) |
+| **Qué hacer ahora** (tareas concretas) | [2_TASKLIST.md](2_TASKLIST.md) |
+| Plan detallado por bloques | [4_ROADMAP.md](4_ROADMAP.md) |
+| Bugs, versión, sistemas funcionando | [5_PROJECT_STATE.md](5_PROJECT_STATE.md) |
+| Pruebas manuales para T1 | [6_TEST_CHECKLIST.md](6_TEST_CHECKLIST.md) |
+| Ideas/backlog (opciones, guardado, UX) | [7_COSAS_POR_HACER.md](7_COSAS_POR_HACER.md) |
+| Visión 4 tiers y escalas | [8_FUTURE_PLAN.md](8_FUTURE_PLAN.md) |
+| Índice de toda la documentación | [3_README.md](3_README.md) |

@@ -16,7 +16,7 @@ Juego de gestión de recursos y fábrica que simula la construcción de materia 
 energía → quarks → protones/neutrones → átomos → moléculas → ADN
 ```
 
-**4 Eras de juego** con escala creciente (ver `FUTURE_PLAN.md`):
+**4 Eras de juego** con escala creciente (ver `8_FUTURE_PLAN.md`):
 - Tier 1 — Cuántica (1×1, ×1) ← **ACTUAL**
 - Tier 2 — Subatómica (3×3, ×4)
 - Tier 3 — Atómica (9×9, ×16)
@@ -149,6 +149,6 @@ Bloqueante para considerar **T1 funcional**: crítico + altos verificados. Menor
 2. **Demo en itch.io:** Publicar Tier 1 jugable para feedback real
 3. **Tier 2 foundation:** Escala 3×3, accumulator de tiempo, electrones
 
-Ver `docs/ROADMAP.md` para tareas detalladas.  
-Ver `docs/FUTURE_PLAN.md` para visión completa de 4 tiers.  
-Índice de docs: `docs/README.md`.
+Ver `docs/4_ROADMAP.md` para tareas detalladas.  
+Ver `docs/8_FUTURE_PLAN.md` para visión completa de 4 tiers.  
+Índice de docs: `docs/3_README.md`.

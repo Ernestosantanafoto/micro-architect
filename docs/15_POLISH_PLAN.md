@@ -32,7 +32,7 @@
 **Tiempo estimado:** 5-7 horas
 
 #### Task 1.1: Rediseñar God Siphon UI
-- [ ] Diseñar mockup (ver `docs/UI_MOCKUPS.md`)
+- [ ] Diseñar mockup (ver `docs/17_UI_MOCKUPS.md`)
 - [ ] Implementar panel fijo al clickear
 - [ ] Sliders para parámetros (energía/segundo, tipo output)
 - [ ] Botones "Cerrar" y "Aplicar"
@@ -46,7 +46,7 @@
 ---
 
 #### Task 1.2: Mejorar Constructor UI
-- [ ] Diseñar mockup (ver `docs/UI_MOCKUPS.md`)
+- [ ] Diseñar mockup (ver `docs/17_UI_MOCKUPS.md`)
 - [ ] Grid de iconos (más visual que lista)
 - [ ] Mostrar costos claramente
 - [ ] Highlight si recursos insuficientes
@@ -134,7 +134,7 @@
 ---
 
 #### Task 4.2: Tutorial Básico
-- [ ] Diseñar flujo (ver `docs/TUTORIAL_SCRIPT.md`)
+- [ ] Diseñar flujo (ver `docs/18_TUTORIAL_SCRIPT.md`)
 - [ ] Sistema de pasos con señales
 - [ ] Highlights visuales (shader glow)
 - [ ] Panel de instrucciones

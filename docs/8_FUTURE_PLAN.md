@@ -257,11 +257,11 @@ Factorio (UPS, blueprints), Satisfactory (3D performance), DSP (multi-escala), S
 
 | Doc | Contenido |
 |-----|-----------|
-| ROADMAP.md | Tareas inmediatas por bloques |
-| PROJECT_STATE.md | Estado actual, bugs, versión |
-| ARCHITECTURE.md | Principios técnicos |
-| ENERGY_SYSTEM.md | Sistema de energía numérica |
-| API_MANAGERS.md | API de managers |
+| 4_ROADMAP.md | Tareas inmediatas por bloques |
+| 5_PROJECT_STATE.md | Estado actual, bugs, versión |
+| 10_ARCHITECTURE.md | Principios técnicos |
+| 11_ENERGY_SYSTEM.md | Sistema de energía numérica |
+| 12_API_MANAGERS.md | API de managers |
 
 ---
 

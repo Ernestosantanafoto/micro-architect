@@ -66,7 +66,7 @@ class EnergyFlow:
             # Opcional: trigger visual
 ```
 
-Ver `ENERGY_SYSTEM.md` para detalle completo.
+Ver `11_ENERGY_SYSTEM.md` para detalle completo.
 
 ---
 
@@ -95,7 +95,7 @@ La velocidad es **GLOBAL**: afecta a todo el juego simultáneamente. No hay velo
 - Velocidad ×4: T1 rápido | T2 cómodo | T3 muy lento  
 - Velocidad ×16: T1 frenético | T2 rápido | T3 cómodo  
 
-La simulación usa un accumulator con velocidad global (ver `FUTURE_PLAN.md` y ROADMAP Bloque 6).
+La simulación usa un accumulator con velocidad global (ver `8_FUTURE_PLAN.md` y 4_ROADMAP Bloque 6).
 
 ### 6. Grids Anidados
 
@@ -170,9 +170,9 @@ El GridManager debe soportar consultas en cualquier escala (multi-escala) cuando
 
 ## 📚 Documentos Relacionados
 
-- `docs/README.md` — Índice de documentación
-- `PROJECT_STATE.md` — Estado general
-- `ENERGY_SYSTEM.md` — Sistema energía detallado
-- `API_MANAGERS.md` — API de managers
-- `FUTURE_PLAN.md` — Visión completa de 4 tiers
-- `ROADMAP.md` — Tareas actuales
+- `docs/3_README.md` — Índice de documentación
+- `5_PROJECT_STATE.md` — Estado general
+- `11_ENERGY_SYSTEM.md` — Sistema energía detallado
+- `12_API_MANAGERS.md` — API de managers
+- `8_FUTURE_PLAN.md` — Visión completa de 4 tiers
+- `4_ROADMAP.md` — Tareas actuales

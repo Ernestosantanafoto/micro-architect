@@ -85,4 +85,4 @@ Cuando se implemente el sistema multi-tier:
 - Los flujos de tiers superiores serán más lentos (partículas más pesadas)
 - El `speed_multiplier` del SimulationManager afectará a todos los flujos
 - Nuevos tipos de recurso: Electron, Hydrogen, Helium, etc.
-- Ver `FUTURE_PLAN.md` para detalle de cada tier
+- Ver `8_FUTURE_PLAN.md` para detalle de cada tier

@@ -269,9 +269,9 @@ func _on_flow_complete(flow: EnergyFlow):
 ---
 
 #### Día 13: Documentación Final
-- [x] Actualizar `PROJECT_STATE.md`
-- [x] Crear `ENERGY_SYSTEM.md` con sistema final
-- [x] Documentar API de managers (`docs/API_MANAGERS.md`)
+- [x] Actualizar `5_PROJECT_STATE.md`
+- [x] Crear `11_ENERGY_SYSTEM.md` con sistema final
+- [x] Documentar API de managers (`docs/12_API_MANAGERS.md`)
 - [x] Escribir lecciones aprendidas
 
 ---
@@ -322,7 +322,7 @@ git push
 
 ## 📝 Notas
 
-- **Protocolo de archivos:** ver `docs/FILE_PROTOCOL.md` (snake_case, scripts en scripts/; deprecated eliminado en ROADMAP 3.2)
+- **Protocolo de archivos:** ver `docs/13_FILE_PROTOCOL.md` (snake_case, scripts en scripts/; deprecated eliminado en ROADMAP 3.2)
 - Este plan es flexible, ajustar según necesidad
 - Priorizar funcionalidad sobre visuales
 - Documentar decisiones importantes
@@ -336,7 +336,7 @@ git push
 - Separar lógica (EnergyFlow) de visual (PulseVisual): los visuales se pueden desactivar sin romper nada
 - Autoloads centralizados: EnergyManager, GridManager, BuildingManager simplifican el código
 - Método único `recibir_energia_numerica()`: todos los receptores implementan la misma API
-- Documentar mientras se avanza: ENERGY_SYSTEM.md y API_MANAGERS.md ayudan a entender luego
+- Documentar mientras se avanza: 11_ENERGY_SYSTEM.md y 12_API_MANAGERS.md ayudan a entender luego
 
 **Qué haríamos distinto:**
 - Validar más temprano que HUD/UI no bloquea input (mouse_filter en inventario)
@@ -349,7 +349,7 @@ git push
 
 ## 🎯 Siguiente Feature (v0.5)
 
-Ver **`docs/FUTURE_PLAN.md`** para el plan detallado.
+Ver **`docs/8_FUTURE_PLAN.md`** para el plan detallado.
 
 | Opción | Esfuerzo | Descripción |
 |--------|----------|-------------|

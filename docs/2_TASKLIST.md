@@ -10,8 +10,8 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 
 - **Prioridad:** haz primero las marcadas como **P** (prioritarias para T1/demo).
 - **Origen:** las tareas vienen de ROADMAP (Bloque 5), COSAS_POR_HACER (P) y mejoras recientes (dim RECURSOS).
-- Para el plan completo por bloques → [ROADMAP.md](ROADMAP.md).  
-- Para estado del proyecto → [PROGRESO.md](PROGRESO.md).
+- Para el plan completo por bloques → [4_ROADMAP.md](4_ROADMAP.md).  
+- Para estado del proyecto → [1_PROGRESO.md](1_PROGRESO.md).
 
 ---
 
@@ -70,4 +70,4 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 2. Ejecutar TEST_CHECKLIST 6.5 y 10.3 y marcar ROADMAP 5.1–5.2; **o**
 3. Empezar 5.4 (export y itch.io).
 
-Cuando termines un bloque o varias tareas, actualiza [PROGRESO.md](PROGRESO.md) y la tabla “Estado actual” en [ROADMAP.md](ROADMAP.md).
+Cuando termines un bloque o varias tareas, actualiza [1_PROGRESO.md](1_PROGRESO.md) y la tabla “Estado actual” en [4_ROADMAP.md](4_ROADMAP.md).

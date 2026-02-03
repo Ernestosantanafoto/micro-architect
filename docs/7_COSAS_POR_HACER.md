@@ -106,9 +106,9 @@
 
 ## 🔗 Relación con otros docs
 
-- **ROADMAP.md**: tareas ya planificadas (Bloques 5–8).
-- **TEST_CHECKLIST.md**: pruebas para considerar T1 listo.
-- **PROJECT_STATE.md**: estado actual, bugs, criterios “done”.
-- **RECETAS.md**: costes y desbloqueos.
+- **4_ROADMAP.md**: tareas ya planificadas (Bloques 5–8).
+- **6_TEST_CHECKLIST.md**: pruebas para considerar T1 listo.
+- **5_PROJECT_STATE.md**: estado actual, bugs, criterios “done”.
+- **9_RECETAS.md**: costes y desbloqueos.
 
 Cuando una tarea de esta lista se lleve a cabo, márcala aquí y, si aplica, añádela al ROADMAP o a PROJECT_STATE como completada.

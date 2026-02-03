@@ -4,7 +4,7 @@
 **Versión:** 0.5-alpha  
 **Objetivo:** Verificar T1 funcional (pulido, save/load, colocación, bugs conocidos)
 
-**Fase de inicio:** Void Generator (footprint, alineación grilla, pulso edificio y malla roja, latente/activar) completado. Recetario de referencia en `docs/RECETAS.md`.
+**Fase de inicio:** Void Generator (footprint, alineación grilla, pulso edificio y malla roja, latente/activar) completado. Recetario de referencia en `docs/9_RECETAS.md`.
 
 ---
 
@@ -339,7 +339,7 @@ Si hay bugs:
 
 ## 📄 Documentos de referencia
 
-- **`docs/RECETAS.md`**: Coste de fabricación (recursos + tiempo) y cómo desbloquear cada edificio (tech + condiciones).
+- **`docs/9_RECETAS.md`**: Coste de fabricación (recursos + tiempo) y cómo desbloquear cada edificio (tech + condiciones).
 
 ---
 

@@ -54,7 +54,7 @@ Objetivo: Tier 1 sin bugs, listo para publicar demo en itch.io.
 - [ ] Test de rotación + colocación en bordes del mapa — TEST_CHECKLIST Parte 6.5
 
 ### 5.3 Testing integral
-- [ ] Ejecutar TEST_CHECKLIST.md completo (v0.5: Partes 1–11, incl. 6.5 colocación y 10.3 save 20+)
+- [ ] Ejecutar 6_TEST_CHECKLIST.md completo (v0.5: Partes 1–11, incl. 6.5 colocación y 10.3 save 20+)
 - [ ] Documentar bugs encontrados
 - [ ] Arreglar bugs críticos
 - [ ] Re-test hasta pasar todo
@@ -198,13 +198,13 @@ Objetivo: Implementar la Fase Subatómica jugable.
 
 | Doc | Para qué |
 |-----|----------|
-| docs/README.md | Índice de toda la documentación |
-| PROJECT_STATE.md | Estado del juego, bugs, versión |
-| FUTURE_PLAN.md | Visión completa 4 tiers (1→3→9→27) |
-| ARCHITECTURE.md | Reglas de arquitectura |
-| ENERGY_SYSTEM.md | Flujos numéricos, EnergyManager |
-| API_MANAGERS.md | API de managers |
-| NOTAS_DESARROLLO.md | Commit + push al decir "hasta mañana" |
+| docs/3_README.md | Índice de toda la documentación |
+| 5_PROJECT_STATE.md | Estado del juego, bugs, versión |
+| 8_FUTURE_PLAN.md | Visión completa 4 tiers (1→3→9→27) |
+| 10_ARCHITECTURE.md | Reglas de arquitectura |
+| 11_ENERGY_SYSTEM.md | Flujos numéricos, EnergyManager |
+| 12_API_MANAGERS.md | API de managers |
+| 14_NOTAS_DESARROLLO.md | Commit + push al decir "hasta mañana" |
 
 Cuando termines un bloque, actualiza la tabla "Estado actual" y el **Última actualización** arriba.
 

@@ -6,4 +6,4 @@ Documentos conservados como referencia histórica. **La documentación activa es
 - **MD_ACTUALIZADO.md** — Registro por sesión de qué MDs se actualizaron (opcional).
 - **Nuevos MDs/** — Copia de la versión “nueva” antes de unificar; la canónica está en `docs/` (README, ROADMAP, PROJECT_STATE, etc.).
 
-Para progreso y tareas actuales → [PROGRESO.md](../PROGRESO.md) y [TASKLIST.md](../TASKLIST.md).
+Para progreso y tareas actuales → [1_PROGRESO.md](../1_PROGRESO.md) y [2_TASKLIST.md](../2_TASKLIST.md).
