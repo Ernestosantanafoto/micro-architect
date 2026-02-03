@@ -3,6 +3,21 @@ extends Node
 const NUM_SLOTS := 3
 const SAVE_PATH_PATTERN := "user://save_slot_%d.json"
 
+# #region agent log
+const _DEBUG_LOG := "res://.cursor/debug.log"
+func _debug_log(hypothesis_id: String, location: String, message: String, data: Dictionary) -> void:
+	var payload := {"hypothesisId": hypothesis_id, "location": location, "message": message, "data": data, "timestamp": Time.get_ticks_msec(), "sessionId": "save_debug"}
+	var j := JSON.stringify(payload)
+	var d := DirAccess.open("res://")
+	if d and not d.dir_exists(".cursor"):
+		d.make_dir_recursive(".cursor")
+	var f := FileAccess.open(_DEBUG_LOG, FileAccess.READ_WRITE)
+	if f:
+		f.seek_end()
+		f.store_line(j)
+		f.close()
+# #endregion
+
 func get_save_path(slot_index: int) -> String:
 	return SAVE_PATH_PATTERN % clamp(slot_index, 1, NUM_SLOTS)
 
@@ -33,24 +48,75 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 	print("[SAVE] Iniciando guardado en slot ", slot_index, " -> ", path)
 	
 	var lista_edificios = []
-	
-	# MÉTODO CORRECTO: Buscar todos los edificios por grupos
-	# Los edificios están en grupos como "Sifones", "Prismas", "Compresores", etc.
-	var grupos_edificios = [
-		"Sifones", "Prismas", "Compresores", "CompresoresT2",
-		"Fusionadores", "Constructores", "VoidGenerators"
-	]
-	
-	# También buscar por el layer de colisión de edificios
 	var edificios_encontrados = []
 	
-	# Buscar todos los Area3D que estén en la capa de edificios
+	# #region agent log
+	var bm_exists := BuildingManager != null
+	var bm_count := BuildingManager.active_buildings.size() if BuildingManager else 0
+	var first_sfp := ""
+	if BuildingManager and bm_count > 0 and is_instance_valid(BuildingManager.active_buildings[0]):
+		var sfp = BuildingManager.active_buildings[0].get("scene_file_path")
+		first_sfp = str(sfp) if sfp != null else ""
+	_debug_log("A", "save_system:_guardar_a_ruta", "BuildingManager state", {"bm_exists": bm_exists, "active_buildings_count": bm_count, "first_scene_file_path": first_sfp})
+	# #endregion
+	
+	# 1) Usar BuildingManager.active_buildings (fuente fiable: cada edificio colocado se registra ahí)
+	if BuildingManager and BuildingManager.active_buildings.size() > 0:
+		for b in BuildingManager.active_buildings:
+			if is_instance_valid(b) and b.get("scene_file_path"):
+				var path_str = str(b.scene_file_path)
+				if "buildings" in path_str:
+					edificios_encontrados.append(b)
+	
+	# #region agent log
+	_debug_log("A", "save_system:after_BM_loop", "after BuildingManager", {"edificios_encontrados": edificios_encontrados.size()})
+	# #endregion
+	
+	# 2) Si no hay ninguno, tomar edificios únicos desde GridManager.occupied_cells (cada colocación los registra)
+	var grid_cells_count := 0
+	if GridManager and GridManager.get("occupied_cells"):
+		grid_cells_count = GridManager.occupied_cells.size()
+	if edificios_encontrados.is_empty() and GridManager and GridManager.get("occupied_cells"):
+		var vistos = {}
+		for pos in GridManager.occupied_cells:
+			var b = GridManager.occupied_cells[pos]
+			if is_instance_valid(b) and b.get("scene_file_path") and not vistos.get(b):
+				var path_str = str(b.scene_file_path)
+				if "buildings" in path_str:
+					edificios_encontrados.append(b)
+					vistos[b] = true
+	
+	# #region agent log
+	_debug_log("B", "save_system:after_GridManager", "after GridManager", {"occupied_cells_count": grid_cells_count, "edificios_encontrados": edificios_encontrados.size()})
+	if edificios_encontrados.size() > 0:
+		var sample: Node = edificios_encontrados[0]
+		var sfp_sample = sample.get("scene_file_path")
+		var sfp_str = str(sfp_sample) if sfp_sample != null else ""
+		_debug_log("C", "save_system:sample_building", "first building", {"scene_file_path": sfp_str, "has_buildings": "buildings" in sfp_str})
+	# #endregion
+	
+	# 3) Último recurso: buscar recursivamente desde la raíz de la escena de juego
+	var current_scene_val = get_tree().current_scene
+	var raiz_recursive = _obtener_raiz_escena_juego()
+	if edificios_encontrados.is_empty():
+		var raiz = get_tree().current_scene
+		if not raiz or not is_instance_valid(raiz):
+			raiz = _obtener_raiz_escena_juego()
+		if raiz:
+			_buscar_edificios_recursivo(raiz, edificios_encontrados)
+	
+	# #region agent log
+	_debug_log("D", "save_system:roots", "scene roots", {"current_scene_not_null": current_scene_val != null, "obtener_raiz_not_null": raiz_recursive != null, "edificios_after_recursive": edificios_encontrados.size()})
+	# #endregion
+	
+	# Raíz para cámara (y fallback)
 	var raiz = get_tree().current_scene
-	if raiz:
-		_buscar_edificios_recursivo(raiz, edificios_encontrados)
+	if not raiz or not is_instance_valid(raiz):
+		raiz = _obtener_raiz_escena_juego()
 	
 	print("[SAVE] Edificios encontrados: ", edificios_encontrados.size())
 	
+	var skipped_esta_construido := 0
 	for edificio in edificios_encontrados:
 		# Verificar que esté construido (no sea fantasma)
 		var esta_construido = true
@@ -58,6 +124,7 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 			esta_construido = edificio.esta_construido
 		
 		if not esta_construido:
+			skipped_esta_construido += 1
 			continue
 		
 		# Obtener datos del edificio
@@ -86,8 +153,12 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 		lista_edificios.append(datos_edificio)
 		print("[SAVE] - ", edificio.name, " en ", edificio.global_position)
 	
-	# Obtener datos de cámara
-	var escena_actual = get_tree().current_scene
+	# #region agent log
+	_debug_log("E", "save_system:after_loop", "filter loop", {"skipped_esta_construido": skipped_esta_construido, "lista_edificios_final": lista_edificios.size(), "encontrados_total": edificios_encontrados.size()})
+	# #endregion
+	
+	# Obtener datos de cámara (usar misma raíz que edificios)
+	var escena_actual = raiz if raiz else get_tree().current_scene
 	var cam_pivot = escena_actual.find_child("CameraPivot", true, false) if escena_actual else null
 	var c_pos = Vector3.ZERO
 	var c_size = 100.0
@@ -146,6 +217,14 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 		print("[SAVE] ¡Guardado exitoso! Slot ", slot_index, " (", save_name, "), ", lista_edificios.size(), " edificios.")
 	else:
 		print("[SAVE] ERROR: No se pudo abrir el archivo para escritura.")
+
+## Devuelve la raíz de la escena de juego (MainGame3D) cuando current_scene no está actualizado (partida cargada con add_child).
+func _obtener_raiz_escena_juego() -> Node:
+	var root = get_tree().root
+	for child in root.get_children():
+		if child.find_child("GridMap", true, false) or child.find_child("WorldGenerator", true, false):
+			return child
+	return null
 
 ## Desde un nodo (p. ej. Area3D hijo), subir hasta la raíz de la escena del edificio (tiene scene_file_path con "buildings").
 func _obtener_raiz_edificio(n: Node) -> Node:
@@ -245,10 +324,16 @@ func reconstruir_edificios():
 		print("[SAVE] No hay edificios para reconstruir.")
 		return
 	
+	# Raíz de la escena de juego: current_scene puede ser null si la partida se cargó con add_child
 	var raiz = get_tree().current_scene
+	if not raiz or not is_instance_valid(raiz):
+		raiz = _obtener_raiz_escena_juego()
 	if not raiz:
-		print("[SAVE] ERROR: current_scene es null, no se pueden reconstruir edificios.")
+		print("[SAVE] ERROR: no se pudo obtener raíz de escena de juego, no se pueden reconstruir edificios.")
 		return
+	
+	# Guardar referencias de las instancias para activarlas por referencia (no depender de búsqueda en árbol)
+	var instancias_recien_anadidas: Array[Node] = []
 	
 	for datos in edificios:
 		var ruta_escena = datos.get("scene", "")
@@ -284,17 +369,17 @@ func reconstruir_edificios():
 				GlobalInventory.registrar_estado(celda, datos["estado"])
 		
 		# Activar el edificio - debe hacerse DESPUÉS de posicionar y rotar
-		# Esperamos un frame para que el nodo esté completamente en el árbol
 		instancia.set_meta("necesita_activacion", true)
+		instancias_recien_anadidas.append(instancia)
 		
 		if GameConstants.DEBUG_MODE: print("[SAVE] - Reconstruido: ", instancia.name, " en ", instancia.global_position)
 	
 	# Limpiar lista
 	GlobalInventory.edificios_para_reconstruir = []
 	
-	# Activar todos los edificios después de un frame
+	# Activar por referencia (no buscar en árbol: al cargar desde menú current_scene no es la escena de juego)
 	await get_tree().process_frame
-	_activar_edificios_reconstruidos(raiz)
+	_activar_lista_edificios(instancias_recien_anadidas)
 	
 	print("[SAVE] Reconstrucción completada.")
 
@@ -407,15 +492,73 @@ func _agregar_edificio(lista: Array, map: GridMap, escena: String, celda: Vector
 	lista.append(datos)
 	usado[Vector2i(celda.x, celda.z)] = true
 
+func _recoger_nodos_con_meta_activacion(nodo: Node, lista: Array) -> void:
+	if nodo.has_meta("necesita_activacion") and nodo.get_meta("necesita_activacion"):
+		lista.append(nodo)
+	for hijo in nodo.get_children():
+		_recoger_nodos_con_meta_activacion(hijo, lista)
+
+## Activa una lista de nodos de edificios por referencia (evita fallos cuando current_scene no es la escena de juego).
+func _activar_lista_edificios(lista: Array) -> void:
+	var map = get_tree().get_first_node_in_group("MapaPrincipal")
+	var activados_count := 0
+	for edificio in lista:
+		if not is_instance_valid(edificio):
+			continue
+		if edificio.has_meta("necesita_activacion"):
+			edificio.remove_meta("necesita_activacion")
+		activados_count += 1
+		if edificio.has_method("check_ground"):
+			# Diferir para que se ejecute cuando el nodo esté en el árbol (get_tree() válido)
+			edificio.call_deferred("check_ground")
+		if edificio.get("collision_layer") != null:
+			edificio.collision_layer = GameConstants.LAYER_EDIFICIOS
+		if edificio.get("esta_construido") != null:
+			edificio.esta_construido = true
+		if map and GridManager:
+			var celda = map.local_to_map(edificio.global_position)
+			var pos_2d = Vector2i(celda.x, celda.z)
+			if edificio.has_method("get_footprint_offsets"):
+				for off in edificio.get_footprint_offsets():
+					GridManager.register_building(pos_2d + off, edificio)
+			else:
+				GridManager.register_building(pos_2d, edificio)
+		if BuildingManager:
+			BuildingManager.register_building(edificio)
+	print("[SAVE] Total edificios activados: ", activados_count)
+
 func _activar_edificios_reconstruidos(raiz: Node):
+	if not is_instance_valid(raiz):
+		return
+	var hijos_nombres: Array[String] = []
+	for c in raiz.get_children():
+		hijos_nombres.append(c.name)
+		var has_meta = c.has_meta("necesita_activacion")
+		if has_meta:
+			hijos_nombres.append("  -> tiene meta!")
+	print("[SAVE] raiz = ", raiz.name, " hijos = ", raiz.get_child_count(), " ", hijos_nombres)
 	var edificios = []
 	_buscar_edificios_recursivo(raiz, edificios)
+	# Si la búsqueda por scene_file_path no encuentra ninguno con meta, buscar por meta (los que acabamos de añadir)
+	var con_meta_count := 0
+	for e in edificios:
+		if e.has_meta("necesita_activacion") and e.get_meta("necesita_activacion"):
+			con_meta_count += 1
+	if con_meta_count == 0:
+		edificios.clear()
+		_recoger_nodos_con_meta_activacion(raiz, edificios)
+		print("[SAVE] Fallback por meta: edificios a activar = ", edificios.size())
+	else:
+		print("[SAVE] Por búsqueda normal: edificios a activar = ", con_meta_count)
 	
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	
+	var activados_count := 0
 	for edificio in edificios:
 		if edificio.has_meta("necesita_activacion") and edificio.get_meta("necesita_activacion"):
 			edificio.remove_meta("necesita_activacion")
+			activados_count += 1
+			print("[SAVE] Activando edificio: ", edificio.name, " en ", edificio.global_position)
 			
 			# Forzar activación completa
 			if edificio.has_method("check_ground"):
@@ -440,3 +583,4 @@ func _activar_edificios_reconstruidos(raiz: Node):
 					GridManager.register_building(pos_2d, edificio)
 			
 			if GameConstants.DEBUG_MODE: print("[SAVE] Activado: ", edificio.name)
+	print("[SAVE] Total edificios activados: ", activados_count)

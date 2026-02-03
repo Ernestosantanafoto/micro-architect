@@ -20,7 +20,7 @@ func _ready():
 	add_child(beam_emitter)
 	
 	# Conectarse al reloj global
-	var main = get_tree().current_scene
+	var main = GameConstants.get_scene_root_for(self)
 	if main and main.has_signal("game_tick"):
 		main.game_tick.connect(_on_game_tick)
 	
@@ -33,7 +33,8 @@ func _ready():
 
 func _process(_delta):
 	if esta_construido:
-		var map = get_tree().current_scene.find_child("GridMap")
+		var scene = GameConstants.get_scene_root_for(self)
+		var map = scene.find_child("GridMap") if scene else null
 		var space = get_world_3d().direct_space_state
 		if map:
 			var dir = -global_transform.basis.z
@@ -54,7 +55,8 @@ func _on_game_tick(_c):
 		contador_ticks = 0
 
 func disparar():
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	if not map or not space or not EnergyManager:
 		return
@@ -86,8 +88,8 @@ func abrir_ui():
 
 func _gestionar_clic_derecho():
 	# Buscar la UI específica del GodSiphon
-	# Opción 1: Por nombre directo
-	var menu = get_tree().current_scene.find_child("GodSiphonUI", true, false)
+	var scene = GameConstants.get_scene_root_for(self)
+	var menu = scene.find_child("GodSiphonUI", true, false) if scene else null
 	
 	# Opción 2: Buscar en el grupo VentanasUI la que tiene sifon_activo
 	if not menu:

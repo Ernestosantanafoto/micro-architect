@@ -404,7 +404,10 @@ func _intentar_rotar_edificio_suelo():
 	var res = _lanzar_raycast_a_edificios()
 	if res:
 		var edificio = res.collider
-		if edificio.is_in_group("AbreUIClicDerecho"):
+		# Clic derecho en edificio con menú = abrir menú (rotar desde dentro con botón "Rotar")
+		if edificio.is_in_group("AbreUIClicDerecho") and edificio.has_method("abrir_ui"):
+			edificio.abrir_ui()
+			get_viewport().set_input_as_handled()
 			return
 		# Void Generator latente: clic derecho = activar (no rota)
 		if edificio.scene_file_path and "void_generator" in edificio.scene_file_path.to_lower():

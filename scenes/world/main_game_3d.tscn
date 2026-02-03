@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/help_panel.tscn" id="12_help"]
 [ext_resource type="PackedScene" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
 [ext_resource type="Script" uid="uid://bclk3pc1m7h0g" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
-[ext_resource type="PackedScene" uid="uid://cmerger_ui_001" path="res://scenes/ui/merger_ui.tscn" id="15_merger")
+[ext_resource type="PackedScene" uid="uid://cmerger_ui_001" path="res://scenes/ui/merger_ui.tscn" id="15_merger"]
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -245,7 +245,7 @@ theme_override_constants/separation = 8
 [node name="BtnRecursos" type="Button" parent="CanvasLayer/PanelMusica/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "RECURSOS"
+text = "INFRAESTRUCTURA"
 
 [node name="RecursosDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
 visible = false

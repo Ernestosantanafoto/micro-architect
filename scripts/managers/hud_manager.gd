@@ -29,6 +29,13 @@ func _ready():
 			_setup_tooltip(child)
 	set_process_input(true)
 
+func _avisar_dim_menu_edificios(abierto: bool) -> void:
+	# Este script está en MainContainer (hijo de HUD); MainGame3D tiene HUD y CanvasLayer como hijos
+	var main = get_parent().get_parent() if get_parent() else null
+	var canvas = main.get_node_or_null("CanvasLayer") if main else null
+	if canvas and canvas.has_method("aplicar_dim_menu_edificios"):
+		canvas.aplicar_dim_menu_edificios(abierto)
+
 func _input(event):
 	if not vertical_stack.visible: return
 	if event is InputEventMouseButton and event.pressed:
@@ -139,6 +146,7 @@ func _construir_items_verticales(categoria: String, boton_origen: Button):
 
 	vertical_stack.visible = true
 	vertical_stack.set_meta("cat_activa", categoria)
+	_avisar_dim_menu_edificios(true)
 	
 	await get_tree().process_frame
 	var pos_x = boton_origen.global_position.x + (boton_origen.size.x / 2) - (vertical_stack.size.x / 2)
@@ -157,6 +165,7 @@ func _on_item_seleccionado(ruta_escena, nombre_inventario):
 func _cerrar_menu():
 	vertical_stack.visible = false
 	vertical_stack.set_meta("cat_activa", "")
+	_avisar_dim_menu_edificios(false)
 
 ## Llamado al cambiar DEBUG_MODE desde el botón del panel sistema; refresca el menú abierto si hay uno.
 func refresh_debug_menu():

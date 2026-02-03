@@ -45,7 +45,8 @@ func _process(_delta):
 		return
 	
 	if Time.get_ticks_msec() - tiempo_ultima_luz < GameConstants.TIEMPO_PERSISTENCIA_LUZ:
-		var map = get_tree().current_scene.find_child("GridMap")
+		var scene = GameConstants.get_scene_root_for(self)
+		var map = scene.find_child("GridMap") if scene else null
 		var space = get_world_3d().direct_space_state
 		if map:
 			beam_emitter.dibujar_haz(global_position, direccion_salida_fija, alcance_maximo, color_haz_actual, map, space)
@@ -67,7 +68,8 @@ func recibir_energia_numerica(cantidad: int, tipo_recurso: String, origen: Node)
 		_procesar_energia_numerica(cantidad, tipo_recurso, dir_salida)
 
 func _procesar_energia_numerica(cantidad: int, tipo_recurso: String, dir_salida: Vector3):
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	if not map or not space or not EnergyManager:
 		return

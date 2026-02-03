@@ -14,23 +14,7 @@ var _tech_notification_timer: Timer = null
 
 const TECH_NOTIFICATION_DURATION := 4.5
 
-func _debug_log_path() -> String:
-	var base = ProjectSettings.globalize_path("res://")
-	return base.path_join(".cursor").path_join("debug.log")
-
 func _ready():
-	# #region agent log
-	var _dir = ProjectSettings.globalize_path("res://").path_join(".cursor")
-	if not DirAccess.dir_exists_absolute(_dir): DirAccess.make_dir_recursive_absolute(_dir)
-	var _d = {"sessionId":"debug-session","runId":"run1","hypothesisId":"H3,H4","location":"main_game_3d.gd:_ready","message":"game_scene_ready","data":{},"timestamp":Time.get_ticks_msec()}
-	var _p = _debug_log_path()
-	var _f: FileAccess = null
-	if FileAccess.file_exists(_p): _f = FileAccess.open(_p, FileAccess.READ_WRITE); if _f: _f.seek_end()
-	else: _f = FileAccess.open(_p, FileAccess.WRITE)
-	var _line = JSON.stringify(_d)
-	if _f: _f.store_line(_line); _f.close()
-	print("[DEBUG_LOG] ", _line)
-	# #endregion
 	# Buscar y conectar botones automáticamente
 	_conectar_botones()
 	_crear_popup_desbloqueo()
@@ -492,15 +476,22 @@ func _aplicar_carga_ingame(slot: int) -> void:
 func _on_btn_menu_pressed() -> void:
 	print("[MAIN] Volviendo al menú...")
 	# Solo se guarda cuando el jugador pulsa GUARDAR; al salir al menú no se guarda automáticamente.
-	
-	# Cambiar a la escena del menú principal
+	# Cambio manual: quitar esta escena del árbol, liberarla y añadir el menú (evita acumular escenas y que se vea más brillante).
 	var ruta_menu = "res://scenes/ui/main_menu.tscn"
-	
-	if ResourceLoader.exists(ruta_menu):
+	if not ResourceLoader.exists(ruta_menu):
+		print("[MAIN] ERROR: No existe la ruta: ", ruta_menu)
+		return
+	var pack = load(ruta_menu) as PackedScene
+	var menu = pack.instantiate() if pack else null
+	if not menu:
 		var resultado = get_tree().change_scene_to_file(ruta_menu)
 		if resultado == OK:
-			print("[MAIN] Cambio de escena exitoso.")
-		else:
-			print("[MAIN] ERROR al cambiar escena: ", resultado)
-	else:
-		print("[MAIN] ERROR: No existe la ruta: ", ruta_menu)
+			print("[MAIN] Cambio de escena exitoso (fallback).")
+		return
+	var root = get_tree().root
+	var escena_juego = self
+	if escena_juego.get_parent() == root:
+		root.remove_child(escena_juego)
+	escena_juego.queue_free()
+	root.add_child(menu)
+	print("[MAIN] Cambio de escena exitoso.")

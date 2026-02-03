@@ -4,7 +4,7 @@
 **Estado:** 🔄 En curso (fase UI aplicada)  
 **Objetivo:** Mejorar experiencia de usuario y hacer el juego presentable
 
-**Hecho en esta fase:** HUD por categorías (RECETAS + HUD_CATEGORIAS/HUD_LABELS), F1/F2 (ayuda + recetario), God Siphon/Constructor UI, hotkeys 1-9, clic central (edificio = mismo en mano con orientación; suelo válido = colocar y mantener en mano), grid guía (pulso 50–100% + desvanecimiento por zoom), starter pack (Constructor 1, God Siphon solo DEV), merger 3x1 footprint, feedback al colocar (pop/shake), menú principal (transiciones, versión). **Conocido (dev):** Menús popup recuadro gris en algunos entornos; God Siphon solo en DEBUG_MODE.
+**Hecho en esta fase:** HUD por categorías; botón **INFRAESTRUCTURA** (dropdown); dim completo + ocultar red/tiles al abrir, tiles permanecen ocultos al elegir ítem; F1/F2 (ayuda + recetario); God Siphon/Constructor UI (títulos centrados, etc.), hotkeys 1-9, clic central, grid guía, starter pack, merger 3x1 footprint, feedback al colocar, menú principal. Ver [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md) para no tocar. **Conocido (dev):** Menús popup recuadro gris en algunos entornos; God Siphon solo en DEBUG_MODE.
 
 ---
 

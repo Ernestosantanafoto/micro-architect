@@ -26,39 +26,77 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_merger")
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LabelTitulo" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="CenterTitulo" type="CenterContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/VBoxContainer/CenterTitulo"]
 layout_mode = 2
 text = "FUSIONADOR"
+horizontal_alignment = 1
 
-[node name="OptProducto" type="OptionButton" parent="VentanaFlotante/VBoxContainer"]
+[node name="CenterSelector" type="CenterContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxQuark" type="HBoxContainer" parent="VentanaFlotante/VBoxContainer/CenterSelector"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnDownQuark" type="Button" parent="VentanaFlotante/VBoxContainer/CenterSelector/HBoxQuark"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Down Quark"
+
+[node name="BtnUpQuark" type="Button" parent="VentanaFlotante/VBoxContainer/CenterSelector/HBoxQuark"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Up-Quark"
 
 [node name="HSeparator" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
 layout_mode = 2
 
-[node name="LblE" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="LblBuffer" type="Label" parent="VentanaFlotante/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Buffer: 0 / 100"
+
+[node name="HBoxE" type="HBoxContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LblE" type="Label" parent="VentanaFlotante/VBoxContainer/HBoxE"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "E: 0"
 
-[node name="LblC" type="Label" parent="VentanaFlotante/VBoxContainer"]
+[node name="BtnPurgaE" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxE"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "X"
+
+[node name="HBoxC" type="HBoxContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LblC" type="Label" parent="VentanaFlotante/VBoxContainer/HBoxC"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "C: 0"
 
-[node name="HBoxPurga" type="HBoxContainer" parent="VentanaFlotante/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="BtnPurgaE" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxPurga"]
+[node name="BtnPurgaC" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxC"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Purga E"
+text = "X"
 
-[node name="BtnPurgaC" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxPurga"]
+[node name="CenterPurgaTodo" type="CenterContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="BtnPurgaTodo" type="Button" parent="VentanaFlotante/VBoxContainer/CenterPurgaTodo"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Purga C"
+text = "Purga todo"

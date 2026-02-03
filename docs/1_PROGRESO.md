@@ -1,13 +1,14 @@
 # Estado y progreso – Micro Architect
 
 **Este es el documento para saber en qué punto está el proyecto.**  
-Última actualización: 2025-01-31
+Última actualización: 2025-01-31  
+**Reglas universales y no tocar:** [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md)
 
 ---
 
 ## En una frase
 
-**v0.5-alpha**, Tier 1 (Fase Cuántica). Estabilización en curso; dim/ocultar menú RECURSOS implementado; pendiente testing integral y demo itch.io.
+**v0.5-alpha**, Tier 1 (Fase Cuántica). Estabilización en curso; menú **INFRAESTRUCTURA** (dim + ocultar red/tiles) y save/load de edificios funcionando; pendiente testing integral y demo itch.io.
 
 ---
 
@@ -39,7 +40,7 @@
 
 1. **Estabilizar T1:** Ejecutar TEST_CHECKLIST (6.5 colocación, 10.3 save 20+), corregir bugs críticos.
 2. **Demo itch.io:** Export HTML5/Windows, página, descripción, publicar alpha.
-3. **Opcional:** Persistir bolas de energía en vuelo (PulseVisual) al cargar/des-dim (ver TASKLIST).
+3. **Opcional:** Persistir bolas de energía en vuelo (PulseVisual) al cargar/des-dim (ver TASKLIST; no bloqueante).
 
 ---
 

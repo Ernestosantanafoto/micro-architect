@@ -47,7 +47,8 @@ func _ready():
 			_restaurar_mapa_guardado(gm)
 			GlobalInventory.mapa_guardado.clear()
 			if GlobalInventory.edificios_para_reconstruir.size() > 0 and SaveSystem:
-				SaveSystem.reconstruir_edificios()
+				# No llamar add_child desde _ready(): el padre está ocupado. Diferir hasta después del frame.
+				call_deferred("_reconstruir_edificios_deferred")
 		else:
 			call_deferred("_reconstruir_mundo")
 
@@ -180,6 +181,11 @@ func forzar_generar_rango(sector_min_x: int, sector_max_x: int, sector_min_z: in
 			if not sectores_cargados.has(clave):
 				_generar_sector(sx, sz, gm)
 				sectores_cargados.append(clave)
+
+func _reconstruir_edificios_deferred() -> void:
+	"""Llamado con call_deferred desde _ready para no hacer add_child mientras el padre está ocupado."""
+	if GlobalInventory.edificios_para_reconstruir.size() > 0 and SaveSystem:
+		await SaveSystem.reconstruir_edificios()
 
 func _reconstruir_mundo():
 	await get_tree().process_frame

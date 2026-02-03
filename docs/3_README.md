@@ -8,16 +8,20 @@
 
 | Objetivo | Documento |
 |----------|------------|
+| **Reglas universales y puntos no tocar** (asistente y equipo) | [**0_REGLAS_UNIVERSALES.md**](0_REGLAS_UNIVERSALES.md) |
 | **Seguir el progreso** (estado, criterios T1, próximo paso) | [**1_PROGRESO.md**](1_PROGRESO.md) |
 | **Ver qué hacer ahora** (tasklist concreta) | [**2_TASKLIST.md**](2_TASKLIST.md) |
 
-Con solo estos dos tienes claro el estado y las tareas. El resto es referencia o detalle.
+Con 0 (reglas), 1 y 2 tienes claro qué respetar, el estado y las tareas. El resto es referencia o detalle.
 
 **Convención de nombres:** Los MD llevan prefijo numérico (1_, 2_, …) para verse en orden de prioridad en GitHub: primero lo que miras cada día, luego cuando toque, al final referencia para el asistente. **Mantener este estilo** en cualquier MD nuevo que se añada a `docs/`.
 
 ---
 
 ## Estructura en 3 niveles (orden = número del archivo)
+
+### Nivel 0 – Referencia obligatoria (asistente)
+- [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md) — Reglas universales (colores, unidades, "todos los…") y puntos no tocar (save/load, UI, menú INFRAESTRUCTURA)
 
 ### Nivel 1 – Mirar a diario
 - [1_PROGRESO.md](1_PROGRESO.md) — Estado y próximo paso

@@ -74,7 +74,8 @@ func iniciar_secuencia_carga():
 	tiempo_restante_carga = GameConstants.COMPRESOR_TIEMPO_CARGA
 
 func disparar_comprimido():
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	var dir = -global_transform.basis.z
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
@@ -104,7 +105,8 @@ func disparar_comprimido():
 	actualizar_interfaz()
 
 func _gestionar_haz(longitud):
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	if map:
 		var dir = -global_transform.basis.z
@@ -152,7 +154,8 @@ func es_suelo_valido(id):
 	return PlacementLogic.es_posicion_valida(grupo_placement, id)
 
 func _actualizar_mi_estado_global():
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	if map and esta_construido:
 		var datos = {"buf": buffer, "rec": recurso_actual, "crg": cargando, "rem": tiempo_restante_carga}
 		GlobalInventory.registrar_estado(map.local_to_map(global_position), datos)

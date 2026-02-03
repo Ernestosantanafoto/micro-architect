@@ -18,9 +18,13 @@ const RECURSOS_LABELS: Dictionary = {
 }
 
 var _recursos_highlight_recipe: String = ""
+var _menu_edificios_abierto: bool = false  # menú categorías (barra inferior) abierto: oscurecer todo y ocultar red/tiles
+var _recursos_panel_abierto: bool = false  # panel RECURSOS (BtnRecursos) abierto: mismo efecto
 var _building_dark_materials: Dictionary = {}
 var _surface_dark_materials: Dictionary = {}  # MeshInstance3D -> Material (surface 0, para restaurar bolas)
 var _grid_original_surface: Variant = null  # material de la grilla para restaurar
+var _grid_plane_visible: bool = true  # para restaurar visibility del plano de la grilla
+var _gridmap_visible: bool = true  # para restaurar visibility del GridMap (tiles)
 var _beam_dim_material: StandardMaterial3D = null  # material oscuro reutilizable para beams (se recrean cada frame)
 var _volatile_dim_material: StandardMaterial3D = null  # para tiles void y otros que se sobrescriben cada frame
 # Oscurecimiento ~80%: solo ~20% de brillo (0.12 = 12%)
@@ -51,12 +55,12 @@ func _crear_materiales_dim_volatiles():
 
 func _process(_delta: float) -> void:
 	# Beams y tiles del void se redibujan/actualizan cada frame; re-aplicar dim para que sigan oscuros
-	if _recursos_highlight_recipe.is_empty():
+	if _recursos_highlight_recipe.is_empty() and not _menu_edificios_abierto and not _recursos_panel_abierto:
 		return
 	_reaplicar_dim_elementos_volatiles()
 
 func _input(event: InputEvent) -> void:
-	# Clic fuera del menú RECURSOS: cerrar y quitar dim
+	# Clic fuera del menú RECURSOS (dropdown BtnRecursos): cerrar y quitar dim
 	var panel = get_node_or_null("RecursosDropdownPanel")
 	if not panel or not panel.visible:
 		return
@@ -66,8 +70,10 @@ func _input(event: InputEvent) -> void:
 			var pos = (panel as Control).get_global_mouse_position()
 			if not (panel as Control).get_global_rect().has_point(pos) and not (btn as Control).get_global_rect().has_point(pos):
 				panel.visible = false
+				_recursos_panel_abierto = false
 				_quitar_aislamiento_visual()
 				get_viewport().set_input_as_handled()
+		return
 
 func _ocultar_barra_superior():
 	var hud = get_parent().get_node_or_null("HUD")
@@ -234,10 +240,14 @@ func _on_btn_recursos_toggle():
 		return
 	if panel.visible:
 		panel.visible = false
+		_recursos_panel_abierto = false
 		_quitar_aislamiento_visual()
 		return
 	_rellenar_recursos_dropdown()
 	panel.visible = true
+	_recursos_panel_abierto = true
+	# Oscurecer todo y ocultar red + tiles al abrir el menú RECURSOS (mismo efecto que menú categorías)
+	_aplicar_dim_completo_sin_highlight()
 	var btn = get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos")
 	if btn:
 		await get_tree().process_frame
@@ -274,10 +284,25 @@ func _on_recursos_item_pressed(recipe_name: String):
 	_recursos_highlight_recipe = recipe_name
 	_aplicar_aislamiento_visual()
 
+func _aplicar_dim_completo_sin_highlight() -> void:
+	_recursos_highlight_recipe = ""
+	var root = get_parent()
+	_oscurecer_edificios_recursivo(root, "")
+	_oscurecer_y_ocultar_grilla_y_tiles(true)
+
+## Llamar cuando se abre/cierra el menú de edificios (SIFONES, PRISMAS, etc.) en la barra inferior.
+## abierto = true: oscurece todo el mundo, hace invisible la red y los tiles del suelo.
+func aplicar_dim_menu_edificios(abierto: bool) -> void:
+	_menu_edificios_abierto = abierto
+	if abierto:
+		_aplicar_dim_completo_sin_highlight()
+	else:
+		_quitar_aislamiento_visual()
+
 func _aplicar_aislamiento_visual():
 	# Oscurecer todo lo que no sea la categoría seleccionada: edificios, grilla, haces, partículas
 	var recipe = _recursos_highlight_recipe
-	_quitar_aislamiento_visual()  # restaura materiales anteriores (cambio de categoría)
+	_quitar_aislamiento_visual(false)  # restaura solo materiales; no mostrar grid/tiles (panel sigue abierto)
 	_recursos_highlight_recipe = recipe
 	var scene_path = ""
 	if GameConstants.RECETAS.has(_recursos_highlight_recipe):
@@ -285,6 +310,9 @@ func _aplicar_aislamiento_visual():
 	var root = get_parent()
 	_oscurecer_edificios_recursivo(root, scene_path)
 	_oscurecer_grilla()
+	# Si el panel INFRAESTRUCTURA sigue abierto, mantener red y tiles ocultos (no mostrarlos al resaltar categoría)
+	if _recursos_panel_abierto:
+		_oscurecer_y_ocultar_grilla_y_tiles(true)
 	_oscurecer_particulas_y_haces(root, scene_path)
 
 func _oscurecer_edificios_recursivo(nodo: Node, scene_path_highlight: String):
@@ -326,6 +354,30 @@ func _oscurecer_grilla():
 	mat_oscuro.set_shader_parameter("grid_color", Color(DIM_GRID_COLOR, DIM_GRID_COLOR, DIM_GRID_COLOR + 0.02))
 	grid_plane.set_surface_override_material(0, mat_oscuro)
 
+func _oscurecer_y_ocultar_grilla_y_tiles(ocultar: bool) -> void:
+	var root = get_parent()
+	var camera_pivot = root.get_node_or_null("CameraPivot")
+	if camera_pivot:
+		var grid_plane = camera_pivot.get_node_or_null("MeshInstance3D")
+		if grid_plane and grid_plane is MeshInstance3D and ocultar:
+			_grid_plane_visible = grid_plane.visible
+			grid_plane.visible = false
+	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
+	if gridmap and gridmap is Node3D and ocultar:
+		_gridmap_visible = gridmap.visible
+		gridmap.visible = false
+
+func _restaurar_visibilidad_grilla_y_tiles() -> void:
+	var root = get_parent()
+	var camera_pivot = root.get_node_or_null("CameraPivot")
+	if camera_pivot:
+		var grid_plane = camera_pivot.get_node_or_null("MeshInstance3D")
+		if grid_plane and grid_plane is MeshInstance3D:
+			grid_plane.visible = _grid_plane_visible
+	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
+	if gridmap and gridmap is Node3D:
+		gridmap.visible = _gridmap_visible
+
 func _oscurecer_particulas_y_haces(_root: Node, _scene_path_highlight: String):
 	# PulseVisual y Beams se actualizan cada frame en _reaplicar_dim_elementos_volatiles
 	# porque se crean/recrean constantemente durante el juego
@@ -333,7 +385,9 @@ func _oscurecer_particulas_y_haces(_root: Node, _scene_path_highlight: String):
 
 func _reaplicar_dim_elementos_volatiles():
 	var scene_path = ""
-	if GameConstants.RECETAS.has(_recursos_highlight_recipe):
+	if _menu_edificios_abierto or _recursos_panel_abierto:
+		scene_path = ""  # todo oscuro
+	elif GameConstants.RECETAS.has(_recursos_highlight_recipe):
 		scene_path = GameConstants.RECETAS[_recursos_highlight_recipe].get("output_scene", "")
 	var root = get_parent()
 	
@@ -381,7 +435,8 @@ func _get_edificios_void_generator(root: Node) -> Array:
 			out.append(node)
 	return out
 
-func _quitar_aislamiento_visual():
+## restaurar_grilla_y_tiles: si false, no se restaura material ni visibilidad de red/tiles (panel INFRAESTRUCTURA sigue abierto).
+func _quitar_aislamiento_visual(restaurar_grilla_y_tiles: bool = true) -> void:
 	for nodo in _building_dark_materials:
 		if is_instance_valid(nodo):
 			nodo.material_override = _building_dark_materials[nodo]
@@ -390,13 +445,17 @@ func _quitar_aislamiento_visual():
 		if is_instance_valid(mesh) and mesh is MeshInstance3D:
 			(mesh as MeshInstance3D).set_surface_override_material(0, _surface_dark_materials[mesh])
 	_surface_dark_materials.clear()
-	if _grid_original_surface != null:
+	if restaurar_grilla_y_tiles and _grid_original_surface != null:
 		var root = get_parent()
 		var grid_plane = root.get_node_or_null("CameraPivot/MeshInstance3D")
 		if grid_plane and grid_plane is MeshInstance3D:
 			grid_plane.set_surface_override_material(0, _grid_original_surface)
 		_grid_original_surface = null
 	_recursos_highlight_recipe = ""
+	if restaurar_grilla_y_tiles:
+		_menu_edificios_abierto = false
+		_recursos_panel_abierto = false
+		_restaurar_visibilidad_grilla_y_tiles()
 
 func guardar_partida():
 	print("[DEBUG-SAVE] Iniciando volcado total...")

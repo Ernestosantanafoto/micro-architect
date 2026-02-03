@@ -359,3 +359,34 @@ func format_cantidad_recurso(nombre_recurso: String, cantidad: int) -> String:
 			return "%d Carga Condensada" % cantidad
 		_:
 			return "%d %s" % [cantidad, nombre_recurso]
+
+## Devuelve la raíz de la escena que contiene a node (hijo directo de root). Útil cuando el juego se cargó con add_child (current_scene puede no estar actualizado).
+static func get_scene_root_for(node: Node) -> Node:
+	if not node or not node.get_tree():
+		return null
+	var root = node.get_tree().root
+	for child in root.get_children():
+		if child.is_ancestor_of(node) or node.is_ancestor_of(child):
+			return child
+	return null
+
+var _pending_scene_path: String = ""
+
+## El menú llama esto; el cambio se hace en un Timer del autoload para evitar error 19.
+func pedir_cambio_escena(path: String) -> void:
+	_pending_scene_path = path
+	var t = Timer.new()
+	t.one_shot = true
+	t.wait_time = 0.2
+	t.timeout.connect(_hacer_cambio_escena_pendiente)
+	add_child(t)
+	t.start()
+
+func _hacer_cambio_escena_pendiente() -> void:
+	var path = _pending_scene_path
+	_pending_scene_path = ""
+	if path.is_empty():
+		return
+	var err = get_tree().change_scene_to_file(path)
+	if err != OK:
+		push_error("[GameConstants] change_scene_to_file falló: %s" % str(err))

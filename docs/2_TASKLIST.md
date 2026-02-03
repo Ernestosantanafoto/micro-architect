@@ -2,14 +2,16 @@
 
 **Un solo sitio para las tareas actuales.**  
 Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.  
-Última actualización: 2025-01-31
+Última actualización: 2025-01-31  
+**Reglas y puntos no tocar:** [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md)
 
 ---
 
 ## Cómo usar
 
 - **Prioridad:** haz primero las marcadas como **P** (prioritarias para T1/demo).
-- **Origen:** las tareas vienen de ROADMAP (Bloque 5), COSAS_POR_HACER (P) y mejoras recientes (dim RECURSOS).
+- **Origen:** las tareas vienen de ROADMAP (Bloque 5), COSAS_POR_HACER (P) y mejoras recientes.
+- **No tocar:** Lo marcado como hecho en "Menú INFRAESTRUCTURA (dim)" y en PROJECT_STATE (mejoras recientes) no debe refactorizarse salvo petición explícita.
 - Para el plan completo por bloques → [4_ROADMAP.md](4_ROADMAP.md).  
 - Para estado del proyecto → [1_PROGRESO.md](1_PROGRESO.md).
 
@@ -37,11 +39,13 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 
 ## Mejoras recientes (seguimiento)
 
-### Menú RECURSOS (dim/ocultar) — hecho
-- [x] Al elegir categoría: edificios no seleccionados se atenúan
-- [x] Grilla azul, tiles de energía (GridMap), bolas (PulseVisual) y haces (BeamSegment) se ocultan/atenúan
-- [x] Clic fuera del menú RECURSOS cierra y quita el dim
-- [ ] **Persistir bolas de energía en vuelo (PulseVisual)** al cargar partida o al quitar el dim (que no desaparezcan y que no se reinicien desde el edificio)
+### Menú INFRAESTRUCTURA (ex RECURSOS) — hecho — NO TOCAR
+- [x] Botón renombrado a INFRAESTRUCTURA
+- [x] Al abrir panel: oscurecer todo, ocultar red (plano cámara) y tiles (GridMap)
+- [x] Tiles y red permanecen ocultos al pulsar un ítem del dropdown (hasta cerrar panel)
+- [x] Conteo de edificios colocados desde BuildingManager (menú actualizado en partida)
+- [x] Clic fuera cierra y restaura visibilidad/materiales
+- [ ] **Persistir bolas de energía en vuelo (PulseVisual)** al cargar partida o al quitar el dim (opcional; no bloqueante)
 
 ---
 

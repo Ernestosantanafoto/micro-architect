@@ -1,7 +1,8 @@
 # 🎮 Micro Architect - Estado del Proyecto
 
-**Última actualización:** 2025-01-31 15:02  
+**Última actualización:** 2025-01-31  
 **Versión:** 0.5-alpha  
+**Reglas y no-tocar:** Ver [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md)  
 **Godot:** 4.x  
 **Era actual:** Tier 1 — Fase Cuántica
 
@@ -50,9 +51,10 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ### UI / UX
 - HUD categorizado (ENERGÍA | QUARKS | EDIFICIOS) con colores
-- Barra de categorías (SIFONES, PRISMAS, MANIPULA, CONSTR)
+- Barra de categorías (SIFONES, PRISMAS, MANIPULA, CONSTR); botón **INFRAESTRUCTURA** (dropdown de categorías)
+- Menú INFRAESTRUCTURA: oscurece todo, oculta red y tiles; conteo de edificios colocados desde BuildingManager; tiles/red permanecen ocultos al elegir ítem hasta cerrar
 - God Siphon UI (sliders energía/frecuencia, vista previa)
-- Constructor UI (grid de iconos, hotkeys 1-9)
+- Constructor UI (título centrado, grid de iconos, hotkeys 1-9)
 - Panel de Ayuda F1 (4 pestañas: Recursos, Edificios, Controles, Objetivos)
 - Recetario F2 (tech tree con desbloqueos)
 - Tutorial básico (5 pasos)
@@ -70,15 +72,18 @@ energía → quarks → protones/neutrones → átomos → moléculas → ADN
 
 ---
 
-## ✅ Mejoras Recientes (v0.5)
+## ✅ Mejoras Recientes (v0.5) — NO TOCAR salvo petición explícita
+
+*(Ver [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md) para lista de puntos no tocar.)*
 
 - **Fabricador Hadrón:** Quarks → Protones/Neutrones (2U+1D, 1U+2D). Recibe pulsos, añade productos al inventario.
 - **Colocación de edificios:** HUD con `mouse_filter = IGNORE` para que los clics lleguen al mapa. Botón SELECCIÓN desactivado por defecto.
-- **Save/Load corregido:** Edificios se guardan/cargan correctamente; búsqueda recursiva de Area3D en save_system; zoom de cámara se restaura; sifones se reactivan tras cargar (game_tick reconectado). **Tecnologías F2 persisten:** TechTree.save_progress/load_progress integrados en SaveSystem.
-- **Prismas corregidos:** Solo se colocan en vacío (TILE_VACIO); placement_logic separado por grupo; eliminada función duplicada en prism_logic.
-- **Void Generator:** Implementado con lógica real de borrado de tiles.
-- **Pulido estético:** StyleBox en HUD, paneles unificados, tooltips. Menús popup (ConstructorUI sin FondoDetector, estilos consistentes en God Siphon).
-- **F1/F2 actualizados:** Fabricador Hadrón, Protón, Neutrón añadidos. TechTree actualizado.
+- **Save/Load:** Edificios se guardan/cargan; reconstrucción por referencia (`_activar_lista_edificios`), diferida desde WorldGenerator; registro en BuildingManager/GridManager; Constructor `check_ground` diferido y `_recuperar_estado_guardado` con guarda `is_inside_tree`. TechTree persistente en SaveSystem.
+- **Prismas corregidos:** Solo se colocan en vacío (TILE_VACIO); placement_logic por grupo.
+- **Void Generator:** Lógica real de borrado de tiles.
+- **Pulido estético:** StyleBox en HUD, paneles unificados, tooltips. UIs edificios: sin Rotar 90° / "Abrir clic derecho"; títulos centrados (CONSTRUCTOR, FUSIONADOR); Merger con selector quarks y purga por fila.
+- **Menú INFRAESTRUCTURA (ex RECURSOS):** Botón renombrado a INFRAESTRUCTURA; al abrir: oscurecer todo + ocultar red y tiles; tiles/red siguen ocultos al elegir ítem; conteo desde BuildingManager. Restaurar solo al cerrar.
+- **F1/F2 actualizados:** Fabricador Hadrón, Protón, Neutrón. TechTree actualizado.
 - **Análisis null-safety:** beam_emitter, god_siphon, save_system, world_generator, inventory_button, hud.
 
 ---

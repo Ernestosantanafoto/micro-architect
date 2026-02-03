@@ -206,6 +206,8 @@ func _actualizar_mi_estado_global():
 		GlobalInventory.registrar_estado(mi_celda, datos)
 
 func _recuperar_estado_guardado():
+	if not is_inside_tree():
+		return
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	if map:
 		var mi_celda = map.local_to_map(global_position)

@@ -328,7 +328,7 @@ Si todos los tests pasan (T1 funcional):
 
 **Notas de diseño / futuro:**
 - Hotkeys 1-9: actualmente 1-7 fijos (Sifón…Void Generator), 8-9 vacíos. En el futuro: posibilidad de que el jugador bindee las teclas 1-9 a su gusto.
-- Menú de recursos (HUD): dar una vuelta de imagen y utilidad más adelante.
+- Menú INFRAESTRUCTURA (HUD): comportamiento dim/ocultar red y tiles documentado en 0_REGLAS_UNIVERSALES; no refactorizar salvo petición.
 
 Si hay bugs:
 1. Documentar en "Bugs Encontrados" más abajo

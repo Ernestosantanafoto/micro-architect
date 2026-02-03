@@ -23,7 +23,9 @@ func register_flow(from: Node, to: Node, amount: int, tipo_recurso: String, colo
 func spawn_pulse_visual(from_pos: Vector3, to_pos: Vector3, color: Color, source_origen: Node = null, tipo_recurso: String = "") -> void:
 	if not MOSTRAR_VISUAL_PULSO:
 		return
-	var scene = get_tree().current_scene
+	var scene = GameConstants.get_scene_root_for(source_origen) if source_origen else get_tree().current_scene
+	if not scene:
+		scene = get_tree().root.get_child(0) if get_tree().root.get_child_count() > 0 else null
 	if not scene:
 		return
 	var dist = from_pos.distance_to(to_pos)

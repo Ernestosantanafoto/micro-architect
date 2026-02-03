@@ -15,6 +15,7 @@ var beam_emitter: BeamEmitter
 var ui_root: Node3D = null
 var label: Node = null
 var label_e: Label3D = null  # E (Estabilidad) en verde
+var label_sep: Label3D = null  # " - " en blanco entre E y C
 var label_c: Label3D = null  # C (Carga) en magenta
 var barra_visual: Node3D = null 
 
@@ -126,7 +127,8 @@ func finalizar_fusion():
 	verificar_recetas()
 
 func emitir_producto(nombre: String, color: Color):
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	var dir = -global_transform.basis.z
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
@@ -152,20 +154,28 @@ func emitir_producto(nombre: String, color: Color):
 	_actualizar_mi_estado_global()
 
 func _crear_labels_e_c(original: Label3D) -> void:
-	# E y C en unidades condensadas (1, 2, 3...); E verde, C magenta
+	# E y C en unidades condensadas (1, 2, 3...); E verde, " - " blanco, C magenta
 	label_e = Label3D.new()
 	label_e.pixel_size = original.pixel_size
 	label_e.font_size = original.font_size
 	label_e.billboard = original.billboard
-	label_e.position = original.position + Vector3(-0.25, 0, 0)
+	label_e.position = original.position + Vector3(-0.35, 0, 0)
 	label_e.text = "E:0"
 	label_e.modulate = GameConstants.COLOR_STABILITY
 	ui_root.add_child(label_e)
+	label_sep = Label3D.new()
+	label_sep.pixel_size = original.pixel_size
+	label_sep.font_size = original.font_size
+	label_sep.billboard = original.billboard
+	label_sep.position = original.position
+	label_sep.text = " - "
+	label_sep.modulate = Color.WHITE
+	ui_root.add_child(label_sep)
 	label_c = Label3D.new()
 	label_c.pixel_size = original.pixel_size
 	label_c.font_size = original.font_size
 	label_c.billboard = original.billboard
-	label_c.position = original.position + Vector3(0.25, 0, 0)
+	label_c.position = original.position + Vector3(0.35, 0, 0)
 	label_c.text = "C:0"
 	label_c.modulate = GameConstants.COLOR_CHARGE
 	ui_root.add_child(label_c)
@@ -224,7 +234,8 @@ func _gestionar_haz():
 			longitud = GameConstants.HAZ_LONGITUD_PREVIEW
 			if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
 			if EnergyManager: EnergyManager.remove_flows_from_source(self)
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	if map:
 		var dir = -global_transform.basis.z
@@ -267,7 +278,8 @@ func get_footprint_offsets() -> Array[Vector2i]:
 func recibir_luz_instantanea(_c, _r, _d): pass
 
 func _actualizar_mi_estado_global():
-	var map = get_tree().current_scene.find_child("GridMap", true, false)
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap", true, false) if scene else null
 	if not map: map = get_tree().get_first_node_in_group("MapaPrincipal")
 	if map and esta_construido:
 		var datos = {
@@ -278,8 +290,9 @@ func _actualizar_mi_estado_global():
 		GlobalInventory.registrar_estado(map.local_to_map(global_position), datos)
 
 func _recuperar_estado_guardado():
+	var scene = GameConstants.get_scene_root_for(self)
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
-	if not map: map = get_tree().current_scene.find_child("GridMap", true, false)
+	if not map and scene: map = scene.find_child("GridMap", true, false)
 	if map:
 		var e = GlobalInventory.obtener_estado(map.local_to_map(global_position))
 		if e.size() > 0:
@@ -306,6 +319,17 @@ func set_producto_objetivo(quark: String) -> void:
 func purgar_recurso(tipo_recurso: String) -> void:
 	if not buffer.has(tipo_recurso): return
 	buffer[tipo_recurso] = 0
+	actualizar_ui()
+	actualizar_barra()
+	_actualizar_mi_estado_global()
+	_notificar_ui_merger()
+
+## Vacía todo el buffer (E y C). Útil para resetear el fusionador.
+func purgar_buffer() -> void:
+	var key_stab = GameConstants.PREFIJO_COMPRIMIDO + GameConstants.RECURSO_STABILITY
+	var key_charg = GameConstants.PREFIJO_COMPRIMIDO + GameConstants.RECURSO_CHARGE
+	buffer[key_stab] = 0
+	buffer[key_charg] = 0
 	actualizar_ui()
 	actualizar_barra()
 	_actualizar_mi_estado_global()

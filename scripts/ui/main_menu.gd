@@ -47,6 +47,8 @@ func _ready():
 	
 	# Feedback hover/pressed en todos los botones
 	_aplicar_feedback_botones()
+	# Aviso por si se ejecuta en ventana embebida (NUEVA/CARGAR pueden fallar)
+	_anadir_aviso_f5_si_embebido()
 
 # --- LÓGICA DE NAVEGACIÓN (con transición suave) ---
 
@@ -172,6 +174,17 @@ func _anadir_version_al_menu():
 	main_container.add_child(label_ver)
 	main_container.move_child(label_ver, 1)  # Justo después del título (Label)
 
+func _anadir_aviso_f5_si_embebido():
+	var hint = Label.new()
+	hint.name = "LabelHintF5"
+	hint.text = "Si NUEVA/CARGAR no inician: ejecuta el proyecto con F5 (ventana separada)."
+	hint.add_theme_font_size_override("font_size", 14)
+	hint.add_theme_color_override("font_color", Color(0.5, 0.55, 0.65))
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.custom_minimum_size.x = 400
+	main_container.add_child(hint)
+
 func _aplicar_feedback_botones():
 	for c in [main_container, options_container]:
 		for child in c.get_children():
@@ -265,10 +278,6 @@ func _panel_estilo_cargar() -> StyleBoxFlat:
 	s.content_margin_bottom = 24.0
 	return s
 
-func _debug_log_path() -> String:
-	var base = ProjectSettings.globalize_path("res://")
-	return base.path_join(".cursor").path_join("debug.log")
-
 func _mostrar_aviso_ventana_embebida() -> void:
 	var layer = CanvasLayer.new()
 	layer.layer = 200
@@ -302,27 +311,10 @@ func _mostrar_aviso_ventana_embebida() -> void:
 	vbox.add_child(btn)
 
 func _intentar_cambio_escena():
-	# #region agent log
-	var _dir = ProjectSettings.globalize_path("res://").path_join(".cursor")
-	if not DirAccess.dir_exists_absolute(_dir): DirAccess.make_dir_recursive_absolute(_dir)
-	var _d = {"sessionId":"debug-session","runId":"run1","hypothesisId":"H1,H2,H5","location":"main_menu.gd:_intentar_cambio_escena","message":"entry","data":{"escena":ESCENA_JUEGO,"exists":ResourceLoader.exists(ESCENA_JUEGO)},"timestamp":Time.get_ticks_msec()}
-	var _p = _debug_log_path()
-	var _f: FileAccess = null
-	if FileAccess.file_exists(_p): _f = FileAccess.open(_p, FileAccess.READ_WRITE); if _f: _f.seek_end()
-	else: _f = FileAccess.open(_p, FileAccess.WRITE)
-	var _line = JSON.stringify(_d)
-	if _f: _f.store_line(_line); _f.close(); print("[DEBUG] Log escrito en: ", _p)
-	else: print("[DEBUG] Log path (falló abrir): ", _p)
-	print("[DEBUG_LOG] ", _line)
-	# #endregion
 	if not ResourceLoader.exists(ESCENA_JUEGO):
 		push_error("[MainMenu] Escena no encontrada: " + ESCENA_JUEGO)
 		return
-	# Precargar con ResourceLoader (más explícito que load() global)
 	_escena_precargada = ResourceLoader.load(ESCENA_JUEGO, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
-	var tiene_instantiate = _escena_precargada != null and _escena_precargada.has_method("instantiate")
-	var res_class = _escena_precargada.get_class() if _escena_precargada else "null"
-	print("[DEBUG_LOG] ", JSON.stringify({"message":"preload_in_button","preloaded_ok":_escena_precargada != null,"has_instantiate":tiene_instantiate,"class":res_class}))
 	# En ventana embebida (editor) el fullscreen puede impedir que se vea la nueva escena
 	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
@@ -330,19 +322,7 @@ func _intentar_cambio_escena():
 	call_deferred("_do_cambio_escena")
 
 func _do_cambio_escena() -> void:
-	# #region agent log
-	var _dir2 = ProjectSettings.globalize_path("res://").path_join(".cursor")
-	if not DirAccess.dir_exists_absolute(_dir2): DirAccess.make_dir_recursive_absolute(_dir2)
-	var _d2 = {"sessionId":"debug-session","runId":"run1","hypothesisId":"H1,H5","location":"main_menu.gd:_do_cambio_escena","message":"deferred_callback_entered","data":{"escena":ESCENA_JUEGO},"timestamp":Time.get_ticks_msec()}
-	var _p2 = _debug_log_path()
-	var _f2: FileAccess = null
-	if FileAccess.file_exists(_p2): _f2 = FileAccess.open(_p2, FileAccess.READ_WRITE); if _f2: _f2.seek_end()
-	else: _f2 = FileAccess.open(_p2, FileAccess.WRITE)
-	var _line2 = JSON.stringify(_d2)
-	if _f2: _f2.store_line(_line2); _f2.close()
-	print("[DEBUG_LOG] ", _line2)
-	# #endregion
-	# Error 19 = árbol ocupado incluso tras await; usar Timer para ejecutar cuando el árbol esté libre
+	# Timer para evitar error 19 (árbol ocupado) al cambiar escena
 	var t = Timer.new()
 	t.one_shot = true
 	t.wait_time = 0.1
@@ -351,28 +331,33 @@ func _do_cambio_escena() -> void:
 	t.start()
 
 func _cambio_escena_en_timeout() -> void:
-	# #region agent log
-	print("[DEBUG_LOG] ", JSON.stringify({"message":"timeout_entered","timestamp":Time.get_ticks_msec()}))
-	# #endregion
-	# Cambio manual: evita change_scene_to_file (error 19 en ventana embebida)
 	var pack_or_raw = _escena_precargada
 	if not pack_or_raw:
 		pack_or_raw = ResourceLoader.load(ESCENA_JUEGO, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
 	var new_scene: Node = null
 	if pack_or_raw != null and pack_or_raw.has_method("instantiate"):
 		new_scene = pack_or_raw.instantiate()
-	print("[DEBUG_LOG] ", JSON.stringify({"message":"after_instantiate","new_scene_ok":new_scene != null}))
 	if not new_scene:
 		push_error("[MainMenu] No se pudo cargar/instanciar escena: " + ESCENA_JUEGO)
-		_mostrar_aviso_ventana_embebida()
+		# En ventana separada (F5) el cambio directo puede funcionar
+		var err = get_tree().change_scene_to_file(ESCENA_JUEGO)
+		if err == OK:
+			return
+		# Si falla (p. ej. error 19 en embebida): autoload lo intenta desde su Timer
+		GameConstants.pedir_cambio_escena(ESCENA_JUEGO)
+		var t_aviso = Timer.new()
+		t_aviso.one_shot = true
+		t_aviso.wait_time = 0.5
+		t_aviso.timeout.connect(_mostrar_aviso_ventana_embebida)
+		add_child(t_aviso)
+		t_aviso.start()
 		return
+	# Quitar esta escena (el menú) del árbol ANTES de añadir la partida. Usamos self porque
+	# current_scene puede no estar actualizado cuando se cambió escena manualmente (add_child).
 	var root = get_tree().root
-	var old_scene = get_tree().current_scene
+	var old_scene = self if self.get_parent() == root else get_tree().current_scene
+	if old_scene and is_instance_valid(old_scene):
+		if old_scene.get_parent() == root:
+			root.remove_child(old_scene)
+		old_scene.queue_free()
 	root.add_child(new_scene)
-	print("[DEBUG_LOG] ", JSON.stringify({"message":"after_add_child"}))
-	old_scene.queue_free()
-	print("[DEBUG_LOG] ", JSON.stringify({"message":"after_queue_free"}))
-	# #region agent log
-	var _d3 = {"sessionId":"debug-session","runId":"post-fix","hypothesisId":"H2,H3","location":"main_menu.gd:_cambio_escena_en_timeout","message":"scene_replaced_manually","timestamp":Time.get_ticks_msec()}
-	print("[DEBUG_LOG] ", JSON.stringify(_d3))
-	# #endregion

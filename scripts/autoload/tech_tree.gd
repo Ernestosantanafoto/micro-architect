@@ -122,7 +122,8 @@ func can_unlock(tech_name: String) -> bool:
 	
 	return true
 
-## Cuenta cuántos edificios del tipo dado hay colocados en la escena actual.
+## Cuenta cuántos edificios del tipo dado hay colocados en la partida.
+## Usa BuildingManager.active_buildings (fuente fiable); fallback a búsqueda en escena.
 func get_placed_building_count(building_name: String) -> int:
 	var scene_path = ""
 	if GameConstants.RECETAS.has(building_name):
@@ -132,6 +133,13 @@ func get_placed_building_count(building_name: String) -> int:
 	var target = _normalizar_ruta_escena(scene_path)
 	if target.is_empty():
 		return 0
+	if BuildingManager and BuildingManager.active_buildings.size() > 0:
+		var count := 0
+		for b in BuildingManager.active_buildings:
+			if is_instance_valid(b) and b.get("scene_file_path") != null:
+				if _normalizar_ruta_escena(b.scene_file_path) == target:
+					count += 1
+		return count
 	var root = get_tree().current_scene if get_tree() else null
 	if not root:
 		return 0

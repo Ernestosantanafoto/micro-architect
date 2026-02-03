@@ -93,7 +93,8 @@ func _centrar_panel_recursos() -> void:
 	panel_recursos.offset_right = panel_recursos.offset_left + ancho_panel
 	panel_recursos.offset_bottom = alto_panel
 
-func _update_resources():
+func _update_resources(_item_name: String = "", _new_amount: int = -1) -> void:
+	# Acepta 0 args (timer) o 2 (señal inventory_changed)
 	# Limpiar contenedor
 	for child in resource_container.get_children():
 		child.queue_free()

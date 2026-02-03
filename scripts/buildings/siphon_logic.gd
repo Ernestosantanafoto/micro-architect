@@ -30,7 +30,7 @@ func _ready():
 	desconectar_sifon()
 
 func _conectar_game_tick():
-	var main = get_tree().current_scene
+	var main = GameConstants.get_scene_root_for(self)
 	if main and main.has_signal("game_tick"):
 		if not main.game_tick.is_connected(_on_game_tick):
 			main.game_tick.connect(_on_game_tick)
@@ -57,7 +57,8 @@ func _process(_delta):
 			return
 
 	if longitud > 0:
-		var map = get_tree().current_scene.find_child("GridMap")
+		var scene = GameConstants.get_scene_root_for(self)
+		var map = scene.find_child("GridMap") if scene else null
 		var space = get_world_3d().direct_space_state
 		if map:
 			var dir = -global_transform.basis.z
@@ -71,7 +72,8 @@ func _on_game_tick(_c):
 			contador_ticks = 0
 
 func disparar():
-	var map = get_tree().current_scene.find_child("GridMap")
+	var scene = GameConstants.get_scene_root_for(self)
+	var map = scene.find_child("GridMap") if scene else null
 	var space = get_world_3d().direct_space_state
 	if not map or not space or not EnergyManager:
 		return
@@ -90,8 +92,12 @@ func disparar():
 		EnergyManager.register_flow(self, resultado["target"], energia_por_disparo, recurso_actual, color_recurso)
 
 func _detectar_recurso_bajo_pies():
-	var map = get_tree().current_scene.find_child("GridMap")
-	if not map: return
+	var scene = GameConstants.get_scene_root_for(self)
+	if not scene:
+		return
+	var map = scene.find_child("GridMap")
+	if not map:
+		return
 	
 	var id = map.get_cell_item(map.local_to_map(global_position))
 	
