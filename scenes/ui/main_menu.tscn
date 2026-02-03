@@ -62,17 +62,41 @@ text = "SALIR"
 [node name="OptionsMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
 visible = false
 layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+[node name="LabelOpciones" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "VOLUMEN"
+theme_override_font_sizes/font_size = 48
+text = "OPCIONES"
+
+[node name="LabelMusica" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+text = "Volumen de música"
 
 [node name="VolumeSlider" type="HSlider" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
 layout_mode = 2
 max_value = 1.0
 step = 0.01
-value = 0.1
+value = 1.0
+
+[node name="LabelEfectos" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+text = "Volumen de efectos"
+
+[node name="SfxSlider" type="HSlider" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="FullscreenCheck" type="CheckButton" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+text = "Pantalla completa"
+
+[node name="LabelRebind" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Reasignar teclas (próximamente)"
 
 [node name="ButtonBack" type="Button" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
 custom_minimum_size = Vector2(10, 40)

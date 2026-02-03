@@ -27,6 +27,15 @@ func _ready():
 		if child is Button:
 			child.pressed.connect(_on_category_pressed.bind(child))
 			_setup_tooltip(child)
+	set_process_input(true)
+
+func _input(event):
+	if not vertical_stack.visible: return
+	if event is InputEventMouseButton and event.pressed:
+		var pos = get_viewport().get_mouse_position()
+		if not vertical_stack.get_global_rect().has_point(pos):
+			_cerrar_menu()
+			get_viewport().set_input_as_handled()
 
 func _estilizar_botones_categoria():
 	var estilo = StyleBoxFlat.new()
@@ -113,6 +122,10 @@ func _construir_items_verticales(categoria: String, boton_origen: Button):
 		
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
+		style.corner_radius_top_left = 6
+		style.corner_radius_top_right = 6
+		style.corner_radius_bottom_left = 6
+		style.corner_radius_bottom_right = 6
 		style.set_border_width_all(2)
 		style.border_color = Color.CYAN if "T2" not in item["label"] else Color.GOLD
 		btn.add_theme_stylebox_override("normal", style)

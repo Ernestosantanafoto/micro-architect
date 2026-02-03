@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmerger_ui_001"]
+
+[ext_resource type="Script" path="res://scripts/ui/merger_ui.gd" id="1_merger"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_merger"]
+bg_color = Color(0.1, 0.11, 0.14, 0.97)
+corner_radius = 8
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.35, 0.5, 0.6)
+
+[node name="MergerUI" type="CanvasLayer"]
+script = ExtResource("1_merger")
+
+[node name="VentanaFlotante" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 260.0
+offset_bottom = 220.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_merger")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+text = "FUSIONADOR"
+
+[node name="OptProducto" type="OptionButton" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+
+[node name="LblE" type="Label" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "E: 0"
+
+[node name="LblC" type="Label" parent="VentanaFlotante/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "C: 0"
+
+[node name="HBoxPurga" type="HBoxContainer" parent="VentanaFlotante/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnPurgaE" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxPurga"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Purga E"
+
+[node name="BtnPurgaC" type="Button" parent="VentanaFlotante/VBoxContainer/HBoxPurga"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Purga C"

@@ -14,7 +14,23 @@ var _tech_notification_timer: Timer = null
 
 const TECH_NOTIFICATION_DURATION := 4.5
 
+func _debug_log_path() -> String:
+	var base = ProjectSettings.globalize_path("res://")
+	return base.path_join(".cursor").path_join("debug.log")
+
 func _ready():
+	# #region agent log
+	var _dir = ProjectSettings.globalize_path("res://").path_join(".cursor")
+	if not DirAccess.dir_exists_absolute(_dir): DirAccess.make_dir_recursive_absolute(_dir)
+	var _d = {"sessionId":"debug-session","runId":"run1","hypothesisId":"H3,H4","location":"main_game_3d.gd:_ready","message":"game_scene_ready","data":{},"timestamp":Time.get_ticks_msec()}
+	var _p = _debug_log_path()
+	var _f: FileAccess = null
+	if FileAccess.file_exists(_p): _f = FileAccess.open(_p, FileAccess.READ_WRITE); if _f: _f.seek_end()
+	else: _f = FileAccess.open(_p, FileAccess.WRITE)
+	var _line = JSON.stringify(_d)
+	if _f: _f.store_line(_line); _f.close()
+	print("[DEBUG_LOG] ", _line)
+	# #endregion
 	# Buscar y conectar botones automáticamente
 	_conectar_botones()
 	_crear_popup_desbloqueo()
@@ -22,7 +38,7 @@ func _ready():
 		TechTree.tech_unlocked.connect(_on_tech_unlocked)
 
 func _conectar_botones():
-	# Conectar todos los botones GUARDAR (PanelSistema y BottomBar) para que guardar siempre funcione
+	# Conectar botón GUARDAR del menú desplegable (MENU → GUARDAR). El de la barra inferior es BtnSoltar (SOLTAR).
 	var btns_save = _find_all_children_by_name(self, "BtnGuardar")
 	for btn_save in btns_save:
 		if btn_save is BaseButton and not btn_save.pressed.is_connected(_on_btn_guardar_pressed):
@@ -34,6 +50,12 @@ func _conectar_botones():
 	if btn_salir and not btn_salir.pressed.is_connected(_on_btn_menu_pressed):
 		btn_salir.pressed.connect(_on_btn_menu_pressed)
 		print("[MAIN] Botón SALIR conectado.")
+	
+	# Cargar partida (entre SALIR y SELECCIÓN)
+	var btn_cargar = _buscar_boton("BtnCargar")
+	if btn_cargar and not btn_cargar.pressed.is_connected(_on_btn_cargar_pressed):
+		btn_cargar.pressed.connect(_on_btn_cargar_pressed)
+		print("[MAIN] Botón CARGAR conectado.")
 	
 	# Modo selección (Button toggle_mode): mismo aspecto que GUARDAR/MENÚ
 	var btn_modo_sel = find_child("BtnModoSeleccion", true, false)
@@ -150,6 +172,14 @@ func _process(delta):
 		current_tick += 1
 		game_tick.emit(current_tick)
 
+func _input(event):
+	# Clic central: máxima prioridad para clonar / poner en mano (no lo consume la UI)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_MIDDLE:
+		var cm = find_child("ConstructionManager", true, false)
+		if cm and cm.has_method("ejecutar_accion_clic_central"):
+			if cm.ejecutar_accion_clic_central():
+				get_viewport().set_input_as_handled()
+
 func _unhandled_input(event):
 	var sm = find_child("SelectionManager", true, false)
 	var cm = find_child("ConstructionManager", true, false)
@@ -252,12 +282,212 @@ func _seleccionar_edificio_por_indice(indice: int):
 			cm.seleccionar_para_construir(escena, nombre_item)
 
 func _on_btn_guardar_pressed() -> void:
-	print("[MAIN] Guardando partida...")
 	if SaveSystem:
-		SaveSystem.guardar_partida()
-		print("[MAIN] ¡Partida guardada!")
+		_mostrar_popup_guardar()
 	else:
 		print("[MAIN] ERROR: SaveSystem no encontrado")
+
+func _cerrar_popups_overlay() -> void:
+	for n in get_tree().get_nodes_in_group(GameConstants.POPUP_OVERLAY_GROUP):
+		if is_instance_valid(n):
+			n.queue_free()
+
+func _on_popup_backdrop_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		_cerrar_popups_overlay()
+		get_viewport().set_input_as_handled()
+
+func _mostrar_popup_guardar() -> void:
+	_cerrar_popups_overlay()
+	var layer = CanvasLayer.new()
+	layer.layer = 100
+	layer.add_to_group(GameConstants.POPUP_OVERLAY_GROUP)
+	add_child(layer)
+	# Fondo transparente: clic fuera cierra el popup
+	var backdrop = ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.01)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(_on_popup_backdrop_input)
+	layer.add_child(backdrop)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = GameConstants.POPUP_OFFSET_LEFT
+	panel.offset_top = GameConstants.POPUP_OFFSET_TOP
+	panel.offset_right = GameConstants.POPUP_OFFSET_RIGHT
+	panel.offset_bottom = GameConstants.POPUP_OFFSET_BOTTOM
+	panel.add_theme_stylebox_override("panel", _panel_estilo_guardar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	panel.add_child(vbox)
+	var lbl = Label.new()
+	lbl.text = "Guardar partida"
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(lbl)
+	var slots_info = SaveSystem.get_slots_info()
+	var slot_buttons: Array[Button] = []
+	for i in range(3):
+		var info = slots_info[i]
+		var btn = Button.new()
+		btn.toggle_mode = true
+		var nm = info.get("name", "")
+		btn.text = "Slot %d: %s" % [info["slot"], nm if nm else "(vacío)"]
+		btn.custom_minimum_size.y = 36
+		btn.pressed.connect(_on_popup_slot_seleccionado.bind(info["slot"], slot_buttons, btn))
+		slot_buttons.append(btn)
+		vbox.add_child(btn)
+	var nombre_edit = LineEdit.new()
+	nombre_edit.placeholder_text = "Nombre (opcional)"
+	nombre_edit.custom_minimum_size.y = 32
+	vbox.add_child(nombre_edit)
+	var hbox = HBoxContainer.new()
+	var btn_guardar = Button.new()
+	btn_guardar.text = "Guardar"
+	btn_guardar.pressed.connect(func():
+		var slot = _popup_slot_guardar
+		var nombre = nombre_edit.text.strip_edges()
+		SaveSystem.guardar_partida(slot, nombre)
+		_cerrar_popups_overlay()
+		print("[MAIN] ¡Partida guardada en slot ", slot, "!")
+	)
+	var btn_cancelar = Button.new()
+	btn_cancelar.text = "Cancelar"
+	btn_cancelar.pressed.connect(_cerrar_popups_overlay)
+	hbox.add_child(btn_guardar)
+	hbox.add_child(btn_cancelar)
+	vbox.add_child(hbox)
+	_popup_slot_guardar = 1
+	slot_buttons[0].emit_signal("pressed")
+
+func _on_popup_slot_seleccionado(slot: int, todos: Array, btn_actual: Button) -> void:
+	_popup_slot_guardar = slot
+	for b in todos:
+		b.button_pressed = (b == btn_actual)
+
+var _popup_slot_guardar := 1
+
+func _panel_estilo_guardar() -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = Color(0.08, 0.1, 0.14, 0.98)
+	s.border_width_left = 2
+	s.border_width_top = 2
+	s.border_width_right = 2
+	s.border_width_bottom = 2
+	s.border_color = Color(0.25, 0.4, 0.55, 0.8)
+	s.corner_radius_top_left = 8
+	s.corner_radius_top_right = 8
+	s.corner_radius_bottom_left = 8
+	s.corner_radius_bottom_right = 8
+	s.content_margin_left = 20.0
+	s.content_margin_top = 20.0
+	s.content_margin_right = 20.0
+	s.content_margin_bottom = 20.0
+	return s
+
+func _on_btn_cargar_pressed() -> void:
+	if not SaveSystem:
+		print("[MAIN] ERROR: SaveSystem no encontrado")
+		return
+	_mostrar_popup_cargar_ingame()
+
+func _mostrar_popup_cargar_ingame() -> void:
+	var slots_info = SaveSystem.get_slots_info()
+	var has_any = false
+	for s in slots_info:
+		if not (s.get("name", "") as String).is_empty():
+			has_any = true
+			break
+	if not has_any:
+		print("[MAIN] No hay partida guardada para cargar.")
+		return
+	_cerrar_popups_overlay()
+	var layer = CanvasLayer.new()
+	layer.layer = 100
+	layer.add_to_group(GameConstants.POPUP_OVERLAY_GROUP)
+	add_child(layer)
+	# Fondo transparente: clic fuera cierra el popup
+	var backdrop = ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.01)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(_on_popup_backdrop_input)
+	layer.add_child(backdrop)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = GameConstants.POPUP_OFFSET_LEFT
+	panel.offset_top = GameConstants.POPUP_OFFSET_TOP
+	panel.offset_right = GameConstants.POPUP_OFFSET_RIGHT
+	panel.offset_bottom = GameConstants.POPUP_OFFSET_BOTTOM
+	panel.add_theme_stylebox_override("panel", _panel_estilo_guardar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	panel.add_child(vbox)
+	var lbl = Label.new()
+	lbl.text = "Cargar partida"
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(lbl)
+	for info in slots_info:
+		var nm = info.get("name", "")
+		var tiene_datos = not (nm as String).is_empty()
+		var btn = Button.new()
+		if tiene_datos:
+			var ts = info.get("timestamp", 0)
+			var fecha = ""
+			if ts > 0:
+				var dt_str = Time.get_datetime_string_from_unix_time(ts)
+				fecha = " (%s)" % dt_str.substr(0, 16) if dt_str.length() >= 16 else ""
+			btn.text = "Slot %d: %s%s" % [info["slot"], nm, fecha]
+		else:
+			btn.text = "Slot %d: (vacío)" % info["slot"]
+			btn.disabled = true
+		btn.custom_minimum_size.y = 40
+		var slot = info["slot"]
+		if tiene_datos:
+			btn.pressed.connect(func():
+				_cerrar_popups_overlay()
+				_aplicar_carga_ingame(slot)
+			)
+		vbox.add_child(btn)
+	var btn_cancelar = Button.new()
+	btn_cancelar.text = "Cancelar"
+	btn_cancelar.pressed.connect(_cerrar_popups_overlay)
+	vbox.add_child(btn_cancelar)
+
+func _aplicar_carga_ingame(slot: int) -> void:
+	if not SaveSystem or not SaveSystem.cargar_partida(slot):
+		return
+	# Quitar edificios actuales del mundo
+	if BuildingManager:
+		for b in BuildingManager.active_buildings.duplicate():
+			if is_instance_valid(b):
+				if GridManager:
+					GridManager.unregister_building_all(b)
+				b.queue_free()
+		BuildingManager.limpiar()
+	if GridManager:
+		GridManager.limpiar()
+	# Restaurar mapa guardado (terreno) o generar rango si partida antigua sin mapa
+	var wg = find_child("WorldGenerator", true, false)
+	if wg and GlobalInventory.mapa_guardado.size() > 0 and wg.has_method("restaurar_mapa_desde_inventario"):
+		wg.restaurar_mapa_desde_inventario()
+	elif wg and wg.has_method("forzar_generar_rango") and GlobalInventory.edificios_para_reconstruir.size() > 0:
+		wg.forzar_generar_rango(-6, 6, -6, 6)
+	if GlobalInventory.edificios_para_reconstruir.size() > 0:
+		await SaveSystem.reconstruir_edificios()
+	# Restaurar cámara
+	var cam_pivot = find_child("CameraPivot", true, false)
+	if cam_pivot and GlobalInventory.datos_camara["pos"] != Vector3.ZERO:
+		cam_pivot.global_position = GlobalInventory.datos_camara["pos"]
+		var cam_node = cam_pivot.find_child("Camera3D", true, false)
+		if cam_node and cam_node.get("size") != null:
+			cam_node.size = GlobalInventory.datos_camara.get("size", 100.0)
+	# Cerrar dropdown MENU si está abierto
+	var menu_drop = get_node_or_null("CanvasLayer/MenuDropdownPanel")
+	if menu_drop and menu_drop.visible:
+		menu_drop.visible = false
+	print("[MAIN] Partida cargada en slot ", slot)
 
 func _on_btn_menu_pressed() -> void:
 	print("[MAIN] Volviendo al menú...")

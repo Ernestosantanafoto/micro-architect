@@ -17,11 +17,11 @@
 
 | Estado | Prioridad | Tarea | Notas |
 |--------|-----------|--------|--------|
-| [ ] | P | **Volumen de música** (slider en menú o pausa) | MusicManager existe; falta control desde UI |
-| [ ] | M | **Volumen de efectos** (si se añaden SFX) | Preparar canal cuando haya sonidos |
-| [ ] | M | **Pantalla completa / ventana** | Toggle en opciones o menú pausa |
-| [ ] | F | **Rebind de teclas 1–9** (y R, ESC) | Ya mencionado en TEST_CHECKLIST como futuro |
-| [ ] | M | **Guardar preferencias** (volumen, fullscreen) | user://config.cfg o similar |
+| [x] | P | **Volumen de música** (slider en menú o pausa) | OPCIONES en menú principal + OPCIONES en menú ingame (MENU → OPCIONES) |
+| [x] | M | **Volumen de efectos** (si se añaden SFX) | Slider + bus SFX creado al vuelo; guardado en user://settings.cfg |
+| [x] | M | **Pantalla completa / ventana** | CheckButton en opciones; guardado en preferencias |
+| [ ] | F | **Rebind de teclas 1–9** (y R, ESC) | Placeholder "Reasignar teclas (próximamente)" en opciones |
+| [x] | M | **Guardar preferencias** (volumen, fullscreen) | user://settings.cfg (audio.volume, audio.sfx_volume, display.fullscreen) |
 
 ---
 
@@ -30,7 +30,7 @@
 | Estado | Prioridad | Tarea | Notas |
 |--------|-----------|--------|--------|
 | [ ] | P | **Manejo de partida corrupta o inexistente** | Al cargar: si falla JSON o falta archivo, mensaje claro y no crashear |
-| [ ] | M | **Más de un slot de guardado** (ej. 3 slots) | Guardar en user://save_1.json, save_2.json, etc. |
+| [x] | M | **Más de un slot de guardado** (ej. 3 slots) | Guardar en user://save_1.json, save_2.json, etc. |
 | [ ] | M | **Indicador “Partida guardada”** (ya existe mensaje; verificar que sea visible) | Revisar que el jugador vea confirmación |
 | [ ] | M | **Pantalla de carga** al cargar partida | Mínimo: “Cargando…” mientras se reconstruye el mundo |
 | [ ] | F | **Auto-guardado** (cada N minutos o al salir) | Opción en configuración; actualmente solo guardado manual |
@@ -90,6 +90,10 @@
 | [ ] | F | **Gráfico de flujo** (qué produce qué) | En F1/F2: diagrama Energía → Quarks → … |
 | [ ] | M | **Indicador “en producción” en edificios** | Icono o barra sutil en Compresor/Merger/Constructor |
 | [ ] | F | **Alertas de bloqueo** (ej. “Sifón sin salida”) | Opcional; ayuda a depurar diseños |
+| [ ] | F | **Balanceo de recursos solicitados** | Evitar desbloquear Fabricador Hadrón antes que Compresores/fábricas normales; orden de Tier1 coherente |
+| [ ] | F | **Visión/UI de fábricas más amigable** | Mejorar feedback visual de edificios de producción |
+| [ ] | F | **Interfaz externa de progresión/almacenaje** | Panel o HUD que permita ver progresión o almacenaje de fábricas de un vistazo |
+| [ ] | M | **Bugs visuales prismas (energía aparece/desaparece)** | Corregir parpadeo o desaparición incorrecta de energía/haces en prismas |
 
 ---
 

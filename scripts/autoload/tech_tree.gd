@@ -48,7 +48,7 @@ var unlock_conditions = {
 # Texto para el jugador: cómo conseguir cada objetivo (F2).
 var goal_hints = {
 	"Compresor": "",
-	"Fusionador": "Producir 5 Compressed-Stability: coloca Compresores conectados a Sifones; cada 10 pulsos un Compresor añade 1 al inventario.",
+	"Fusionador": "Producir 5 Estabilidad condensada: coloca Compresores conectados a Sifones; cada 10 pulsos un Compresor añade 1 al inventario.",
 	"Constructor": "Producir 1 Up-Quark: desbloquea primero Fusionador, luego Fabricador Hadrón; el Hadrón produce Up-Quark.",
 	"Sifón T2": "Coloca 20 Sifones T1 en el mundo.",
 	"Prisma Recto T2": "Coloca 100 Prismas Rectos T1 en el mundo.",
@@ -129,15 +129,24 @@ func get_placed_building_count(building_name: String) -> int:
 		scene_path = GameConstants.RECETAS[building_name].get("output_scene", "")
 	if scene_path.is_empty():
 		return 0
+	var target = _normalizar_ruta_escena(scene_path)
+	if target.is_empty():
+		return 0
 	var root = get_tree().current_scene if get_tree() else null
 	if not root:
 		return 0
-	return _count_buildings_recursive(root, scene_path)
+	return _count_buildings_recursive(root, target)
 
-func _count_buildings_recursive(nodo: Node, scene_path: String) -> int:
-	var n = 1 if (nodo.scene_file_path == scene_path) else 0
+func _normalizar_ruta_escena(path: String) -> String:
+	return str(path).replace("\\", "/").strip_edges()
+
+func _count_buildings_recursive(nodo: Node, scene_path_normalizado: String) -> int:
+	var nodo_path = ""
+	if nodo.get("scene_file_path") != null:
+		nodo_path = _normalizar_ruta_escena(nodo.scene_file_path)
+	var n = 1 if (nodo_path == scene_path_normalizado and nodo_path.length() > 0) else 0
 	for c in nodo.get_children():
-		n += _count_buildings_recursive(c, scene_path)
+		n += _count_buildings_recursive(c, scene_path_normalizado)
 	return n
 
 func _check_unlock_conditions(_item_name: String = "", _new_amount: int = 0):

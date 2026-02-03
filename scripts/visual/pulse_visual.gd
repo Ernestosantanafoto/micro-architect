@@ -57,6 +57,10 @@ func _process(delta: float) -> void:
 		if abs(source_origen.global_rotation.y - _rotacion_inicial) > 0.01:
 			queue_free()
 			return
+		# Si ya no hay haz activo en el origen, la bola no debería existir (red de seguridad)
+		if PulseValidator and source_origen not in PulseValidator.haces_activos:
+			queue_free()
+			return
 	timer += delta
 	var progress = clampf(timer / duration, 0.0, 1.0)
 	global_position = from_pos.lerp(to_pos, progress)

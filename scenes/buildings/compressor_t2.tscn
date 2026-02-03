@@ -6,9 +6,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wlhp4"]
 roughness = 0.12
-emission_enabled = true
-emission = Color(0.946415, 0.93382895, 0, 1)
-emission_energy_multiplier = 1.12
+emission_enabled = false
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_emlho"]
 material = SubResource("StandardMaterial3D_wlhp4")

@@ -1,9 +1,36 @@
 extends Node
 
-const SAVE_PATH = "user://vaciado_save.json"
+const NUM_SLOTS := 3
+const SAVE_PATH_PATTERN := "user://save_slot_%d.json"
 
-func guardar_partida():
-	print("[SAVE] Iniciando guardado...")
+func get_save_path(slot_index: int) -> String:
+	return SAVE_PATH_PATTERN % clamp(slot_index, 1, NUM_SLOTS)
+
+## Devuelve info de cada slot: { "slot": 1, "name": "Mi partida", "timestamp": 123 } o name vacío si no hay guardado.
+func get_slots_info() -> Array:
+	var result: Array = []
+	for i in range(1, NUM_SLOTS + 1):
+		var path = get_save_path(i)
+		var info = { "slot": i, "name": "", "timestamp": 0 }
+		if FileAccess.file_exists(path):
+			var file = FileAccess.open(path, FileAccess.READ)
+			if file:
+				var raw = file.get_as_text()
+				file.close()
+				var data = JSON.parse_string(raw)
+				if data:
+					info["name"] = data.get("save_name", "")
+					info["timestamp"] = data.get("save_timestamp", 0)
+		result.append(info)
+	return result
+
+func guardar_partida(slot_index: int = 1, custom_name: String = "") -> void:
+	slot_index = clamp(slot_index, 1, NUM_SLOTS)
+	var path = get_save_path(slot_index)
+	_guardar_a_ruta(path, slot_index, custom_name)
+
+func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void:
+	print("[SAVE] Iniciando guardado en slot ", slot_index, " -> ", path)
 	
 	var lista_edificios = []
 	
@@ -70,14 +97,37 @@ func guardar_partida():
 		if cam_node and cam_node.get("size") != null:
 			c_size = cam_node.size
 	
+	# Guardar estado del mapa (GridMap) para restaurar terreno al cargar
+	var lista_mapa: Array = []
+	var map = get_tree().get_first_node_in_group("MapaPrincipal")
+	if map and map is GridMap:
+		for cell in map.get_used_cells():
+			var item = map.get_cell_item(cell)
+			lista_mapa.append({"x": cell.x, "y": cell.y, "z": cell.z, "item": item})
+
 	# Progreso del árbol tecnológico (F2)
 	var tech_data = TechTree.save_progress() if TechTree else {}
 
+	# Nombre y timestamp para el slot
+	var save_name = custom_name.strip_edges()
+	if save_name.is_empty():
+		var slots = get_slots_info()
+		for s in slots:
+			if s["slot"] == slot_index and not (s["name"] as String).is_empty():
+				save_name = s["name"]
+				break
+		if save_name.is_empty():
+			save_name = "Partida %d" % slot_index
+
 	# Construir paquete de datos
 	var data = {
+		"save_name": save_name,
+		"save_timestamp": int(Time.get_unix_time_from_system()),
+		"save_slot": slot_index,
 		"semilla": GlobalInventory.semilla_mundo,
 		"stock": GlobalInventory.stock,
 		"mundo": lista_edificios,
+		"mapa": lista_mapa,
 		"estados_vivos": GlobalInventory.estados_edificios,
 		"tech": tech_data,
 		"cam": {
@@ -89,47 +139,57 @@ func guardar_partida():
 	}
 	
 	# Guardar archivo
-	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file = FileAccess.open(path, FileAccess.WRITE)
 	if file:
 		file.store_line(JSON.stringify(data))
 		file.close()
-		print("[SAVE] ¡Guardado exitoso! ", lista_edificios.size(), " edificios.")
+		print("[SAVE] ¡Guardado exitoso! Slot ", slot_index, " (", save_name, "), ", lista_edificios.size(), " edificios.")
 	else:
 		print("[SAVE] ERROR: No se pudo abrir el archivo para escritura.")
 
+## Desde un nodo (p. ej. Area3D hijo), subir hasta la raíz de la escena del edificio (tiene scene_file_path con "buildings").
+func _obtener_raiz_edificio(n: Node) -> Node:
+	var node = n
+	while node:
+		var path = node.get("scene_file_path")
+		if path and str(path).strip_edges().length() > 0 and "buildings" in str(path):
+			return node
+		node = node.get_parent()
+	return null
+
 func _buscar_edificios_recursivo(nodo: Node, lista: Array):
-	# Verificar si este nodo es un edificio
 	if nodo is Area3D:
-		# Verificar si tiene collision_layer de edificios (4) o métodos de edificio
 		var es_edificio = false
-		
-		# Método 1: Por collision_layer
 		if nodo.collision_layer == GameConstants.LAYER_EDIFICIOS:
 			es_edificio = true
-		
-		# Método 2: Por tener métodos típicos de edificios
 		if nodo.has_method("check_ground") or nodo.has_method("es_suelo_valido"):
 			es_edificio = true
-		
-		# Método 3: Por tener scene_file_path que contenga "buildings"
-		if nodo.scene_file_path and "buildings" in nodo.scene_file_path:
+		var path = nodo.get("scene_file_path")
+		if path and "buildings" in str(path):
 			es_edificio = true
-		
-		if es_edificio and nodo.scene_file_path != "":
-			lista.append(nodo)
-	
+		if es_edificio:
+			var raiz = _obtener_raiz_edificio(nodo)
+			if raiz and raiz.scene_file_path and str(raiz.scene_file_path).strip_edges().length() > 0:
+				if raiz not in lista:
+					lista.append(raiz)
 	# Buscar en hijos
 	for hijo in nodo.get_children():
 		_buscar_edificios_recursivo(hijo, lista)
 
-func cargar_partida() -> bool:
-	print("[SAVE] Intentando cargar partida...")
+## Carga la partida del slot indicado (1, 2 o 3).
+func cargar_partida(slot_index: int = 1) -> bool:
+	slot_index = clamp(slot_index, 1, NUM_SLOTS)
+	var path = get_save_path(slot_index)
+	return _cargar_desde_ruta(path)
 	
-	if not FileAccess.file_exists(SAVE_PATH):
+func _cargar_desde_ruta(path: String) -> bool:
+	print("[SAVE] Intentando cargar partida desde ", path)
+	
+	if not FileAccess.file_exists(path):
 		print("[SAVE] No existe archivo de guardado.")
 		return false
 	
-	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:
 		print("[SAVE] ERROR: No se pudo abrir el archivo.")
 		return false
@@ -145,6 +205,9 @@ func cargar_partida() -> bool:
 	# Restaurar datos básicos
 	GlobalInventory.semilla_mundo = data.get("semilla", 0)
 	GlobalInventory.stock = data.get("stock", {})
+	
+	# Restaurar estado del mapa (terreno) para no regenerar al cargar
+	GlobalInventory.mapa_guardado = data.get("mapa", [])
 	
 	# Restaurar estados de edificios
 	if data.has("estados_vivos"):
@@ -309,13 +372,16 @@ func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
 		centro_x /= lista_edificios.size()
 		centro_z /= lista_edificios.size()
 	var data = {
+		"save_name": "Partida test",
+		"save_timestamp": int(Time.get_unix_time_from_system()),
+		"save_slot": 1,
 		"semilla": GlobalInventory.semilla_mundo if GlobalInventory.semilla_mundo != 0 else randi(),
 		"stock": stock_test,
 		"mundo": lista_edificios,
 		"estados_vivos": {},
 		"cam": {"x": centro_x, "y": 0, "z": centro_z, "s": 100.0}
 	}
-	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file = FileAccess.open(get_save_path(1), FileAccess.WRITE)
 	if not file:
 		print("[SAVE] ERROR al escribir partida test.")
 		return false

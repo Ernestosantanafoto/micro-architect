@@ -43,6 +43,10 @@ func toggle_panel():
 		show_panel()
 
 func show_panel():
+	# Cerrar popups Guardar/Cargar/Opciones al abrir F2
+	var main = get_tree().current_scene
+	if main and main.has_method("_cerrar_popups_overlay"):
+		main._cerrar_popups_overlay()
 	for n in get_tree().get_nodes_in_group("PanelesAyuda"):
 		if n != self and n.has_method("hide_panel") and n.visible:
 			n.hide_panel()
@@ -177,7 +181,9 @@ func _create_tech_entry(tech_info: Dictionary):
 				var needed = cond["amount"]
 				var res_name = cond["resource"]
 				var res_colored = _color_nombre_recurso(res_name)
-				txt += "\n[b]Objetivo:[/b] Producir %d %s. [b]Progreso: %d/%d[/b]" % [needed, res_colored, current, needed]
+				var cifra_needed = GameConstants.format_cantidad_solo_cifra(res_name, needed)
+				var cifra_current = GameConstants.format_cantidad_solo_cifra(res_name, current)
+				txt += "\n[b]Objetivo:[/b] Producir %s %s. [b]Progreso: %s/%s[/b]" % [cifra_needed, res_colored, cifra_current, cifra_needed]
 				if tech_info.get("goal_hint", "").length() > 0:
 					txt += "\n[i]%s[/i]" % tech_info["goal_hint"]
 			elif cond.get("type") == "building_count":
@@ -204,21 +210,28 @@ func _create_tech_entry(tech_info: Dictionary):
 				
 				var parts = []
 				for item in inputs:
-					parts.append("%dx %s" % [inputs[item], _color_nombre_recurso(item)])
+					var cant = inputs[item]
+					parts.append("%s %s" % [GameConstants.format_cantidad_solo_cifra(item, cant), _color_nombre_recurso(item)])
 				recipe_rtl.text = "Receta: " + ", ".join(parts)
-				recipe_rtl.add_theme_color_override("default_color", Color(0.4, 1.0, 0.4))
+				recipe_rtl.add_theme_color_override("default_color", Color(0.9, 0.9, 0.9))
 				vbox.add_child(recipe_rtl)
 	
 	tech_container.add_child(entry)
 
 func _color_nombre_recurso(nombre: String) -> String:
+	# E y C solo la letra en su color; UP/DOWN en amarillo/naranja (versión resumida sin "Quark")
+	var c_est = GameConstants.COLOR_STABILITY
+	var c_car = GameConstants.COLOR_CHARGE
+	var h_est = "#%02x%02x%02x" % [int(c_est.r * 255), int(c_est.g * 255), int(c_est.b * 255)]
+	var h_car = "#%02x%02x%02x" % [int(c_car.r * 255), int(c_car.g * 255), int(c_car.b * 255)]
+	# Palabra completa en su color (Carga en magenta, Estabilidad en verde)
 	var colores = {
-		"Stability": "[color=#66ff66]Stability[/color]",
-		"Charge": "[color=#aa66ff]Charge[/color]",
-		"Compressed-Stability": "[color=#66ffff]Compressed-Stability[/color]",
-		"Compressed-Charge": "[color=#aa66ff]Compressed-Charge[/color]",
-		"Up-Quark": "[color=#ffff66]Up-Quark[/color]",
-		"Down-Quark": "[color=#ffaa44]Down-Quark[/color]"
+		"Stability": "[color=%s]Estabilidad E[/color]" % h_est,
+		"Charge": "[color=%s]Carga C[/color]" % h_car,
+		"Compressed-Stability": "[color=%s]Estabilidad Condensada E[/color]" % h_est,
+		"Compressed-Charge": "[color=%s]Carga Condensada C[/color]" % h_car,
+		"Up-Quark": "[color=#ffff66]UP[/color]",
+		"Down-Quark": "[color=#ffaa44]DOWN[/color]"
 	}
 	return colores.get(nombre, nombre)
 

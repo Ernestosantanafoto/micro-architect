@@ -3,6 +3,21 @@ extends Node
 ## Modo desarrollo: God Siphon en HUD, tecla 0, etc. Toggle en juego con botón DEBUG (panel sistema).
 var DEBUG_MODE = false 
 
+# --- POPUPS (Guardar, Cargar, Opciones ingame: mismo tamaño y posición) ---
+const POPUP_OVERLAY_GROUP := "PopupOverlay"
+const POPUP_OFFSET_LEFT := -200
+const POPUP_OFFSET_TOP := -180
+const POPUP_OFFSET_RIGHT := 200
+const POPUP_OFFSET_BOTTOM := 180
+
+# --- PREFERENCIAS (user://settings.cfg) ---
+const PREFERENCIAS_PATH := "user://settings.cfg"
+const PREF_SECTION_AUDIO := "audio"
+const PREF_KEY_VOLUME := "volume"
+const PREF_KEY_SFX := "sfx_volume"
+const PREF_SECTION_DISPLAY := "display"
+const PREF_KEY_FULLSCREEN := "fullscreen"
+
 # --- TILES ---
 const TILE_VACIO = -1
 const TILE_ESTABILIDAD = 0 
@@ -17,10 +32,16 @@ const LAYER_EDIFICIOS = 4
 # --- CÁMARA ---
 const CAMARA_SENSIBILIDAD = 0.05
 const CAMARA_INCLINACION_X = -80.0
-const CAMARA_ZOOM_INICIAL = 100.0
-const CAMARA_ZOOM_MIN = 5.0
+const CAMARA_ZOOM_INICIAL = 15.0
+const CAMARA_ZOOM_MIN = 15.0
 const CAMARA_ZOOM_MAX = 200.0
 const CAMARA_ZOOM_PASO = 3.0
+## Velocidad movimiento WASD (unidades mundo/segundo).
+const CAMARA_VELOCIDAD_WASD := 40.0
+## Velocidad zoom Q/E lineal (size unidades/segundo, sin ease).
+const CAMARA_ZOOM_VELOCIDAD_QE := 50.0
+## Por encima de este size (≈33% del rango 5–200) se ocultan las partículas; al acercar de nuevo reaparecen.
+const CAMARA_ZOOM_UMBRAL_OCULTAR_PARTICULAS := 69.0
 ## Margen extra al encuadrar selección: la cuadrícula nunca toca los bordes (siempre un poco más de espacio).
 const CAMARA_SELECCION_MARGEN := 1.4
 
@@ -86,6 +107,9 @@ const RECURSO_STABILITY = "Stability"
 const COLOR_STABILITY = Color(0.2, 0.8, 0.2)
 const RECURSO_CHARGE = "Charge"
 const COLOR_CHARGE = Color(1.0, 0.0, 1.0, 1.0)
+# Visualización comprimida: 100 energía elemental = 1 Quark; 10 comprimida = 1 unidad
+const UNIDADES_ELEMENTAL_POR_QUARK := 100
+const UNIDADES_COMPRIMIDAS_POR_UNIDAD := 10
 
 # --- SIFÓN ---
 const SIFON_TICKS_POR_DISPARO = 5 
@@ -114,6 +138,8 @@ const COMPRESOR_T2_TIEMPO_CARGA = 2.5
 const MERGER_TIEMPO_PROCESO = 15.0 
 const MERGER_COSTO_STABILITY = 100
 const MERGER_COSTO_CHARGE = 200
+## Máximo 1000 unidades de energía total (100 partículas condensadas en total de ambos tipos)
+const MERGER_MAX_ALMACEN := 1000
 const MERGER_ANIM_SQUASH = Vector3(1.1, 0.9, 1.1)
 const MERGER_ANIM_BIRTH_SCALE = Vector3(2.5, 2.5, 2.5)
 const MERGER_OFFSET_SALIDA = 1.5
@@ -271,3 +297,65 @@ const STARTER_PACK = {
 	"Proton": 0,
 	"Neutron": 0
 }
+
+# --- FORMATO DE VISUALIZACIÓN (unidades comprimidas, nunca valor expandido) ---
+## Nombre en español para UI: Estabilidad (E), Carga (C), Estabilidad condensada (E), Carga condensada (C).
+func get_nombre_visible_recurso(clave: String) -> String:
+	match clave:
+		"Stability": return "Estabilidad E"
+		"Charge": return "Carga C"
+		"Compressed-Stability": return "Estabilidad Condensada E"
+		"Compressed-Charge": return "Carga Condensada C"
+		"Up-Quark": return "UP"
+		"Down-Quark": return "DOWN"
+		_: return clave
+
+## Solo la cifra para mostrar junto al nombre coloreado (evita duplicar "Estabilidad", "Carga", etc. en F2).
+## Ej: 15 → "15"; 100 Stability → "1 Quark"; 50 Compressed → "5"; Up-Quark 1 → "1".
+func format_cantidad_solo_cifra(nombre_recurso: String, cantidad: int) -> String:
+	if cantidad <= 0:
+		return "0"
+	match nombre_recurso:
+		"Stability":
+			if cantidad >= UNIDADES_ELEMENTAL_POR_QUARK:
+				return "%d Quark" % (cantidad / UNIDADES_ELEMENTAL_POR_QUARK)
+			return "%d" % cantidad
+		"Charge":
+			if cantidad >= UNIDADES_ELEMENTAL_POR_QUARK:
+				return "%d Quark" % (cantidad / UNIDADES_ELEMENTAL_POR_QUARK)
+			return "%d" % cantidad
+		"Compressed-Stability", "Compressed-Charge":
+			if cantidad >= UNIDADES_COMPRIMIDAS_POR_UNIDAD:
+				return "%d" % (cantidad / UNIDADES_COMPRIMIDAS_POR_UNIDAD)
+			return "%d" % cantidad
+		_:
+			return "%d" % cantidad
+
+## Devuelve texto para mostrar cantidad de recurso en forma lógica/comprimida.
+## 100 elemental → "1 Quark (Estabilidad)"; 20 comprimida → "2 Estabilidad condensada".
+func format_cantidad_recurso(nombre_recurso: String, cantidad: int) -> String:
+	if cantidad <= 0:
+		return "0"
+	match nombre_recurso:
+		"Stability":
+			if cantidad >= UNIDADES_ELEMENTAL_POR_QUARK:
+				var quarks = cantidad / UNIDADES_ELEMENTAL_POR_QUARK
+				return "%d Quark (Estabilidad)" % quarks
+			return "%d Estabilidad" % cantidad
+		"Charge":
+			if cantidad >= UNIDADES_ELEMENTAL_POR_QUARK:
+				var quarks = cantidad / UNIDADES_ELEMENTAL_POR_QUARK
+				return "%d Quark (Carga)" % quarks
+			return "%d Carga" % cantidad
+		"Compressed-Stability":
+			if cantidad >= UNIDADES_COMPRIMIDAS_POR_UNIDAD:
+				var un = cantidad / UNIDADES_COMPRIMIDAS_POR_UNIDAD
+				return "%d Estabilidad Condensada" % un
+			return "%d Estabilidad Condensada" % cantidad
+		"Compressed-Charge":
+			if cantidad >= UNIDADES_COMPRIMIDAS_POR_UNIDAD:
+				var un = cantidad / UNIDADES_COMPRIMIDAS_POR_UNIDAD
+				return "%d Carga Condensada" % un
+			return "%d Carga Condensada" % cantidad
+		_:
+			return "%d %s" % [cantidad, nombre_recurso]

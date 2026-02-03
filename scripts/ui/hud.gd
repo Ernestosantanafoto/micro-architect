@@ -36,12 +36,12 @@ var resource_icons = {
 	"Fabricador Hadrón": "⚛"
 }
 
-# Colores específicos por recurso
+# Colores semánticos: E (Estabilidad), C (Carga) — alineados con GameConstants
 var resource_colors = {
-	"Stability": Color(0.4, 1.0, 0.4),  # Verde
-	"Charge": Color(0.67, 0.4, 1.0),    # Violeta
-	"Compressed-Stability": Color(0.4, 1.0, 0.4),
-	"Compressed-Charge": Color(0.67, 0.4, 1.0),
+	"Stability": GameConstants.COLOR_STABILITY,
+	"Charge": GameConstants.COLOR_CHARGE,
+	"Compressed-Stability": GameConstants.COLOR_STABILITY,
+	"Compressed-Charge": GameConstants.COLOR_CHARGE,
 	"Up-Quark": Color(1.0, 1.0, 0.4),   # Amarillo
 	"Down-Quark": Color(1.0, 0.65, 0.3), # Naranja
 	"Electron": Color(0.2, 0.85, 1.0),   # Cyan
@@ -112,11 +112,12 @@ func _update_resources():
 		if not has_items and not always_show:
 			continue
 		
-		# Título de categoría (ancho fijo para que no se mueva)
+		# Título de categoría con color semántico (ENERGÍA = Estabilidad/Carga)
 		var category_label = Label.new()
 		category_label.text = category + ":"
 		category_label.add_theme_font_size_override("font_size", 15)
 		category_label.add_theme_color_override("font_color", category_colors[category])
+		category_label.tooltip_text = "Estabilidad E y Carga C" if category == "ENERGÍA" else ""
 		category_label.custom_minimum_size.x = 95
 		resource_container.add_child(category_label)
 		
@@ -131,11 +132,11 @@ func _update_resources():
 			
 			var label = Label.new()
 			var icon = resource_icons.get(resource_name, "📦")
-			label.text = "%s %d" % [icon, amount]
+			label.text = "%s %s" % [icon, GameConstants.format_cantidad_recurso(resource_name, amount)]
 			label.add_theme_font_size_override("font_size", 16)
-			label.tooltip_text = resource_name
-			# Ancho fijo para 3 dígitos (100, 99...) para que el HUD no se mueva
-			label.custom_minimum_size.x = 68
+			label.tooltip_text = _nombre_visible_recurso(resource_name)
+			# Ancho suficiente para texto comprimido (ej. "1 Quark (Estabilidad)")
+			label.custom_minimum_size.x = 120
 			
 			if resource_colors.has(resource_name):
 				label.add_theme_color_override("font_color", resource_colors[resource_name])
@@ -146,3 +147,6 @@ func _update_resources():
 		var separator = VSeparator.new()
 		separator.custom_minimum_size = Vector2(2, 0)
 		resource_container.add_child(separator)
+
+func _nombre_visible_recurso(clave: String) -> String:
+	return GameConstants.get_nombre_visible_recurso(clave)

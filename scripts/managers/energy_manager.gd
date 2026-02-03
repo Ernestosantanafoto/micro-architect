@@ -36,14 +36,11 @@ func unregister_flow(flow: EnergyFlow) -> void:
 	energy_flows.erase(flow)
 
 ## Cancela todos los flujos donde el edificio es origen o destino (p. ej. al destruir el edificio).
-## También destruye los visuales de pulso (bolas) de ese edificio y de toda la cadena aguas abajo,
-## para que no queden quarks/bolas flotando cuando desaparece el haz de luz.
+## También cancela flujos de toda la cadena aguas abajo (ej. prisma2→X) para que el segundo prisma
+## no siga "emitiendo" partículas que ya no tienen haz de origen.
+## Destruye los visuales de pulso de ese edificio y de toda la cadena aguas abajo.
 func remove_flows_involving(building: Node) -> void:
-	var to_remove: Array[EnergyFlow] = []
-	for flow in energy_flows:
-		if flow.from_building == building or flow.to_building == building:
-			to_remove.append(flow)
-	# Construir set de edificios "aguas abajo" (recursivo) para borrar todas sus bolas
+	# Construir set de edificios "aguas abajo" (recursivo)
 	var downstream: Array[Node] = [building]
 	var crecio = true
 	while crecio:
@@ -53,11 +50,27 @@ func remove_flows_involving(building: Node) -> void:
 				if flow.to_building not in downstream:
 					downstream.append(flow.to_building)
 					crecio = true
+	# Quitar cualquier flujo que tenga origen o destino en la cadena (no solo el edificio desconectado)
+	var to_remove: Array[EnergyFlow] = []
+	for flow in energy_flows:
+		if flow.from_building in downstream or flow.to_building in downstream:
+			to_remove.append(flow)
 	for flow in to_remove:
 		unregister_flow(flow)
 	for b in downstream:
 		if is_instance_valid(b):
 			destroy_pulse_visuals_from_source(b)
+
+## Cancela solo los flujos cuyo origen es este edificio (y destruye sus bolas). Útil cuando un prisma apaga su haz (p. ej. deja de recibir luz).
+func remove_flows_from_source(building: Node) -> void:
+	var to_remove: Array[EnergyFlow] = []
+	for flow in energy_flows:
+		if flow.from_building == building:
+			to_remove.append(flow)
+	for flow in to_remove:
+		unregister_flow(flow)
+	if is_instance_valid(building):
+		destroy_pulse_visuals_from_source(building)
 
 ## Elimina todas las bolas de energía cuyo origen es este edificio (para que no floten al quitar el edificio).
 func destroy_pulse_visuals_from_source(building: Node) -> void:

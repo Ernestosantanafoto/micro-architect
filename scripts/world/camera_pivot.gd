@@ -9,6 +9,7 @@ var _is_dragging = false
 
 func _ready():
 	elevation.rotation_degrees.x = GameConstants.CAMARA_INCLINACION_X
+	camera.size = GameConstants.CAMARA_ZOOM_INICIAL
 	camera.position.z = GameConstants.CAMARA_ZOOM_INICIAL
 
 func _unhandled_input(event):
@@ -27,8 +28,35 @@ func _unhandled_input(event):
 		var movement = Vector3(-event.relative.x, 0, -event.relative.y)
 		position += movement * move_sensitivity
 
-func _process(_delta):
+func _process(delta: float) -> void:
+	# No mover/zoom con WASD/QE si hay un popup abierto o el foco está en un campo de texto
+	if _debe_ignorar_teclado_camara():
+		_set_grid_zoom_fade(camera.size)
+		_actualizar_visibilidad_particulas_por_zoom()
+		return
+
+	# WASD: movimiento lineal por teclado (sin depender de UI del ratón)
+	var dir = Vector3.ZERO
+	if Input.is_key_pressed(KEY_A):
+		dir.x -= 1.0
+	if Input.is_key_pressed(KEY_D):
+		dir.x += 1.0
+	if Input.is_key_pressed(KEY_S):
+		dir.z += 1.0
+	if Input.is_key_pressed(KEY_W):
+		dir.z -= 1.0
+	if dir.length_squared() > 0.0:
+		dir = dir.normalized()
+		position += dir * GameConstants.CAMARA_VELOCIDAD_WASD * delta
+
+	# Q/E: zoom lineal (sin ease in/out)
+	if Input.is_key_pressed(KEY_Q):
+		camera.size = maxf(GameConstants.CAMARA_ZOOM_MIN, camera.size - GameConstants.CAMARA_ZOOM_VELOCIDAD_QE * delta)
+	if Input.is_key_pressed(KEY_E):
+		camera.size = minf(GameConstants.CAMARA_ZOOM_MAX, camera.size + GameConstants.CAMARA_ZOOM_VELOCIDAD_QE * delta)
+
 	_set_grid_zoom_fade(camera.size)
+	_actualizar_visibilidad_particulas_por_zoom()
 
 ## Ajusta zoom (y posición) para que el rectángulo en XZ quepa en pantalla.
 ## Solo aleja el zoom, nunca acerca: mantiene la distancia máxima alcanzada.
@@ -63,6 +91,13 @@ func _set_grid_zoom_fade(camera_size: float) -> void:
 	var zoom_fade = clampf(t, 0.0, 1.0)
 	mat.set_shader_parameter("zoom_fade", zoom_fade)
 
+## Por encima del umbral (≈33% zoom out) las partículas se ocultan; al acercar reaparecen (memoria: no se destruyen).
+func _actualizar_visibilidad_particulas_por_zoom() -> void:
+	var mostrar = camera.size < GameConstants.CAMARA_ZOOM_UMBRAL_OCULTAR_PARTICULAS
+	for node in get_tree().get_nodes_in_group("PulseVisual"):
+		if is_instance_valid(node):
+			node.visible = mostrar
+
 func _is_mouse_over_ui() -> bool:
 	var ventanas = get_tree().get_nodes_in_group("VentanasUI")
 	for v in ventanas:
@@ -72,4 +107,16 @@ func _is_mouse_over_ui() -> bool:
 			for c in controles:
 				if c.is_visible_in_tree() and c.get_global_rect().has_point(c.get_global_mouse_position()):
 					return true
+	return false
+
+## True si no debemos aplicar WASD/QE: popup de guardar/cargar/opciones abierto o foco en LineEdit/TextEdit.
+func _debe_ignorar_teclado_camara() -> bool:
+	# Popup overlay visible (Guardar, Cargar, Opciones)
+	for n in get_tree().get_nodes_in_group(GameConstants.POPUP_OVERLAY_GROUP):
+		if is_instance_valid(n) and n.is_inside_tree():
+			return true
+	# Foco en control de texto: al escribir nombre no mover cámara
+	var focus = get_viewport().gui_get_focus_owner()
+	if focus is LineEdit or focus is TextEdit:
+		return true
 	return false

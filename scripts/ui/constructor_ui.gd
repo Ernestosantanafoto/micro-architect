@@ -130,12 +130,12 @@ func actualizar_vista():
 			bar_progreso.value = constructor_activo.tiempo_progreso
 		
 		if lbl_requisitos:
-			var txt = "Requiere: "
+			var partes: Array[String] = []
 			for r in info["inputs"]:
 				var nec = info["inputs"][r]
 				var act = constructor_activo.inventario_interno.get(r, 0)
-				txt += "%s (%d/%d) " % [r, act, nec]
-			lbl_requisitos.text = txt
+				partes.append("%s: %s (%d/%d)" % [GameConstants.get_nombre_visible_recurso(r), GameConstants.format_cantidad_recurso(r, nec), act, nec])
+			lbl_requisitos.text = "Requiere: " + " - ".join(partes)
 	else:
 		if bar_progreso: bar_progreso.value = 0
 		if lbl_requisitos: lbl_requisitos.text = "Selecciona receta..."
@@ -162,8 +162,12 @@ func actualizar_vista():
 			var cant = constructor_activo.inventario_interno[tipo]
 			var fila = HBoxContainer.new()
 			var lbl = Label.new()
-			lbl.text = "%s: %d" % [tipo, cant]
+			lbl.text = "%s: %s" % [GameConstants.get_nombre_visible_recurso(tipo), GameConstants.format_cantidad_recurso(tipo, cant)]
 			lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			if tipo == "Stability" or tipo == "Compressed-Stability":
+				lbl.add_theme_color_override("font_color", GameConstants.COLOR_STABILITY)
+			elif tipo == "Charge" or tipo == "Compressed-Charge":
+				lbl.add_theme_color_override("font_color", GameConstants.COLOR_CHARGE)
 			
 			var btn = Button.new()
 			btn.text = "X"

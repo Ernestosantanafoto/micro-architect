@@ -42,6 +42,7 @@ func _process(_delta):
 	else:
 		beam_emitter.apagar()
 		if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
+		if EnergyManager: EnergyManager.remove_flows_from_source(self)
 
 # --- LÓGICA DE DISPARO AUTOMÁTICO ---
 func _on_game_tick(_c):
@@ -61,6 +62,9 @@ func disparar():
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
 	var longitud = 10
 	var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+	# Solo crear pulso/flujo si hay haz activo
+	if PulseValidator and not PulseValidator.haces_activos.has(self):
+		return
 	var from_pos = global_position + Vector3(0, 0.5, 0)
 	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
 	if EnergyManager.MOSTRAR_VISUAL_PULSO:

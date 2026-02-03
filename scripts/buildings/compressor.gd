@@ -84,12 +84,16 @@ func disparar_comprimido():
 	var from_pos = global_position + Vector3(0, 0.5, 0)
 	
 	if map and space and EnergyManager:
-		var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
-		var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
-		if EnergyManager.MOSTRAR_VISUAL_PULSO:
-			EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, tipo_comprimido)
-		if resultado:
-			EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
+		# Solo crear pulso/flujo si hay haz activo (mismo criterio que el beam)
+		if PulseValidator and not PulseValidator.haces_activos.has(self):
+			pass
+		else:
+			var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+			var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
+			if EnergyManager.MOSTRAR_VISUAL_PULSO:
+				EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, tipo_comprimido)
+			if resultado:
+				EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
 		# Contabilizar producción en inventario global para desbloqueos (F2)
 		if GlobalInventory:
 			GlobalInventory.add_item(tipo_comprimido, 1)
@@ -108,14 +112,28 @@ func _gestionar_haz(longitud):
 		if recurso_actual != "":
 			color = GameConstants.COLOR_STABILITY if "Stability" in recurso_actual else GameConstants.COLOR_CHARGE
 		beam_emitter.dibujar_haz(global_position, dir, longitud, color, map, space)
+		if esta_construido:
+			if PulseValidator: PulseValidator.registrar_haz_activo(self)
+		else:
+			if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
+			if EnergyManager: EnergyManager.remove_flows_from_source(self)
 
 func actualizar_interfaz():
-	if label_texto: label_texto.text = "%.1f" % tiempo_restante_carga if cargando else str(buffer)+"/10"
+	if label_texto:
+		label_texto.text = "%.1f" % tiempo_restante_carga if cargando else str(buffer)+"/10"
+		var color_ui = GameConstants.COLOR_STABILITY if ("Stability" in recurso_actual or recurso_actual.is_empty()) else GameConstants.COLOR_CHARGE
+		label_texto.modulate = color_ui
 	if barra_visual:
-		var progreso = (1.0 - (tiempo_restante_carga/GameConstants.COMPRESOR_TIEMPO_CARGA)) if cargando else (buffer/10.0)
+		var progreso: float
+		if cargando:
+			progreso = tiempo_restante_carga / GameConstants.COMPRESOR_TIEMPO_CARGA
+		else:
+			progreso = buffer / 10.0
 		barra_visual.scale.x = clamp(progreso, 0.001, 1.0)
 		var mat = barra_visual.get_active_material(0)
-		if mat: mat.albedo_color = Color.ORANGE if cargando else Color.CYAN
+		if mat:
+			var color_barra = GameConstants.COLOR_STABILITY if ("Stability" in recurso_actual or recurso_actual.is_empty()) else GameConstants.COLOR_CHARGE
+			mat.albedo_color = color_barra
 
 func check_ground():
 	esta_construido = true

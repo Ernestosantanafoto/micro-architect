@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=22 format=3 uid="uid://cwhvblny03sya"]
 
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/help_panel.tscn" id="12_help"]
 [ext_resource type="PackedScene" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
 [ext_resource type="Script" uid="uid://bclk3pc1m7h0g" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
+[ext_resource type="PackedScene" uid="uid://cmerger_ui_001" path="res://scenes/ui/merger_ui.tscn" id="15_merger")
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -145,6 +146,8 @@ script = ExtResource("7_5bore")
 
 [node name="ConstructorUI" parent="." instance=ExtResource("10_3vmts")]
 
+[node name="MergerUI" parent="." instance=ExtResource("15_merger")]
+
 [node name="HelpPanel" parent="." instance=ExtResource("12_help")]
 
 [node name="RecipeBook" parent="." instance=ExtResource("13_recipe")]
@@ -187,6 +190,10 @@ theme_override_constants/separation = 4
 layout_mode = 2
 text = "SALIR"
 
+[node name="BtnCargar" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "CARGAR"
+
 [node name="BtnModoSeleccion" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
 layout_mode = 2
 toggle_mode = true
@@ -203,6 +210,10 @@ text = "RECETAS"
 [node name="BtnMúsica" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
 layout_mode = 2
 text = "MÚSICA"
+
+[node name="BtnOpciones" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "OPCIONES"
 
 [node name="BtnPausa" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
 layout_mode = 2

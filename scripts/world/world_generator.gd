@@ -38,11 +38,18 @@ func _ready():
 		if BuildingManager:
 			BuildingManager.limpiar()
 		var gm = _get_grid_map()
-		if gm: 
+		if gm:
 			gm.add_to_group("MapaPrincipal")
 			gm.clear()
 		_posicionar_camara()
-		call_deferred("_reconstruir_mundo")
+		# Si hay mapa guardado (carga de partida), restaurar terreno en lugar de regenerar
+		if GlobalInventory and GlobalInventory.mapa_guardado.size() > 0 and gm:
+			_restaurar_mapa_guardado(gm)
+			GlobalInventory.mapa_guardado.clear()
+			if GlobalInventory.edificios_para_reconstruir.size() > 0 and SaveSystem:
+				SaveSystem.reconstruir_edificios()
+		else:
+			call_deferred("_reconstruir_mundo")
 
 func _process(_delta):
 	if not Engine.is_editor_hint():
@@ -135,6 +142,33 @@ func _cargar_sectores_cercanos():
 
 func _get_grid_map():
 	return get_parent().get_node_or_null("GridMap")
+
+## Restaura el GridMap desde GlobalInventory.mapa_guardado (celdas guardadas). Marca sectores como cargados para no regenerar.
+func _restaurar_mapa_guardado(gm: GridMap) -> void:
+	if not GlobalInventory or GlobalInventory.mapa_guardado.is_empty():
+		return
+	for c in GlobalInventory.mapa_guardado:
+		var cell = Vector3i(int(c.get("x", 0)), int(c.get("y", 0)), int(c.get("z", 0)))
+		var item = int(c.get("item", -1))
+		gm.set_cell_item(cell, item)
+		# Marcar sector como cargado para que _cargar_sectores_cercanos no lo regenere
+		var sx = int(floor(float(cell.x) / tamano_sector))
+		var sz = int(floor(float(cell.z) / tamano_sector))
+		var clave = Vector2i(sx, sz)
+		if not sectores_cargados.has(clave):
+			sectores_cargados.append(clave)
+	print("[WorldGenerator] Mapa restaurado: ", GlobalInventory.mapa_guardado.size(), " celdas.")
+
+## Llamar desde carga in-game: restaura el mapa desde GlobalInventory.mapa_guardado y limpia la variable.
+func restaurar_mapa_desde_inventario() -> void:
+	var gm = _get_grid_map()
+	if not gm:
+		return
+	gm.clear()
+	sectores_cargados.clear()
+	if GlobalInventory and GlobalInventory.mapa_guardado.size() > 0:
+		_restaurar_mapa_guardado(gm)
+		GlobalInventory.mapa_guardado.clear()
 
 ## Fuerza la generación de sectores en un rango (para herramientas como generador de partida test)
 func forzar_generar_rango(sector_min_x: int, sector_max_x: int, sector_min_z: int, sector_max_z: int) -> void:

@@ -5,6 +5,7 @@ signal inventory_changed(item_name, new_amount)
 # --- PERSISTENCIA MAESTRA ---
 var semilla_mundo : int = 0
 var edificios_para_reconstruir : Array = []
+var mapa_guardado : Array = []  # Celdas del GridMap guardadas para restaurar terreno al cargar
 var estados_edificios : Dictionary = {}
 var datos_camara : Dictionary = {"pos": Vector3.ZERO, "size": 100.0}
 
@@ -77,6 +78,7 @@ func limpiar_inventario():
 		stock[item] = 0
 	estados_edificios.clear()
 	edificios_para_reconstruir.clear()
+	mapa_guardado.clear()
 	semilla_mundo = 0
 	datos_camara = {"pos": Vector3.ZERO, "size": 100.0}
 

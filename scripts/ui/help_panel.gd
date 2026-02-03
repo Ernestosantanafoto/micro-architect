@@ -8,52 +8,58 @@ extends CanvasLayer
 
 const DURACION_OSCURECER = 0.2
 
-# Contenido de ayuda
-var help_content = {
+static func _color_hex(c: Color) -> String:
+	return "#%02x%02x%02x" % [int(c.r * 255), int(c.g * 255), int(c.b * 255)]
+
+# Contenido de ayuda (colores Estabilidad/Carga desde GameConstants)
+var help_content: Dictionary:
+	get:
+		var h_est = _color_hex(GameConstants.COLOR_STABILITY)
+		var h_car = _color_hex(GameConstants.COLOR_CHARGE)
+		return {
 	"Recursos": """[b]RECURSOS DE ENERGÍA[/b]
 
-🔋 [color=#66ff66]ESTABILIDAD (Stability)[/color] - Energía base verde
-   • Se extrae de losetas verdes con Sifones
+🔋 Estabilidad [color=%s]E[/color] — Energía base
+   • Se extrae de losetas con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-⚡ [color=#aa66ff]CARGA (Charge)[/color] - Energía base violeta
-   • Se extrae de losetas azules con Sifones
+⚡ Carga [color=%s]C[/color] — Energía base
+   • Se extrae de losetas con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-💠 [color=#66ffff]ESTABILIDAD Comprimida[/color] - Energía comprimida verde
+💠 Estabilidad Condensada [color=%s]E[/color] — Energía condensada
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
 
-⚗️ [color=#aa66ff]CARGA Comprimida[/color] - Energía comprimida violeta
+⚗️ Carga Condensada [color=%s]C[/color] — Energía condensada
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
+""" % [h_est, h_car, h_est, h_car] +
+"""[b]QUARKS[/b]
 
-[b]QUARKS[/b]
-
-🟡 [color=#ffff66]Up-Quark[/color] - Quark amarillo
+[color=#ffff66]UP[/color]
    • Se crea fusionando energías comprimidas
    • Necesario para crear protones
 
-🟠 [color=#ffaa44]Down-Quark[/color] - Quark naranja
+[color=#ffaa44]DOWN[/color]
    • Se crea fusionando energías comprimidas
    • Necesario para crear neutrones
 
 [b]NUCLEONES[/b]
 
-[color=#e65959]Proton[/color] - Partícula nuclear roja
-   • Se crea en Fabricador Hadrón: 2 Up + 1 Down
+[color=#e65959]Proton[/color] — Partícula nuclear
+   • Se crea en Fabricador Hadrón: 2 [color=#ffff66]UP[/color] + 1 [color=#ffaa44]DOWN[/color]
    • Base de los átomos
 
-[color=#b3b3bf]Neutron[/color] - Partícula nuclear gris
-   • Se crea en Fabricador Hadrón: 1 Up + 2 Down
+[color=#b3b3bf]Neutron[/color] — Partícula nuclear
+   • Se crea en Fabricador Hadrón: 1 [color=#ffff66]UP[/color] + 2 [color=#ffaa44]DOWN[/color]
    • Junto con protones forman núcleos
 """,
-	
 	"Edificios": """[b]EXTRACTORES[/b]
 
 🏗️ [b]Sifón T1[/b]
    • Extrae energía de losetas de color
-   • Debe colocarse en verde ([color=#66ff66]ESTABILIDAD[/color]) o azul ([color=#aa66ff]CARGA[/color])
+   • Debe colocarse en loseta [color=%s]E[/color] o [color=%s]C[/color]
    • Producción: 1 energía/5 ticks
 
 🏗️+ [b]Sifón T2[/b]
@@ -84,15 +90,14 @@ var help_content = {
    • Mayor velocidad de procesamiento
 
 🔀 [b]Fusionador (Merger)[/b]
-   • Combina 2 energías comprimidas → 1 Quark
-   • Crea Up-Quark (amarillo) o Down-Quark (naranja)
+   • Combina 2 energías comprimidas → 1 [color=#ffff66]UP[/color] o [color=#ffaa44]DOWN[/color]
    • Debe colocarse en loseta roja
 
 ⚛ [b]Fabricador Hadrón[/b]
-   • Convierte quarks en nucleones
-   • Protón: 2 Up-Quark + 1 Down-Quark
-   • Neutrón: 1 Up-Quark + 2 Down-Quark
-   • Colocar en celda vacía; recibe quarks por pulsos
+   • Convierte [color=#ffff66]UP[/color] y [color=#ffaa44]DOWN[/color] en nucleones
+   • Protón: 2 [color=#ffff66]UP[/color] + 1 [color=#ffaa44]DOWN[/color]
+   • Neutrón: 1 [color=#ffff66]UP[/color] + 2 [color=#ffaa44]DOWN[/color]
+   • Colocar en celda vacía; recibe [color=#ffff66]UP[/color] y [color=#ffaa44]DOWN[/color] por pulsos
 
 [b]ESPECIALES[/b]
 
@@ -105,8 +110,7 @@ var help_content = {
    • Genera recursos del vacío (modo creativo)
    • No requiere entrada de energía
    • Solo para testing
-""",
-	
+""" % [h_est, h_car],
 	"Controles": """[b]CONTROLES DEL JUEGO[/b]
 
 [b]Cámara:[/b]
@@ -139,14 +143,16 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 
 [b]CADENA DE PRODUCCIÓN:[/b]
 
-1. [color=#66ff66]Energía Básica[/color] ([color=#66ff66]ESTABILIDAD[/color]/[color=#aa66ff]CARGA[/color])
+1. Energía básica: [color=%s]E[/color] y [color=%s]C[/color]
    ↓ [Sifones en losetas de color]
 
-2. [color=#66ffff]Energía Comprimida[/color] ([color=#66ff66]ESTABILIDAD[/color]/[color=#aa66ff]CARGA[/color] comprimida)
+2. Energía condensada: [color=%s]E[/color] y [color=%s]C[/color]
    ↓ [Compresores: 10→1 ratio]
+""" % [h_est, h_car, h_est, h_car] +
+"""
 
-3. [color=#ffff66]Quarks[/color] (Up/Down)
-   ↓ [Fusionadores: 2 comprimidas→1 quark]
+3. [color=#ffff66]UP[/color] / [color=#ffaa44]DOWN[/color]
+   ↓ [Fusionadores: 2 comprimidas→1 [color=#ffff66]UP[/color] o [color=#ffaa44]DOWN[/color]]
 
 4. [color=#ff6666]Protones/Neutrones[/color]
    ↓ [Fabricador Hadrón: 2U+1D→Protón, 1U+2D→Neutrón]
@@ -203,6 +209,10 @@ func toggle_panel():
 		show_panel()
 
 func show_panel():
+	# Cerrar popups Guardar/Cargar/Opciones al abrir F1
+	var main = get_tree().current_scene
+	if main and main.has_method("_cerrar_popups_overlay"):
+		main._cerrar_popups_overlay()
 	for n in get_tree().get_nodes_in_group("PanelesAyuda"):
 		if n != self and n.has_method("hide_panel") and n.visible:
 			n.hide_panel()

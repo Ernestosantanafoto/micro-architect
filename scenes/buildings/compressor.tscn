@@ -33,16 +33,17 @@ transform = Transform3D(0.33612984, 0, 0, 0, -2.3916353e-08, -0.33612984, 0, 0.5
 mesh = SubResource("CylinderMesh_emlho")
 
 [node name="UI_Root" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5977347, 0)
 
-[node name="TextoCantidad" type="Label3D" parent="."]
+[node name="TextoCantidad" type="Label3D" parent="UI_Root"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.606621, -0.3490098)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.606621, -0.45143372)
 pixel_size = 0.01
 billboard = 1
 text = "0/10"
 font_size = 45
 
-[node name="BarraVisual" type="MeshInstance3D" parent="."]
+[node name="BarraVisual" type="MeshInstance3D" parent="UI_Root"]
 unique_name_in_owner = true
-transform = Transform3D(0.99996924, 0, 0.029692095, 0, 0.99999994, 0, -0.007836447, 0, 3.7888575, 0, 0.5640616, 0.17170334)
+transform = Transform3D(0.99996924, 0, 0.029692095, 0, 0.99999994, 0, -0.007836447, 0, 3.7888575, 0, 0.16723633, 0.11394483)
 mesh = SubResource("BoxMesh_r2q3c")

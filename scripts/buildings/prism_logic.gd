@@ -54,6 +54,8 @@ func _process(_delta):
 	else:
 		beam_emitter.apagar()
 		if PulseValidator: PulseValidator.desregistrar_haz_activo(self)
+		# Al apagar el haz, cancelar flujos salientes para no seguir "emitiendo" partículas en el vacío
+		if EnergyManager: EnergyManager.remove_flows_from_source(self)
 		_animar_cristal(Color.WHITE, false)
 
 func recibir_energia_numerica(cantidad: int, tipo_recurso: String, origen: Node) -> void:
@@ -72,6 +74,9 @@ func _procesar_energia_numerica(cantidad: int, tipo_recurso: String, dir_salida:
 	var dir_flat = Vector3(dir_salida.x, 0, dir_salida.z).normalized()
 	var color_recurso = _color_por_tipo(tipo_recurso)
 	var from_pos = global_position + (dir_salida * GameConstants.OFFSET_SPAWN_PULSO)
+	# Solo crear pulso/flujo si el prisma tiene haz activo (mismo criterio que el beam)
+	if PulseValidator and not PulseValidator.haces_activos.has(self):
+		return
 	var resultado = beam_emitter.obtener_objetivo(global_position, dir_salida, alcance_maximo, map, space, self)
 	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * alcance_maximo
 	if EnergyManager.MOSTRAR_VISUAL_PULSO:

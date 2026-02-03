@@ -232,10 +232,26 @@ func _preparar_fantasma_visual():
 	fantasma.scale = Vector3.ONE * 1.2 # Efecto de "levantado"
 
 # --- HELPERS ---
+func _normalizar_ruta(p: String) -> String:
+	return str(p).replace("\\", "/").strip_edges()
+
+## Desde un nodo (p. ej. collider del raycast), subir hasta el raíz de la escena del edificio (tiene scene_file_path).
+func _obtener_raiz_edificio(nodo: Node) -> Node:
+	var n = nodo
+	while n:
+		var path = n.get("scene_file_path")
+		if path and str(path).strip_edges().length() > 0 and "buildings" in str(path):
+			return n
+		n = n.get_parent()
+	return nodo
+
 func _identificar_item_por_ruta(ruta_archivo: String) -> String:
-	if "god_siphon" in ruta_archivo.to_lower(): return "GodSiphon"
+	var r = _normalizar_ruta(ruta_archivo)
+	if r.is_empty(): return ""
+	if "god_siphon" in r.to_lower(): return "GodSiphon"
 	for nombre in GameConstants.RECETAS:
-		if GameConstants.RECETAS[nombre]["output_scene"] == ruta_archivo:
+		var out = GameConstants.RECETAS[nombre].get("output_scene", "")
+		if _normalizar_ruta(out) == r:
 			return nombre
 	return ""
 
@@ -249,11 +265,17 @@ func _lanzar_raycast_a_edificios():
 	return get_parent().get_world_3d().direct_space_state.intersect_ray(query)
 
 # --- INPUTS ---
-# Procesar clic derecho ANTES de que lo capture el FondoDetector de los menús
+# Clic derecho en _input para prioridad (menús). Clic central se procesa desde la escena principal para máxima prioridad.
 func _input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
-		if not fantasma and _procesar_clic_derecho_con_ui_abierta():
-			get_viewport().set_input_as_handled()
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			if not fantasma and _procesar_clic_derecho_con_ui_abierta():
+				get_viewport().set_input_as_handled()
+				return
+
+## Llamado desde la escena principal al usar clic central: clonar edificio en mano o colocar y mantener otro.
+func ejecutar_accion_clic_central() -> bool:
+	return _procesar_clic_central()
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -273,67 +295,6 @@ func _unhandled_input(event):
 							# Recoger Void latente (igual que cualquier edificio)
 							pass  # gestionar_clic_izquierdo lo hace con el raycast interno
 				gestionar_clic_izquierdo()
-		
-		elif event.button_index == MOUSE_BUTTON_MIDDLE:
-			var res = _lanzar_raycast_a_edificios()
-			if res:
-				# Clic central en edificio puesto: obtener uno igual en mano con la misma orientación
-				var edificio = res.collider
-				var nombre = _identificar_item_por_ruta(edificio.scene_file_path)
-				if nombre == "":
-					pass
-				elif nombre == "GodSiphon" and GameConstants.DEBUG_MODE:
-					# Guardar stats del God Siphon clicado para copiarlos al duplicado
-					if edificio.get("recurso_actual") != null:
-						_god_siphon_stats_duplicado = {
-							"recurso_actual": edificio.recurso_actual,
-							"color_elegido": edificio.color_elegido,
-							"escala_elegida": edificio.escala_elegida,
-							"valor_energia": edificio.valor_energia,
-							"ticks_por_disparo": edificio.ticks_por_disparo
-						}
-						_aplicar_stats_god_siphon_duplicado = true
-					seleccionar_para_construir(god_siphon_escena, "GodSiphon")
-					if fantasma:
-						fantasma.rotation.y = edificio.rotation.y
-				elif nombre == "GodSiphon" and GlobalInventory.get_amount(nombre) > 0:
-					# Duplicar God Siphon: copiar stats del edificio clicado
-					if edificio.get("recurso_actual") != null:
-						_god_siphon_stats_duplicado = {
-							"recurso_actual": edificio.recurso_actual,
-							"color_elegido": edificio.color_elegido,
-							"escala_elegida": edificio.escala_elegida,
-							"valor_energia": edificio.valor_energia,
-							"ticks_por_disparo": edificio.ticks_por_disparo
-						}
-						_aplicar_stats_god_siphon_duplicado = true
-					seleccionar_para_construir(god_siphon_escena, nombre)
-					if fantasma:
-						fantasma.rotation.y = edificio.rotation.y
-				elif GlobalInventory.get_amount(nombre) > 0:
-					var receta = GameConstants.RECETAS.get(nombre)
-					if receta and receta.has("output_scene"):
-						var escena = load(receta["output_scene"])
-						if escena:
-							seleccionar_para_construir(escena, nombre)
-							if fantasma:
-								fantasma.rotation.y = edificio.rotation.y
-			else:
-				# Sin edificio bajo el cursor: colocar el que tengo en mano y quedarse con otro (si hay en inventario)
-				if fantasma and posicion_valida_actual:
-					var nombre = nombre_item_en_mano
-					var rot_y = fantasma.rotation.y
-					var escena: PackedScene = null
-					if nombre == "GodSiphon":
-						escena = god_siphon_escena
-					elif GameConstants.RECETAS.has(nombre):
-						escena = load(GameConstants.RECETAS[nombre]["output_scene"]) as PackedScene
-					if escena:
-						confirmar_colocacion()
-						if (nombre == "GodSiphon" and GameConstants.DEBUG_MODE) or GlobalInventory.get_amount(nombre) > 0:
-							seleccionar_para_construir(escena, nombre)
-							if fantasma:
-								fantasma.rotation.y = rot_y
 		
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if fantasma:
@@ -364,6 +325,80 @@ func _procesar_clic_derecho_con_ui_abierta() -> bool:
 		if n.has_method("cerrar") and n.visible:
 			n.cerrar()
 	return true
+
+## Procesa clic central: clonar edificio en mano o colocar y mantener otro. Retorna true si consumió el evento.
+func _procesar_clic_central() -> bool:
+	var res = _lanzar_raycast_a_edificios()
+	if res:
+		var collider = res.collider
+		var edificio = _obtener_raiz_edificio(collider)
+		var path_str = edificio.get("scene_file_path")
+		var nombre = _identificar_item_por_ruta(path_str if path_str else "")
+		if nombre == "":
+			return false
+		# Modo debug: clonar siempre con clic central (sin comprobar inventario)
+		if GameConstants.DEBUG_MODE:
+			if nombre == "GodSiphon":
+				if edificio.get("recurso_actual") != null:
+					_god_siphon_stats_duplicado = {
+						"recurso_actual": edificio.recurso_actual,
+						"color_elegido": edificio.color_elegido,
+						"escala_elegida": edificio.escala_elegida,
+						"valor_energia": edificio.valor_energia,
+						"ticks_por_disparo": edificio.ticks_por_disparo
+					}
+					_aplicar_stats_god_siphon_duplicado = true
+				seleccionar_para_construir(god_siphon_escena, "GodSiphon")
+			else:
+				var receta = GameConstants.RECETAS.get(nombre)
+				if receta and receta.has("output_scene"):
+					var escena = load(receta["output_scene"])
+					if escena:
+						seleccionar_para_construir(escena, nombre)
+			if fantasma:
+				fantasma.rotation.y = edificio.rotation.y
+			return true
+		if nombre == "GodSiphon" and GlobalInventory.get_amount(nombre) > 0:
+			if edificio.get("recurso_actual") != null:
+				_god_siphon_stats_duplicado = {
+					"recurso_actual": edificio.recurso_actual,
+					"color_elegido": edificio.color_elegido,
+					"escala_elegida": edificio.escala_elegida,
+					"valor_energia": edificio.valor_energia,
+					"ticks_por_disparo": edificio.ticks_por_disparo
+				}
+				_aplicar_stats_god_siphon_duplicado = true
+			seleccionar_para_construir(god_siphon_escena, nombre)
+			if fantasma:
+				fantasma.rotation.y = edificio.rotation.y
+			return true
+		if GlobalInventory.get_amount(nombre) > 0:
+			var receta = GameConstants.RECETAS.get(nombre)
+			if receta and receta.has("output_scene"):
+				var escena = load(receta["output_scene"])
+				if escena:
+					seleccionar_para_construir(escena, nombre)
+					if fantasma:
+						fantasma.rotation.y = edificio.rotation.y
+					return true
+	else:
+		# Sin edificio bajo el cursor: colocar el que tengo en mano y quedarse con otro (si hay en inventario)
+		if fantasma and posicion_valida_actual:
+			var nombre = nombre_item_en_mano
+			var rot_y = fantasma.rotation.y
+			var escena: PackedScene = null
+			if nombre == "GodSiphon":
+				escena = god_siphon_escena
+			elif GameConstants.RECETAS.has(nombre):
+				escena = load(GameConstants.RECETAS[nombre]["output_scene"]) as PackedScene
+			if escena:
+				confirmar_colocacion()
+				if (nombre == "GodSiphon" and GameConstants.DEBUG_MODE) or GlobalInventory.get_amount(nombre) > 0:
+					seleccionar_para_construir(escena, nombre)
+					if fantasma:
+						fantasma.rotation.y = rot_y
+				return true
+	return false
 
 func _intentar_rotar_edificio_suelo():
 	var res = _lanzar_raycast_a_edificios()
