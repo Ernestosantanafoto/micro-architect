@@ -252,23 +252,22 @@ const HUD_LABELS = {
 }
 
 # --- STARTER PACK (Nueva partida) ---
-## 100 de cada edificio para pruebas. Recursos (Electron, Proton, Neutron) en 0.
-## Para partida normal: reducir a valores equilibrados (ej. Sifón 4, Prisma Recto 8, Constructor 1, etc.).
+## Valores equilibrados para partida normal. Solo DEBUG da acceso ilimitado (no consume); al desactivar DEBUG se restaura este pack.
 const STARTER_PACK = {
-	"Sifón": 100,
-	"Sifón T2": 100,
-	"Prisma Recto": 100,
-	"Prisma Angular": 100,
-	"Prisma Recto T2": 100,
-	"Prisma Angular T2": 100,
-	"Compresor": 100,
-	"Compresor T2": 100,
-	"Fusionador": 100,
-	"Constructor": 100,
-	"GodSiphon": 100,
-	"Void Generator": 100,
+	"Sifón": 4,
+	"Sifón T2": 0,
+	"Prisma Recto": 8,
+	"Prisma Angular": 4,
+	"Prisma Recto T2": 0,
+	"Prisma Angular T2": 0,
+	"Compresor": 1,
+	"Compresor T2": 0,
+	"Fusionador": 0,
+	"Constructor": 1,
+	"GodSiphon": 0,
+	"Void Generator": 0,
 	"Electron": 0,
-	"Fabricador Hadrón": 100,
+	"Fabricador Hadrón": 0,
 	"Proton": 0,
 	"Neutron": 0
 }

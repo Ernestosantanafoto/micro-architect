@@ -1,6 +1,5 @@
-[gd_scene load_steps=18 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=21 format=3 uid="uid://cwhvblny03sya"]
 
-[ext_resource type="Script" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
 [ext_resource type="Shader" uid="uid://c4kfcb5wrqdql" path="res://main_game_3d.gdshader" id="1_ibdhq"]
@@ -12,32 +11,9 @@
 [ext_resource type="PackedScene" uid="uid://5d03gyj5ss2q" path="res://scenes/ui/inventory_hud.tscn" id="9_g1lpv"]
 [ext_resource type="PackedScene" uid="uid://bnpx62uoxlkf" path="res://scenes/ui/constructor_ui.tscn" id="10_3vmts"]
 [ext_resource type="Script" uid="uid://bw55cm0gkk1i2" path="res://scripts/ui/system_hud.gd" id="11_7an1d"]
-[ext_resource type="PackedScene" uid="uid://help_panel_001" path="res://scenes/ui/help_panel.tscn" id="12_help"]
-[ext_resource type="PackedScene" uid="uid://recipe_book_001" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
-bg_color = Color(0.05, 0.05, 0.08, 0.9)
-corner_radius = 8
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.2, 0.35, 0.5, 0.6)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recursos"]
-bg_color = Color(0.06, 0.08, 0.12, 0.92)
-corner_radius = 10
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.15, 0.3, 0.45, 0.7)
-content_margin_left = 16.0
-content_margin_top = 12.0
-content_margin_right = 16.0
-content_margin_bottom = 12.0
+[ext_resource type="PackedScene" path="res://scenes/ui/help_panel.tscn" id="12_help"]
+[ext_resource type="PackedScene" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
+[ext_resource type="Script" uid="uid://bclk3pc1m7h0g" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -58,6 +34,27 @@ shader = ExtResource("1_ibdhq")
 shader_parameter/grid_color = Color(0, 0.16461393, 0.3610067, 1)
 shader_parameter/grid_density = 1.0
 shader_parameter/line_thickness = 0.045
+shader_parameter/zoom_fade = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recursos"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.06, 0.08, 0.12, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.15, 0.3, 0.45, 0.7)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.05, 0.05, 0.08, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.35, 0.5, 0.6)
 
 [node name="MainGame3D" type="Node3D"]
 script = ExtResource("1_bxm63")
@@ -111,10 +108,6 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -126,7 +119,6 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -340.0
-offset_top = 0.0
 offset_right = 340.0
 offset_bottom = 70.0
 grow_horizontal = 2
@@ -146,6 +138,7 @@ theme_override_constants/separation = 20
 [node name="InventoryHUD" parent="HUD" instance=ExtResource("9_g1lpv")]
 
 [node name="GodSiphonUI" parent="HUD" instance=ExtResource("8_g1lpv")]
+layout_mode = 1
 
 [node name="ConstructionManager" type="Node" parent="." groups=["ConstructionManager"]]
 script = ExtResource("7_5bore")
@@ -160,15 +153,13 @@ script = ExtResource("7_5bore")
 script = ExtResource("11_7an1d")
 
 [node name="PanelSistema" type="PanelContainer" parent="CanvasLayer"]
-layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = -80.0
-offset_right = 436.0
+offset_right = 180.0
 offset_bottom = -20.0
-grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
@@ -177,32 +168,57 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BtnGuardar" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
-layout_mode = 2
-text = "GUARDAR"
-
-[node name="BtnModoSeleccion" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
-layout_mode = 2
-toggle_mode = true
-button_pressed = false
-text = "SELECCIÓN"
-
 [node name="BtnMenu" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
 layout_mode = 2
-text = "MENÚ"
+text = "MENU"
 
-[node name="BtnDebug" type="Button" parent="CanvasLayer/PanelSistema/HBoxContainer"]
+[node name="MenuDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 380.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="MenuDropdown" type="VBoxContainer" parent="CanvasLayer/MenuDropdownPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BtnSalir" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "SALIR"
+
+[node name="BtnModoSeleccion" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+toggle_mode = true
+text = "SELECCIÓN"
+
+[node name="BtnDebug" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
 layout_mode = 2
 text = "DEBUG OFF"
 
-[node name="PanelEliminar" type="PanelContainer" parent="CanvasLayer"]
-layout_mode = 1
+[node name="BtnRecetas" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "RECETAS"
+
+[node name="BtnMúsica" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "MÚSICA"
+
+[node name="BtnPausa" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "PAUSA"
+
+[node name="BtnGuardar" type="Button" parent="CanvasLayer/MenuDropdownPanel/MenuDropdown"]
+layout_mode = 2
+text = "GUARDAR"
+
+[node name="PanelMusica" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -220.0
+offset_left = -140.0
 offset_top = -80.0
 offset_right = -20.0
 offset_bottom = -20.0
@@ -211,10 +227,22 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelEliminar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelMusica"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BtnEliminar" type="Button" parent="CanvasLayer/PanelEliminar/HBoxContainer"]
+[node name="BtnRecursos" type="Button" parent="CanvasLayer/PanelMusica/HBoxContainer"]
 layout_mode = 2
-text = "ELIMINAR"
+size_flags_horizontal = 3
+text = "RECURSOS"
+
+[node name="RecursosDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 260.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="RecursosDropdown" type="VBoxContainer" parent="CanvasLayer/RecursosDropdownPanel"]
+layout_mode = 2
+theme_override_constants/separation = 2

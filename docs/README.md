@@ -1,63 +1,50 @@
-# 📚 Documentación - Micro Architect
+# Documentación – Micro Architect
 
-Índice de todos los documentos del proyecto.  
 **Última revisión:** 2025-01-31
 
 ---
 
-## 🗺️ Planificación y estado
+## Empieza aquí
 
-| Documento | Para qué |
-|-----------|----------|
-| **ROADMAP.md** | Lista de tareas por bloques (bugs → UX → técnico → T2). Fuente principal de "qué hacer ahora". |
-| **PROJECT_STATE.md** | Estado actual: versión, bugs, sistemas funcionando, próximo paso. |
-| **FUTURE_PLAN.md** | Visión completa: 4 tiers/eras (Cuántica → Subatómica → Atómica → Molecular), escalas 1→3→9→27, LOD semántico, análisis de referentes, roadmap largo plazo. |
-| **RECETAS.md** | Coste de fabricación (recursos + tiempo) y cómo desbloquear cada edificio. |
-| **COSAS_POR_HACER.md** | Checklist proactiva: tareas típicas de juegos de gestión/fábrica que aún no están en el ROADMAP. |
-| **NOTAS_DESARROLLO.md** | Convenciones: commit + push cuando el usuario diga "hasta mañana". |
+| Objetivo | Documento |
+|----------|------------|
+| **Seguir el progreso** (estado, criterios T1, próximo paso) | [**PROGRESO.md**](PROGRESO.md) |
+| **Ver qué hacer ahora** (tasklist concreta) | [**TASKLIST.md**](TASKLIST.md) |
+
+Con solo estos dos tienes claro el estado y las tareas. El resto es referencia o detalle.
 
 ---
 
-## 🏗️ Arquitectura y sistemas
+## Estructura en 3 niveles
 
-| Documento | Para qué |
-|-----------|----------|
-| **ARCHITECTURE.md** | Principios: simulación vs visual, managers, flujo numérico, LOD semántico, grids anidados, arquitectura multi-tier. |
-| **ENERGY_SYSTEM.md** | Sistema de energía: EnergyManager, EnergyFlow, tipos de recurso. |
-| **API_MANAGERS.md** | API de GridManager, EnergyManager, BuildingManager. |
-| **FILE_PROTOCOL.md** | Convenciones de nombres y carpetas (snake_case, scripts/, scenes/). |
+### Nivel 1 – Mirar a diario
+- [PROGRESO.md](PROGRESO.md) — Estado y próximo paso
+- [TASKLIST.md](TASKLIST.md) — Qué hacer ahora (to-do)
 
----
+### Nivel 2 – Cuando toque
+- [ROADMAP.md](ROADMAP.md) — Plan por bloques (5 → 6 → 7 → 8)
+- [PROJECT_STATE.md](PROJECT_STATE.md) — Bugs, sistemas funcionando, versión
+- [TEST_CHECKLIST.md](TEST_CHECKLIST.md) — Pruebas manuales T1
+- [COSAS_POR_HACER.md](COSAS_POR_HACER.md) — Backlog (opciones, guardado, UX, audio)
 
-## 🎨 UX y contenido
-
-| Documento | Para qué |
-|-----------|----------|
-| **POLISH_PLAN.md** | Plan de pulido UI/UX (mayormente completado). |
-| **REFACTORING_PLAN.md** | Migración a sistema numérico (✅ completado, referencia histórica). |
-| **UI_MOCKUPS.md** | Mockups e ideas de interfaz. |
-| **TUTORIAL_SCRIPT.md** | Guion del tutorial para nuevos jugadores. |
-
----
-
-## 🧪 Calidad y registro
-
-| Documento | Para qué |
-|-----------|----------|
-| **TEST_CHECKLIST.md** | Checklist de pruebas manuales (T1 funcional). |
-| **MD_ACTUALIZADO.md** | Registro por sesión de MDs actualizados; ver "Últimos actualizados". |
+### Nivel 3 – Referencia
+- [FUTURE_PLAN.md](FUTURE_PLAN.md) — Visión 4 tiers, escalas, referentes
+- [RECETAS.md](RECETAS.md) — Costes y desbloqueos de edificios
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Principios (simulación vs visual, managers)
+- [ENERGY_SYSTEM.md](ENERGY_SYSTEM.md) — Flujos numéricos, EnergyManager
+- [API_MANAGERS.md](API_MANAGERS.md) — API GridManager, EnergyManager, BuildingManager
+- [FILE_PROTOCOL.md](FILE_PROTOCOL.md) — Nombres y carpetas (snake_case, scripts/, scenes/)
+- [NOTAS_DESARROLLO.md](NOTAS_DESARROLLO.md) — Commit + push al decir "hasta mañana"
+- [POLISH_PLAN.md](POLISH_PLAN.md) — Plan de pulido UI/UX (referencia)
+- [REFACTORING_PLAN.md](REFACTORING_PLAN.md) — Migración numérica (histórico)
+- [UI_MOCKUPS.md](UI_MOCKUPS.md) — Mockups e ideas de interfaz
+- [TUTORIAL_SCRIPT.md](TUTORIAL_SCRIPT.md) — Guion del tutorial
 
 ---
 
-## 📖 Orden sugerido al leer
+## Documentos archivados
 
-1. **ROADMAP.md** → Qué está hecho y qué sigue.
-2. **PROJECT_STATE.md** → Estado actual y bugs.
-3. **FUTURE_PLAN.md** → Visión de 4 tiers y análisis de referentes.
-4. **ARCHITECTURE.md** + **ENERGY_SYSTEM.md** → Cómo funciona por dentro.
-
----
-
-## Nota sobre unificación
-
-La documentación en esta carpeta es la **versión unificada** (feb 2025) entre los MDs que había aquí y los de `docs/Nuevos MDs/`. El análisis detallado (duplicados, redefiniciones, decisiones) está en **ANALISIS_UNIFICACION_MDS.md**. La carpeta `Nuevos MDs` se conserva como referencia de la evolución del proyecto.
+En [docs/archive/](archive/) están los documentos que ya no se usan como referencia activa:
+- **Nuevos MDs/** — Versión anterior unificada (la canónica está en la raíz de `docs/`)
+- **ANALISIS_UNIFICACION_MDS.md** — Análisis de la unificación (registro)
+- **MD_ACTUALIZADO.md** — Registro por sesión de MDs actualizados

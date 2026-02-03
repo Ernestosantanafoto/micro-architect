@@ -29,15 +29,11 @@ func _conectar_botones():
 			btn_save.pressed.connect(_on_btn_guardar_pressed)
 			print("[MAIN] Botón GUARDAR conectado: ", btn_save.get_path())
 	
-	# Buscar botón de menú (puede llamarse BtnMenu, ButtonMenu, etc.)
-	var nombres_menu = ["BtnMenu", "ButtonMenu", "Menu", "MenuButton", "BtnSalir"]
-	for nombre in nombres_menu:
-		var btn = _buscar_boton(nombre)
-		if btn:
-			if not btn.pressed.is_connected(_on_btn_menu_pressed):
-				btn.pressed.connect(_on_btn_menu_pressed)
-			print("[MAIN] Botón MENÚ conectado: ", nombre)
-			break
+	# Salir al menú principal: solo BtnSalir (dentro del dropdown MENU)
+	var btn_salir = _buscar_boton("BtnSalir")
+	if btn_salir and not btn_salir.pressed.is_connected(_on_btn_menu_pressed):
+		btn_salir.pressed.connect(_on_btn_menu_pressed)
+		print("[MAIN] Botón SALIR conectado.")
 	
 	# Modo selección (Button toggle_mode): mismo aspecto que GUARDAR/MENÚ
 	var btn_modo_sel = find_child("BtnModoSeleccion", true, false)
@@ -49,22 +45,11 @@ func _conectar_botones():
 			sm.selection_mode_enabled = btn_modo_sel.button_pressed
 		print("[MAIN] Botón SELECCIÓN conectado.")
 	
-	# ELIMINAR (esquina inferior derecha): borra el contenido de la selección confirmada
-	var btn_eliminar = find_child("BtnEliminar", true, false)
-	if btn_eliminar and btn_eliminar is Button:
-		if not btn_eliminar.pressed.is_connected(_on_btn_eliminar_pressed):
-			btn_eliminar.pressed.connect(_on_btn_eliminar_pressed)
-		print("[MAIN] Botón ELIMINAR conectado.")
 
 func _on_btn_modo_seleccion_toggled(button_pressed: bool) -> void:
 	var sm = find_child("SelectionManager", true, false)
 	if sm and sm.has_method("set_selection_mode_enabled"):
 		sm.set_selection_mode_enabled(button_pressed)
-
-func _on_btn_eliminar_pressed() -> void:
-	var sm = find_child("SelectionManager", true, false)
-	if sm and sm.is_selection_mode_enabled() and sm.is_confirmed():
-		sm.apply_action("delete")
 
 func _cerrar_cualquier_ui_abierta() -> bool:
 	# F1/F2 (PanelesAyuda)

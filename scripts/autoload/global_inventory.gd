@@ -84,6 +84,8 @@ func cargar_starter_pack():
 	limpiar_inventario()
 	for item in GameConstants.STARTER_PACK:
 		set_amount(item, GameConstants.STARTER_PACK[item])
-	# God Siphon solo en modo DEV (herramienta de desarrollo, no partida normal)
-	if GameConstants.DEBUG_MODE:
-		set_amount("GodSiphon", 3)
+
+## Solo restaura cantidades del inventario al STARTER_PACK (sin borrar mundo). Usado al desactivar DEBUG.
+func restaurar_starter_pack_inventario():
+	for item in GameConstants.STARTER_PACK:
+		set_amount(item, GameConstants.STARTER_PACK[item])

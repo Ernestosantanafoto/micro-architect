@@ -2,19 +2,34 @@ extends Node
 
 @export var playlist : Array[AudioStream] = [] 
 var current_track_index : int = -1
+var muted : bool = false
 
-# Estas referencias ahora buscan a los hijos que acabas de crear
 @onready var p1 = $MusicPlayer1
 @onready var p2 = $MusicPlayer2
-@onready var players = [p1, p2]
-var active_player = 0
+var players : Array = []
+var active_player : int = 0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS 
-	# Esperar un frame para asegurar que el playlist no esté vacío
+	players = [p1, p2]
 	await get_tree().process_frame
 	if playlist.size() > 0:
 		play_random_song()
+	_apply_mute()
+
+func toggle_muted() -> void:
+	muted = not muted
+	_apply_mute()
+
+func is_muted() -> bool:
+	return muted
+
+func _apply_mute() -> void:
+	for i in players.size():
+		if muted:
+			players[i].volume_db = -80.0
+		else:
+			players[i].volume_db = 0.0 if (i == active_player) else -80.0
 
 func play_random_song():
 	var next_index = randi() % playlist.size()
@@ -40,7 +55,7 @@ func _fade_to_track(stream: AudioStream):
 	await t.finished
 	p_old.stop()
 	active_player = next_player_idx
+	_apply_mute()
 	
-	# Conectar el final de la canción para poner la siguiente
 	if not p_new.finished.is_connected(play_random_song):
 		p_new.finished.connect(play_random_song, CONNECT_ONE_SHOT)

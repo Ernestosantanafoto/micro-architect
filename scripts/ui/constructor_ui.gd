@@ -25,16 +25,9 @@ func _ready():
 	
 	set_process_input(true)
 	
-	# Rellenar lista
+	# Rellenar lista solo con recetas desbloqueadas
 	if opt_recetas:
-		opt_recetas.clear()
-		opt_recetas.add_item("--- Seleccionar Receta ---", 0)
-		var id = 1
-		for nombre in GameConstants.RECETAS:
-			opt_recetas.add_item(nombre, id)
-			id += 1
-		
-		# Conexión segura
+		_rellenar_recetas_desbloqueadas()
 		if not opt_recetas.item_selected.is_connected(_on_receta_cambiada):
 			opt_recetas.item_selected.connect(_on_receta_cambiada)
 
@@ -101,6 +94,7 @@ func abrir_menu(edificio):
 		t.tween_property(ventana, "scale", Vector2.ONE, 0.22)
 		t.tween_property(ventana, "modulate:a", 1.0, 0.18)
 	
+	_rellenar_recetas_desbloqueadas()
 	actualizar_vista()
 	
 	if opt_recetas:
@@ -184,6 +178,16 @@ func actualizar_vista():
 		var pendientes = constructor_activo.inventario_salida.size()
 		btn_reclamar.text = "RECLAMAR (%d)" % pendientes
 		btn_reclamar.visible = pendientes > 0
+
+func _rellenar_recetas_desbloqueadas():
+	if not opt_recetas: return
+	opt_recetas.clear()
+	opt_recetas.add_item("--- Seleccionar Receta ---", 0)
+	var id = 1
+	for nombre in GameConstants.RECETAS:
+		if TechTree and TechTree.is_unlocked(nombre):
+			opt_recetas.add_item(nombre, id)
+			id += 1
 
 # --- SEÑALES ---
 func _on_receta_cambiada(index):
