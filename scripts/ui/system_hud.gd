@@ -19,15 +19,15 @@ const RECURSOS_LABELS: Dictionary = {
 
 var _recursos_highlight_recipe: String = ""
 var _building_dark_materials: Dictionary = {}
-var _surface_dark_materials: Dictionary = {}  # MeshInstance3D -> Material (surface 0, para restaurar)
+var _surface_dark_materials: Dictionary = {}  # MeshInstance3D -> Material (surface 0, para restaurar bolas)
 var _grid_original_surface: Variant = null  # material de la grilla para restaurar
+var _beam_dim_material: StandardMaterial3D = null  # material oscuro reutilizable para beams (se recrean cada frame)
 var _volatile_dim_material: StandardMaterial3D = null  # para tiles void y otros que se sobrescriben cada frame
 # Oscurecimiento ~80%: solo ~20% de brillo (0.12 = 12%)
 const DIM_ALBEDO: float = 0.12
 const DIM_GRID_COLOR: float = 0.06
 
 func _ready():
-	print("[DEBUG] system_hud _ready() - script cargado")
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ocultar_barra_superior()
 	_estilizar_botones_paneles()
@@ -36,6 +36,13 @@ func _ready():
 	_crear_materiales_dim_volatiles()
 
 func _crear_materiales_dim_volatiles():
+	_beam_dim_material = StandardMaterial3D.new()
+	_beam_dim_material.albedo_color = Color(DIM_ALBEDO, DIM_ALBEDO, DIM_ALBEDO)
+	_beam_dim_material.albedo_color.a = 0.4
+	_beam_dim_material.emission_enabled = false
+	_beam_dim_material.metallic = 0.0
+	_beam_dim_material.roughness = 1.0
+	_beam_dim_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_volatile_dim_material = StandardMaterial3D.new()
 	_volatile_dim_material.albedo_color = Color(DIM_ALBEDO, DIM_ALBEDO, DIM_ALBEDO)
 	_volatile_dim_material.emission_enabled = false
@@ -43,12 +50,13 @@ func _crear_materiales_dim_volatiles():
 	_volatile_dim_material.roughness = 1.0
 
 func _process(_delta: float) -> void:
+	# Beams y tiles del void se redibujan/actualizan cada frame; re-aplicar dim para que sigan oscuros
 	if _recursos_highlight_recipe.is_empty():
 		return
 	_reaplicar_dim_elementos_volatiles()
-	call_deferred("_reaplicar_dim_elementos_volatiles")
 
 func _input(event: InputEvent) -> void:
+	# Clic fuera del menú RECURSOS: cerrar y quitar dim
 	var panel = get_node_or_null("RecursosDropdownPanel")
 	if not panel or not panel.visible:
 		return
@@ -258,6 +266,7 @@ func _rellenar_recursos_dropdown():
 		drop.add_child(btn)
 
 func _on_recursos_item_pressed(recipe_name: String):
+	# Misma categoría: quitar resaltado. Otra categoría: solo la nueva queda brillante.
 	if _recursos_highlight_recipe == recipe_name:
 		_quitar_aislamiento_visual()
 		_recursos_highlight_recipe = ""
@@ -266,8 +275,9 @@ func _on_recursos_item_pressed(recipe_name: String):
 	_aplicar_aislamiento_visual()
 
 func _aplicar_aislamiento_visual():
+	# Oscurecer todo lo que no sea la categoría seleccionada: edificios, grilla, haces, partículas
 	var recipe = _recursos_highlight_recipe
-	_quitar_aislamiento_visual()
+	_quitar_aislamiento_visual()  # restaura materiales anteriores (cambio de categoría)
 	_recursos_highlight_recipe = recipe
 	var scene_path = ""
 	if GameConstants.RECETAS.has(_recursos_highlight_recipe):
@@ -275,10 +285,10 @@ func _aplicar_aislamiento_visual():
 	var root = get_parent()
 	_oscurecer_edificios_recursivo(root, scene_path)
 	_oscurecer_grilla()
-	_oscurecer_gridmap_tiles()
 	_oscurecer_particulas_y_haces(root, scene_path)
 
 func _oscurecer_edificios_recursivo(nodo: Node, scene_path_highlight: String):
+	# Incluir MeshInstance3D y CSG (Constructor usa CSGBox3D con nombre "MeshInstance3D")
 	if nodo is GeometryInstance3D:
 		var building = _get_edificio_raiz(nodo)
 		if building and building.scene_file_path != "" and "buildings" in building.scene_file_path:
@@ -316,14 +326,9 @@ func _oscurecer_grilla():
 	mat_oscuro.set_shader_parameter("grid_color", Color(DIM_GRID_COLOR, DIM_GRID_COLOR, DIM_GRID_COLOR + 0.02))
 	grid_plane.set_surface_override_material(0, mat_oscuro)
 
-func _oscurecer_gridmap_tiles():
-	var root = get_parent()
-	var gridmap = root.get_node_or_null("GridMap")
-	if not gridmap or not (gridmap is GridMap):
-		return
-	gridmap.visible = false
-
 func _oscurecer_particulas_y_haces(_root: Node, _scene_path_highlight: String):
+	# PulseVisual y Beams se actualizan cada frame en _reaplicar_dim_elementos_volatiles
+	# porque se crean/recrean constantemente durante el juego
 	pass
 
 func _reaplicar_dim_elementos_volatiles():
@@ -331,27 +336,37 @@ func _reaplicar_dim_elementos_volatiles():
 	if GameConstants.RECETAS.has(_recursos_highlight_recipe):
 		scene_path = GameConstants.RECETAS[_recursos_highlight_recipe].get("output_scene", "")
 	var root = get_parent()
-	# Beams: hacer invisibles (excepto los del edificio resaltado)
-	for node in root.find_children("*", "Node3D", true):
-		if not is_instance_valid(node):
-			continue
-		if node.name != "BeamSegment":
-			continue
-		var building = _get_edificio_raiz(node)
-		if building and building.get("scene_file_path") != null and building.scene_file_path == scene_path:
-			node.visible = true
-			continue
-		node.visible = false
-	# Bolas de energía (PulseVisual): hacerlas invisibles
+	
+	# 1. Bolas de energía (PulseVisual): se crean constantemente, oscurecer cada frame
 	for node in get_tree().get_nodes_in_group("PulseVisual"):
 		if not is_instance_valid(node):
 			continue
-		node.visible = false
-	# Tiles del Void Generator
+		# PulseVisual crea _mesh como primer hijo
+		var mesh: MeshInstance3D = null
+		if node.get_child_count() > 0 and node.get_child(0) is MeshInstance3D:
+			mesh = node.get_child(0) as MeshInstance3D
+		if not mesh:
+			continue
+		# Aplicar material oscuro sin emisión
+		mesh.set_surface_override_material(0, _beam_dim_material)
+	
+	# 2. Beams: se recrean cada frame; oscurecer por surface para que no brillen
+	if _beam_dim_material:
+		for node in root.find_children("BeamSegment", "Node3D", true, false):
+			var mesh = node.get_node_or_null("MeshInstance3D")
+			if not mesh or not (mesh is MeshInstance3D):
+				continue
+			var building = _get_edificio_raiz(node)
+			if building and building.get("scene_file_path") != null and building.scene_file_path == scene_path:
+				continue
+			mesh.set_surface_override_material(0, _beam_dim_material)
+	
+	# 3. Tiles del Void Generator: _actualizar_pulso_suelo sobrescribe el color cada frame; re-aplicar dim
 	if _volatile_dim_material:
 		for building in _get_edificios_void_generator(root):
 			if building.scene_file_path == scene_path:
 				continue
+			# GridVisual está en escena; perimeter_visual se crea en código (Node3D), ambos tienen hijos MeshInstance3D
 			for contenedor in building.get_children():
 				if not contenedor is Node3D:
 					continue
@@ -381,10 +396,6 @@ func _quitar_aislamiento_visual():
 		if grid_plane and grid_plane is MeshInstance3D:
 			grid_plane.set_surface_override_material(0, _grid_original_surface)
 		_grid_original_surface = null
-	var root2 = get_parent()
-	var gridmap = root2.get_node_or_null("GridMap")
-	if gridmap and gridmap is GridMap:
-		gridmap.visible = true
 	_recursos_highlight_recipe = ""
 
 func guardar_partida():
