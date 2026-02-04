@@ -130,11 +130,15 @@ func actualizar_vista():
 			bar_progreso.value = constructor_activo.tiempo_progreso
 		
 		if lbl_requisitos:
+			if lbl_requisitos is RichTextLabel:
+				lbl_requisitos.bbcode_enabled = true
 			var partes: Array[String] = []
 			for r in info["inputs"]:
 				var nec = info["inputs"][r]
 				var act = constructor_activo.inventario_interno.get(r, 0)
-				partes.append("%s: %s (%d/%d)" % [GameConstants.get_nombre_visible_recurso(r), GameConstants.format_cantidad_recurso(r, nec), act, nec])
+				var nombre_col = _color_nombre_recurso_bbcode(r)
+				var cifra = GameConstants.format_cantidad_solo_cifra(r, nec)
+				partes.append("%s: %s (%d/%d)" % [nombre_col, cifra, act, nec])
 			lbl_requisitos.text = "Requiere: " + " - ".join(partes)
 	else:
 		if bar_progreso: bar_progreso.value = 0
@@ -154,7 +158,7 @@ func actualizar_vista():
 	if lbl_almacen:
 		lbl_almacen.text = "Almacén: %d / %d" % [total, maximo]
 
-	# 3. Lista Recursos
+	# 3. Lista Recursos (cifra sin duplicar nombre; colores por tipo)
 	if lista_recursos:
 		for c in lista_recursos.get_children(): c.queue_free()
 		
@@ -162,12 +166,16 @@ func actualizar_vista():
 			var cant = constructor_activo.inventario_interno[tipo]
 			var fila = HBoxContainer.new()
 			var lbl = Label.new()
-			lbl.text = "%s: %s" % [GameConstants.get_nombre_visible_recurso(tipo), GameConstants.format_cantidad_recurso(tipo, cant)]
+			lbl.text = "%s: %s" % [GameConstants.get_nombre_visible_recurso(tipo), GameConstants.format_cantidad_solo_cifra(tipo, cant)]
 			lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			if tipo == "Stability" or tipo == "Compressed-Stability":
 				lbl.add_theme_color_override("font_color", GameConstants.COLOR_STABILITY)
 			elif tipo == "Charge" or tipo == "Compressed-Charge":
 				lbl.add_theme_color_override("font_color", GameConstants.COLOR_CHARGE)
+			elif tipo == "Up-Quark":
+				lbl.add_theme_color_override("font_color", GameConstants.COLOR_UP_QUARK)
+			elif tipo == "Down-Quark":
+				lbl.add_theme_color_override("font_color", GameConstants.COLOR_DOWN_QUARK)
 			
 			var btn = Button.new()
 			btn.text = "X"
@@ -182,6 +190,22 @@ func actualizar_vista():
 		var pendientes = constructor_activo.inventario_salida.size()
 		btn_reclamar.text = "RECLAMAR (%d)" % pendientes
 		btn_reclamar.visible = pendientes > 0
+
+## Nombre del recurso con BBCode de color (alineado con recipe_book y reglas UI).
+func _color_nombre_recurso_bbcode(nombre: String) -> String:
+	var c_est = GameConstants.COLOR_STABILITY
+	var c_car = GameConstants.COLOR_CHARGE
+	var h_est = "#%02x%02x%02x" % [int(c_est.r * 255), int(c_est.g * 255), int(c_est.b * 255)]
+	var h_car = "#%02x%02x%02x" % [int(c_car.r * 255), int(c_car.g * 255), int(c_car.b * 255)]
+	var colores = {
+		"Stability": "[color=%s]Estabilidad E[/color]" % h_est,
+		"Charge": "[color=%s]Carga C[/color]" % h_car,
+		"Compressed-Stability": "[color=%s]Estabilidad Condensada E[/color]" % h_est,
+		"Compressed-Charge": "[color=%s]Carga Condensada C[/color]" % h_car,
+		"Up-Quark": "[color=#ffff00]UP[/color]",
+		"Down-Quark": "[color=#ff8000]DOWN[/color]"
+	}
+	return colores.get(nombre, nombre)
 
 func _rellenar_recetas_desbloqueadas():
 	if not opt_recetas: return
