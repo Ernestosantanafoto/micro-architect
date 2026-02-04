@@ -71,6 +71,8 @@ const HAZ_OFFSET_ORIGEN = 0.25   # primer segmento: centro aquí para que el haz
 const HAZ_SEGMENTO_OFFSET = 0.25
 const HAZ_ALPHA_TRANSPARENCIA = 0.4
 const HAZ_EMISION_ENERGIA = 3.0
+## Altura Y a la que se dibuja el haz (0 = suelo) para que quede por debajo de edificios y no se vea encima.
+const HAZ_ALTURA_RENDER := 0.0
 
 # --- PRISMAS ---
 const ALCANCE_PRISMA = 5

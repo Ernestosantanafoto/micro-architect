@@ -22,6 +22,7 @@ func dibujar_haz(origen: Vector3, direccion: Vector3, longitud: int, color: Colo
 		var escala = 0.5 if es_ultimo_y_bloqueado else 1.0
 		var offset = (-direccion * GameConstants.HAZ_SEGMENTO_OFFSET) if es_ultimo_y_bloqueado else Vector3.ZERO
 		_crear_segmento(pos + offset, direccion, color, escala)
+	_aplicar_oclusion_segmentos(world)
 	if target != null and target.has_method("recibir_luz_instantanea"):
 		target.recibir_luz_instantanea(color, "Energy", direccion)
 	if GameConstants.DEBUG_MODE:
@@ -32,9 +33,12 @@ func dibujar_haz(origen: Vector3, direccion: Vector3, longitud: int, color: Colo
 func _crear_segmento(pos, dir, col, esc):
 	var seg = beam_segment_scene.instantiate()
 	contenedor.add_child(seg)
-	seg.global_position = pos
+	var pos_render = Vector3(pos.x, GameConstants.HAZ_ALTURA_RENDER, pos.z)
+	seg.global_position = pos_render
 	seg.scale.z = esc
-	if dir.length() > 0.1: seg.look_at(pos + dir, Vector3.UP)
+	if dir.length() > 0.1:
+		var target_flat = Vector3(pos.x + dir.x, GameConstants.HAZ_ALTURA_RENDER, pos.z + dir.z)
+		seg.look_at(target_flat, Vector3.UP)
 	
 	var mesh = seg.get_node_or_null("MeshInstance3D")
 	if not mesh:
@@ -47,6 +51,31 @@ func _crear_segmento(pos, dir, col, esc):
 	mat.emission_energy_multiplier = GameConstants.HAZ_EMISION_ENERGIA
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mesh.set_surface_override_material(0, mat)
+
+## Oculta segmentos que quedan detrás de un edificio. Rayo desde segmento → cámara; si impacta algo (que no sea el emisor) antes de la cámara, ocultar.
+func _aplicar_oclusion_segmentos(world: PhysicsDirectSpaceState3D) -> void:
+	var cam = get_viewport().get_camera_3d()
+	if not cam or not world:
+		return
+	var edificio_propio = get_parent()
+	var excluir_rid: RID = edificio_propio.get_rid() if edificio_propio is CollisionObject3D else RID()
+	var cam_pos: Vector3 = cam.global_position
+	for seg in contenedor.get_children():
+		var seg_pos: Vector3 = seg.global_position
+		var dir_hacia_cam: Vector3 = (cam_pos - seg_pos).normalized()
+		var dist_a_cam: float = seg_pos.distance_to(cam_pos)
+		if dist_a_cam < 0.02:
+			seg.visible = true
+			continue
+		var query = PhysicsRayQueryParameters3D.create(seg_pos, seg_pos + dir_hacia_cam * dist_a_cam)
+		query.collision_mask = GameConstants.LAYER_EDIFICIOS
+		query.collide_with_areas = true
+		query.collide_with_bodies = true
+		if excluir_rid.is_valid():
+			query.exclude = [excluir_rid]
+		var res = world.intersect_ray(query)
+		# Si hay impacto, hay un edificio entre el segmento y la cámara → ocultar.
+		seg.visible = res.is_empty()
 
 func _limpiar():
 	for c in contenedor.get_children(): c.queue_free()
