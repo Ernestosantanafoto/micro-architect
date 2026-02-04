@@ -153,6 +153,7 @@ func _on_btn_salir_pressed():
 	get_tree().quit()
 
 func _on_nueva_pressed():
+	GameConstants.DEBUG_MODE = false  # Nueva partida siempre con debug OFF
 	GlobalInventory.limpiar_inventario()
 	GlobalInventory.semilla_mundo = 0
 	GlobalInventory.cargar_starter_pack()
@@ -255,6 +256,7 @@ func _mostrar_popup_cargar() -> void:
 
 func _hacer_cargar_slot(slot: int, layer: CanvasLayer) -> void:
 	if SaveSystem.cargar_partida(slot):
+		GameConstants.DEBUG_MODE = false  # Cargar partida: empezar con debug OFF
 		layer.queue_free()
 		_intentar_cambio_escena()
 	else:
