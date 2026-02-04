@@ -8,6 +8,8 @@ var _debug_container: Node3D = null  # Solo usado en DEBUG_MODE para dibujar pat
 func _ready():
 	contenedor = Node3D.new()
 	add_child(contenedor)
+	if not is_in_group("BeamEmitter"):
+		add_to_group("BeamEmitter")
 
 func dibujar_haz(origen: Vector3, direccion: Vector3, longitud: int, color: Color, map: GridMap, world: PhysicsDirectSpaceState3D):
 	_limpiar()
@@ -24,6 +26,8 @@ func dibujar_haz(origen: Vector3, direccion: Vector3, longitud: int, color: Colo
 		target.recibir_luz_instantanea(color, "Energy", direccion)
 	if GameConstants.DEBUG_MODE:
 		_dibujar_path_debug(path)
+	else:
+		_limpiar_debug()
 
 func _crear_segmento(pos, dir, col, esc):
 	var seg = beam_segment_scene.instantiate()
@@ -47,7 +51,19 @@ func _crear_segmento(pos, dir, col, esc):
 func _limpiar():
 	for c in contenedor.get_children(): c.queue_free()
 
-func apagar(): _limpiar()
+## Quita la línea amarilla de debug; llamado cuando DEBUG_MODE se desactiva o al apagar el haz.
+func _limpiar_debug():
+	if _debug_container != null:
+		for c in _debug_container.get_children():
+			c.queue_free()
+
+## Público: para que el toggle de DEBUG pueda ocultar todas las líneas al desactivar modo debug.
+func limpiar_debug_visual():
+	_limpiar_debug()
+
+func apagar():
+	_limpiar()
+	_limpiar_debug()
 
 ## Devuelve el nodo edificio (con recibir_energia_numerica o recibir_luz_instantanea) desde un collider.
 ## Si el collider es hijo del edificio (p. ej. CollisionShape3D), sube por el árbol hasta encontrarlo.

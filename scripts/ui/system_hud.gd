@@ -240,6 +240,9 @@ func _on_btn_debug_pressed() -> void:
 		GlobalInventory.add_item("GodSiphon", 3)
 	else:
 		GlobalInventory.restaurar_starter_pack_inventario()
+		for n in get_tree().get_nodes_in_group("BeamEmitter"):
+			if n.has_method("limpiar_debug_visual"):
+				n.limpiar_debug_visual()
 	var inventory_hud = get_parent().get_node_or_null("InventoryHUD/MainContainer")
 	if inventory_hud and inventory_hud.has_method("refresh_debug_menu"):
 		inventory_hud.refresh_debug_menu()
