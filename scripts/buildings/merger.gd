@@ -156,12 +156,14 @@ func emitir_producto(nombre: String, color: Color):
 	_actualizar_mi_estado_global()
 
 func _crear_labels_e_c(original: Label3D) -> void:
-	# E y C en unidades condensadas (1, 2, 3...); E verde, " - " blanco, C magenta
+	# E y C en unidades condensadas; E right-aligned (grows left), " - " center, C left-aligned (grows right) para evitar solapamiento con 2+ dígitos
+	var offset_x = 0.45
 	label_e = Label3D.new()
 	label_e.pixel_size = original.pixel_size
 	label_e.font_size = original.font_size
 	label_e.billboard = original.billboard
-	label_e.position = original.position + Vector3(-0.35, 0, 0)
+	label_e.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label_e.position = original.position + Vector3(-offset_x, 0, 0)
 	label_e.text = "E:0"
 	label_e.modulate = GameConstants.COLOR_STABILITY
 	ui_root.add_child(label_e)
@@ -177,7 +179,8 @@ func _crear_labels_e_c(original: Label3D) -> void:
 	label_c.pixel_size = original.pixel_size
 	label_c.font_size = original.font_size
 	label_c.billboard = original.billboard
-	label_c.position = original.position + Vector3(0.35, 0, 0)
+	label_c.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label_c.position = original.position + Vector3(offset_x, 0, 0)
 	label_c.text = "C:0"
 	label_c.modulate = GameConstants.COLOR_CHARGE
 	ui_root.add_child(label_c)
