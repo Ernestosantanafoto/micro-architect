@@ -44,6 +44,13 @@ func _conectar_botones():
 		if GameConstants.DEBUG_MODE:
 			print("[MAIN] Botón CARGAR conectado.")
 	
+	# Opciones (volumen, SFX, pantalla completa) — popup mismo estilo que Guardar/Cargar
+	var btn_opciones = _buscar_boton("BtnOpciones")
+	if btn_opciones and not btn_opciones.pressed.is_connected(_on_btn_opciones_pressed):
+		btn_opciones.pressed.connect(_on_btn_opciones_pressed)
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] Botón OPCIONES conectado.")
+	
 	# Modo selección (Button toggle_mode): mismo aspecto que GUARDAR/MENÚ
 	var btn_modo_sel = find_child("BtnModoSeleccion", true, false)
 	if btn_modo_sel and btn_modo_sel is BaseButton and btn_modo_sel.has_signal("toggled"):
@@ -379,6 +386,123 @@ func _on_btn_cargar_pressed() -> void:
 		push_error("[MAIN] SaveSystem no encontrado")
 		return
 	_mostrar_popup_cargar_ingame()
+
+func _on_btn_opciones_pressed() -> void:
+	_mostrar_popup_opciones()
+
+func _asegurar_bus_sfx() -> void:
+	for i in range(AudioServer.bus_count):
+		if AudioServer.get_bus_name(i) == "SFX":
+			return
+	AudioServer.add_bus(AudioServer.bus_count)
+	AudioServer.set_bus_name(AudioServer.bus_count - 1, "SFX")
+
+func _mostrar_popup_opciones() -> void:
+	_cerrar_popups_overlay()
+	_asegurar_bus_sfx()
+	var cfg = ConfigFile.new()
+	var load_ok = cfg.load(GameConstants.PREFERENCIAS_PATH) == OK
+	var vol = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_VOLUME, 1.0), 0.0, 1.0) if load_ok else 1.0
+	var sfx_val = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, 1.0), 0.0, 1.0) if load_ok else 1.0
+	var full = cfg.get_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, false) if load_ok else false
+
+	var layer = CanvasLayer.new()
+	layer.layer = 100
+	layer.add_to_group(GameConstants.POPUP_OVERLAY_GROUP)
+	add_child(layer)
+	var backdrop = ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.01)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(_on_popup_backdrop_input)
+	layer.add_child(backdrop)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = GameConstants.POPUP_OFFSET_LEFT
+	panel.offset_top = GameConstants.POPUP_OFFSET_TOP
+	panel.offset_right = GameConstants.POPUP_OFFSET_RIGHT
+	panel.offset_bottom = GameConstants.POPUP_OFFSET_BOTTOM
+	panel.add_theme_stylebox_override("panel", _panel_estilo_guardar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	panel.add_child(vbox)
+	var lbl_titulo = Label.new()
+	lbl_titulo.text = "Opciones"
+	lbl_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(lbl_titulo)
+
+	var lbl_vol = Label.new()
+	lbl_vol.text = "Música"
+	vbox.add_child(lbl_vol)
+	var slider_vol = HSlider.new()
+	slider_vol.min_value = 0.0
+	slider_vol.max_value = 1.0
+	slider_vol.step = 0.05
+	slider_vol.value = vol
+	slider_vol.custom_minimum_size.y = 24
+	vbox.add_child(slider_vol)
+	var lbl_sfx = Label.new()
+	lbl_sfx.text = "Efectos"
+	vbox.add_child(lbl_sfx)
+	var slider_sfx = HSlider.new()
+	slider_sfx.min_value = 0.0
+	slider_sfx.max_value = 1.0
+	slider_sfx.step = 0.05
+	slider_sfx.value = sfx_val
+	slider_sfx.custom_minimum_size.y = 24
+	vbox.add_child(slider_sfx)
+	var check_full = CheckButton.new()
+	check_full.text = "Pantalla completa"
+	check_full.button_pressed = full
+	vbox.add_child(check_full)
+
+	# Aplicar valores iniciales
+	_aplicar_volumen_ingame(vol)
+	_aplicar_sfx_ingame(sfx_val)
+	_aplicar_fullscreen_ingame(full)
+
+	slider_vol.value_changed.connect(func(v: float):
+		_aplicar_volumen_ingame(v)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+	)
+	slider_sfx.value_changed.connect(func(v: float):
+		_aplicar_sfx_ingame(v)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+	)
+	check_full.toggled.connect(func(p: bool):
+		_aplicar_fullscreen_ingame(p)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+	)
+
+	var btn_cerrar = Button.new()
+	btn_cerrar.text = "Cerrar"
+	btn_cerrar.pressed.connect(_cerrar_popups_overlay)
+	vbox.add_child(btn_cerrar)
+
+func _aplicar_volumen_ingame(val: float) -> void:
+	var master_bus = AudioServer.get_bus_index("Master")
+	if master_bus >= 0:
+		AudioServer.set_bus_volume_db(master_bus, linear_to_db(pow(clampf(val, 0.0, 1.0), 2)))
+
+func _aplicar_sfx_ingame(val: float) -> void:
+	var idx = AudioServer.get_bus_index("SFX")
+	if idx >= 0:
+		AudioServer.set_bus_volume_db(idx, linear_to_db(pow(clampf(val, 0.0, 1.0), 2)))
+
+func _aplicar_fullscreen_ingame(enabled: bool) -> void:
+	if enabled:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+
+func _guardar_preferencias_ingame(vol: float, sfx: float, full: bool) -> void:
+	var cfg = ConfigFile.new()
+	var _err = cfg.load(GameConstants.PREFERENCIAS_PATH)
+	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_VOLUME, clampf(vol, 0.0, 1.0))
+	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, clampf(sfx, 0.0, 1.0))
+	cfg.set_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, full)
+	cfg.save(GameConstants.PREFERENCIAS_PATH)
 
 func _mostrar_popup_cargar_ingame() -> void:
 	var slots_info = SaveSystem.get_slots_info()
