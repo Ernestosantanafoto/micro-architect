@@ -207,6 +207,12 @@ func get_all_techs_by_tier() -> Dictionary:
 	
 	return result
 
+## Llamado al activar DEBUG_MODE: desbloquea todas las tecnologías/recetas sin revertir al desactivar.
+func unlock_all_for_debug():
+	for tech_name in tech_tree:
+		if tech_name not in unlocked_techs:
+			unlock_tech(tech_name, true)
+
 # Reiniciar a estado inicial (nueva partida)
 func reset_to_initial():
 	unlocked_techs.clear()

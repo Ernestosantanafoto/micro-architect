@@ -235,6 +235,8 @@ func _on_btn_debug_pressed() -> void:
 	if vbox:
 		_actualizar_texto_debug(vbox.get_node_or_null("BtnDebug") as Button)
 	if GameConstants.DEBUG_MODE:
+		if TechTree:
+			TechTree.unlock_all_for_debug()
 		GlobalInventory.add_item("GodSiphon", 3)
 	else:
 		GlobalInventory.restaurar_starter_pack_inventario()
