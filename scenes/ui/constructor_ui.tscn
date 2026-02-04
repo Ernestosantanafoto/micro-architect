@@ -13,6 +13,7 @@ script = ExtResource("1_26v4u")
 [node name="VentanaFlotante" type="PanelContainer" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+custom_minimum_size = Vector2(280, 0)
 theme_override_styles/panel = SubResource("StyleBoxFlat_ventana")
 
 [node name="MarginContainer" type="MarginContainer" parent="VentanaFlotante"]

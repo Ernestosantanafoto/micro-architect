@@ -132,14 +132,21 @@ func actualizar_vista():
 		if lbl_requisitos:
 			if lbl_requisitos is RichTextLabel:
 				lbl_requisitos.bbcode_enabled = true
-			var partes: Array[String] = []
+			var lineas: Array[String] = ["Requiere:"]
 			for r in info["inputs"]:
 				var nec = info["inputs"][r]
 				var act = constructor_activo.inventario_interno.get(r, 0)
-				var nombre_col = _color_nombre_recurso_bbcode(r)
-				var cifra = GameConstants.format_cantidad_solo_cifra(r, nec)
-				partes.append("%s: %s (%d/%d)" % [nombre_col, cifra, act, nec])
-			lbl_requisitos.text = "Requiere: " + " - ".join(partes)
+				var etiqueta_col = _requisito_etiqueta_bbcode(r)
+				var act_show: int
+				var nec_show: int
+				if r == "Compressed-Stability" or r == "Compressed-Charge":
+					act_show = act / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+					nec_show = nec / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+				else:
+					act_show = act
+					nec_show = nec
+				lineas.append("%s %d/%d" % [etiqueta_col, act_show, nec_show])
+			lbl_requisitos.text = "\n".join(lineas)
 	else:
 		if bar_progreso: bar_progreso.value = 0
 		if lbl_requisitos: lbl_requisitos.text = "Selecciona receta..."
@@ -190,6 +197,22 @@ func actualizar_vista():
 		var pendientes = constructor_activo.inventario_salida.size()
 		btn_reclamar.text = "RECLAMAR (%d)" % pendientes
 		btn_reclamar.visible = pendientes > 0
+
+## Para requisitos compactos: etiqueta corta con color (E:, C:, UP:, DOWN:).
+func _requisito_etiqueta_bbcode(nombre: String) -> String:
+	var c_est = GameConstants.COLOR_STABILITY
+	var c_car = GameConstants.COLOR_CHARGE
+	var h_est = "#%02x%02x%02x" % [int(c_est.r * 255), int(c_est.g * 255), int(c_est.b * 255)]
+	var h_car = "#%02x%02x%02x" % [int(c_car.r * 255), int(c_car.g * 255), int(c_car.b * 255)]
+	var etiquetas = {
+		"Stability": "[color=%s]E:[/color]" % h_est,
+		"Charge": "[color=%s]C:[/color]" % h_car,
+		"Compressed-Stability": "[color=%s]E. Condensada:[/color]" % h_est,
+		"Compressed-Charge": "[color=%s]C. Condensada:[/color]" % h_car,
+		"Up-Quark": "[color=#ffff00]UP:[/color]",
+		"Down-Quark": "[color=#ff8000]DOWN:[/color]"
+	}
+	return etiquetas.get(nombre, nombre + ":")
 
 ## Nombre del recurso con BBCode de color (alineado con recipe_book y reglas UI).
 func _color_nombre_recurso_bbcode(nombre: String) -> String:
