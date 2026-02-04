@@ -2,7 +2,7 @@
 
 **Objetivo:** Un solo documento para ir abordando poco a poco.  
 **Base:** v0.5-alpha (Tier 1 funcional, Fabricador Hadrón, save/load corregido)  
-**Última actualización:** 2025-01-31 15:02
+**Última actualización:** 2025-02-03
 
 ---
 
@@ -45,13 +45,13 @@ Objetivo: Tier 1 sin bugs, listo para publicar demo en itch.io.
 - [x] Zoom de cámara no se restauraba (world_generator corregido)
 - [x] Sifones no funcionaban tras cargar (game_tick + esta_construido)
 - [x] Tecnologías desbloqueadas persisten tras cargar (TechTree integrado en SaveSystem)
-- [ ] Verificar save/load con partidas complejas (20+ edificios) — TEST_CHECKLIST Parte 10.3
+- [x] Verificar save/load con partidas complejas (20+ edificios) — TEST_CHECKLIST Parte 10.3
 
 ### 5.2 Bugs de colocación
 - [x] Prismas se colocaban como God Siphons (placement_logic corregido)
 - [x] Void Generator era copia de construction_manager (reescrito)
-- [ ] Verificar colocación de todos los edificios en sus tiles correctos — TEST_CHECKLIST Parte 6.5
-- [ ] Test de rotación + colocación en bordes del mapa — TEST_CHECKLIST Parte 6.5
+- [x] Verificar colocación de todos los edificios en sus tiles correctos — TEST_CHECKLIST Parte 6.5
+- [x] Test de rotación + colocación en bordes del mapa — TEST_CHECKLIST Parte 6.5
 
 ### 5.3 Testing integral
 - [ ] Ejecutar 6_TEST_CHECKLIST.md completo (v0.5: Partes 1–11, incl. 6.5 colocación y 10.3 save 20+)

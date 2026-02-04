@@ -1,14 +1,14 @@
 # Estado y progreso – Micro Architect
 
 **Este es el documento para saber en qué punto está el proyecto.**  
-Última actualización: 2025-01-31  
+Última actualización: 2025-02-03  
 **Reglas universales y no tocar:** [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md)
 
 ---
 
 ## En una frase
 
-**v0.5-alpha**, Tier 1 (Fase Cuántica). Estabilización en curso; menú **INFRAESTRUCTURA** (dim + ocultar red/tiles) y save/load de edificios funcionando; pendiente testing integral y demo itch.io.
+**v0.5-alpha**, Tier 1 (Fase Cuántica). Estabilización en curso; 5.1–5.2 verificados (save/load 20+ y colocación 6.5 OK); pendiente testing integral (5.3) y demo itch.io (5.4).
 
 ---
 
@@ -17,10 +17,10 @@
 | Criterio | Estado |
 |----------|--------|
 | Tech F2 persisten al guardar/cargar | ✅ |
-| Save/load con 20+ edificios verificado | ⏳ TEST_CHECKLIST 10.3 |
-| Colocación de todos los tipos verificada | ⏳ TEST_CHECKLIST 6.5 |
+| Save/load con 20+ edificios verificado | ✅ TEST_CHECKLIST 10.3 |
+| Colocación de todos los tipos verificada | ✅ TEST_CHECKLIST 6.5 |
 | TEST_CHECKLIST ejecutado; bugs críticos resueltos | ⏳ |
-| ROADMAP 5.1–5.3 marcados al verificar | ⏳ |
+| ROADMAP 5.1–5.2 verificados | ✅ |
 
 ---
 
@@ -38,9 +38,8 @@
 
 ## Próximo paso (prioridad)
 
-1. **Estabilizar T1:** Ejecutar TEST_CHECKLIST (6.5 colocación, 10.3 save 20+), corregir bugs críticos.
+1. **Testing integral (5.3):** Ejecutar TEST_CHECKLIST completo (Partes 1–11) o ir directo a demo.
 2. **Demo itch.io:** Export HTML5/Windows, página, descripción, publicar alpha.
-3. **Opcional:** Persistir bolas de energía en vuelo (PulseVisual) al cargar/des-dim (ver TASKLIST; no bloqueante).
 
 ---
 

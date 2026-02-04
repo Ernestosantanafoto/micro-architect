@@ -32,6 +32,12 @@ func spawn_pulse_visual(from_pos: Vector3, to_pos: Vector3, color: Color, source
 	if path_waypoints.size() >= 2:
 		use_from = path_waypoints[0]
 		use_to = path_waypoints[path_waypoints.size() - 1]
+	var y_render = GameConstants.HAZ_ALTURA_RENDER
+	use_from = Vector3(use_from.x, y_render, use_from.z)
+	use_to = Vector3(use_to.x, y_render, use_to.z)
+	var path_flat: Array = []
+	for p in path_waypoints:
+		path_flat.append(Vector3(p.x, y_render, p.z))
 	var scene = GameConstants.get_scene_root_for(source_origen) if source_origen else get_tree().current_scene
 	if not scene:
 		scene = get_tree().root.get_child(0) if get_tree().root.get_child_count() > 0 else null
@@ -41,7 +47,7 @@ func spawn_pulse_visual(from_pos: Vector3, to_pos: Vector3, color: Color, source
 	var duration = dist / GameConstants.PULSO_VELOCIDAD_VISUAL if dist > 0.01 else FLUJO_DURACION_BASE
 	var visual = PulseVisual.new()
 	scene.add_child(visual)
-	visual.setup(use_from, use_to, duration, color, source_origen, tipo_recurso, path_waypoints)
+	visual.setup(use_from, use_to, duration, color, source_origen, tipo_recurso, path_flat)
 
 func unregister_flow(flow: EnergyFlow) -> void:
 	energy_flows.erase(flow)

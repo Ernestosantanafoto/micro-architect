@@ -2,7 +2,7 @@
 
 **Un solo sitio para las tareas actuales.**  
 Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.  
-Última actualización: 2025-01-31  
+Última actualización: 2025-02-03  
 **Reglas y puntos no tocar:** [0_REGLAS_UNIVERSALES.md](0_REGLAS_UNIVERSALES.md)
 
 ---
@@ -20,9 +20,9 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 ## Bloque 5: Estabilización v0.5 (pre-demo)
 
 ### 5.1–5.2 Save/load y colocación (verificación)
-- [ ] Verificar save/load con partida compleja (20+ edificios) — TEST_CHECKLIST 10.3
-- [ ] Verificar colocación de todos los edificios en tiles correctos — TEST_CHECKLIST 6.5
-- [ ] Test de rotación y colocación en bordes del mapa
+- [x] Verificar save/load con partida compleja (20+ edificios) — TEST_CHECKLIST 10.3
+- [x] Verificar colocación de todos los edificios en tiles correctos — TEST_CHECKLIST 6.5
+- [x] Test de rotación y colocación en bordes del mapa
 
 ### 5.3 Testing integral
 - [ ] Ejecutar TEST_CHECKLIST completo (Partes 1–11)
@@ -40,6 +40,7 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 ## Mejoras recientes (seguimiento)
 
 ### Menú INFRAESTRUCTURA (ex RECURSOS) — hecho — NO TOCAR
+**Dim: solventado 100%. No tocar.**
 - [x] Botón renombrado a INFRAESTRUCTURA
 - [x] Al abrir panel: oscurecer todo, ocultar red (plano cámara) y tiles (GridMap)
 - [x] Tiles y red permanecen ocultos al pulsar un ítem del dropdown (hasta cerrar panel)
@@ -70,8 +71,8 @@ Marca `[x]` al completar. Si algo bloquea, pasa al siguiente.
 
 ## Siguiente sesión sugerida
 
-1. Persistir bolas en vuelo (PulseVisual) si quieres pulir el dim; **o**
-2. Ejecutar TEST_CHECKLIST 6.5 y 10.3 y marcar ROADMAP 5.1–5.2; **o**
-3. Empezar 5.4 (export y itch.io).
+1. ~~Persistir bolas en vuelo~~ — Dim 100% solventado; no tocar.
+2. ~~Ejecutar TEST_CHECKLIST 6.5 y 10.3~~ — Hecho; ROADMAP 5.1–5.2 verificados.
+3. **Siguiente:** Testing integral (5.3) o empezar 5.4 (export y itch.io).
 
 Cuando termines un bloque o varias tareas, actualiza [1_PROGRESO.md](1_PROGRESO.md) y la tabla “Estado actual” en [4_ROADMAP.md](4_ROADMAP.md).

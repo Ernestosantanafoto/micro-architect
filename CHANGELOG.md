@@ -8,6 +8,12 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 ## [Unreleased] – 2025-02-03
 
+### Corregido
+
+- **Issue #1 – Beams ignore building interactions except at maximum range**
+  - **BeamEmitter**: la detección de edificios en el haz usaba la posición del grid (`map.map_to_local`) para el point query; la Y del grid puede no coincidir con la Y de los edificios (estos mantienen la Y de la escena). Ahora el point query usa la Y del origen del haz (`origen.y`) para comprobar a la altura de los edificios, de modo que prismas y otros receptores se detecten en cualquier celda del path.
+  - **BeamEmitter**: añadido `_obtener_edificio_desde_collider()` para resolver el collider al nodo edificio (subiendo por el árbol si el collider es hijo), asegurando que `esta_construido` y los métodos de recepción se comprueban en el nodo correcto.
+
 ### Añadido
 
 - **CHANGELOG.md**: este archivo, con historial de desarrollo según los MD del proyecto y cambios recientes.
