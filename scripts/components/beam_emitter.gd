@@ -49,6 +49,18 @@ func _limpiar():
 
 func apagar(): _limpiar()
 
+## Devuelve el nodo edificio (con recibir_energia_numerica o recibir_luz_instantanea) desde un collider.
+## Si el collider es hijo del edificio (p. ej. CollisionShape3D), sube por el árbol hasta encontrarlo.
+func _obtener_edificio_desde_collider(collider: Node) -> Node:
+	if not is_instance_valid(collider):
+		return null
+	var n: Node = collider
+	while n:
+		if n.has_method("recibir_energia_numerica") or n.has_method("recibir_luz_instantanea"):
+			return n
+		n = n.get_parent()
+	return null
+
 ## Recorrido compartido del haz por celdas del grid. Retorna path (posiciones mundo), target (primer edificio receptor) e impact_pos.
 ## Usado por obtener_objetivo, obtener_ruta_haz y para validar spawn de pulsos.
 func _recorrer_haz(origen: Vector3, direccion: Vector3, longitud: int, map: GridMap, world: PhysicsDirectSpaceState3D, excluir: Node = null) -> Dictionary:
@@ -61,8 +73,10 @@ func _recorrer_haz(origen: Vector3, direccion: Vector3, longitud: int, map: Grid
 	for i in range(longitud):
 		cursor_mapa += dir_mapa
 		var pos_mundo = map.map_to_local(cursor_mapa)
+		# Query at origin Y so we hit buildings (they keep scene Y; grid map_to_local can use different Y).
+		var query_pos = Vector3(pos_mundo.x, origen.y, pos_mundo.z)
 		var query = PhysicsPointQueryParameters3D.new()
-		query.position = pos_mundo
+		query.position = query_pos
 		query.collision_mask = GameConstants.LAYER_EDIFICIOS
 		query.collide_with_areas = true
 		query.collide_with_bodies = true
@@ -70,8 +84,8 @@ func _recorrer_haz(origen: Vector3, direccion: Vector3, longitud: int, map: Grid
 		var bloqueado = false
 		var objeto_colision = null
 		for col in colisiones:
-			var obj = col.collider
-			if obj == excluir:
+			var obj = _obtener_edificio_desde_collider(col.collider)
+			if obj == null or obj == excluir:
 				continue
 			if obj.get("esta_construido") == false:
 				continue
@@ -99,7 +113,7 @@ func obtener_objetivo(origen: Vector3, direccion: Vector3, longitud: int, map: G
 		return {"target": r["target"], "impact_pos": r["impact_pos"]}
 	return null
 
-## Solo en DEBUG_MODE: dibuja el path del haz como línea (verificación de coincidencia con segmentos y con ruta del pulso).
+## Solo en DEBUG_MODE: dibuja el path del haz como línea en espacio local del emisor para que rote con el edificio.
 func _dibujar_path_debug(path: Array) -> void:
 	if path.size() < 2:
 		return
@@ -114,9 +128,9 @@ func _dibujar_path_debug(path: Array) -> void:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	var im := ImmediateMesh.new()
 	im.surface_begin(Mesh.PRIMITIVE_LINE_STRIP, mat)
-	var origin_global := global_position
+	var to_local := global_transform.affine_inverse()
 	for i in range(path.size()):
-		var local_p: Vector3 = Vector3(path[i]) - origin_global
+		var local_p: Vector3 = to_local * Vector3(path[i])
 		im.surface_add_vertex(local_p)
 	im.surface_end()
 	var mi := MeshInstance3D.new()
