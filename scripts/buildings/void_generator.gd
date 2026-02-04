@@ -2,6 +2,8 @@ extends Area3D
 
 # #region agent log
 func _void_dbg(hypothesis_id: String, message: String, data: Dictionary) -> void:
+	if not GameConstants.DEBUG_MODE:
+		return
 	var payload = {sessionId = "debug-session", runId = "run1", hypothesisId = hypothesis_id, location = "void_generator.gd", message = message, data = data, timestamp = Time.get_ticks_msec()}
 	var dir = DirAccess.open("res://")
 	if dir:
@@ -364,7 +366,8 @@ func _ejecutar_destruccion_total(edificio: Node3D):
 	t.tween_property(edificio, "scale", Vector3.ZERO, GameConstants.VOID_GEN_TIEMPO_DESTRUCCION)
 	t.set_parallel(false)
 	t.finished.connect(func(): if is_instance_valid(edificio): edificio.queue_free())
-	print("DESTRUCCIÓN: Suelo eliminado bajo ", edificio.name)
+	if GameConstants.DEBUG_MODE:
+		print("DESTRUCCIÓN: Suelo eliminado bajo ", edificio.name)
 
 # --- FINALIZACIÓN SECUENCIAL ---
 

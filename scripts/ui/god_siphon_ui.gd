@@ -5,6 +5,8 @@ var sifon_activo: Node3D = null
 # #region agent log
 const _DEBUG_LOG = "res://.cursor/debug.log"
 func _agent_log(hypothesis_id: String, location: String, message: String, data: Dictionary) -> void:
+	if not GameConstants.DEBUG_MODE:
+		return
 	var payload = {"hypothesisId": hypothesis_id, "location": location, "message": message, "data": data, "timestamp": Time.get_ticks_msec(), "sessionId": "god_siphon_ui"}
 	var j = JSON.stringify(payload)
 	var d = DirAccess.open("res://")

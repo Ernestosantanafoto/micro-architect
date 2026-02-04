@@ -38,6 +38,7 @@ Con 0 (reglas), 1 y 2 tienes claro qué respetar, el estado y las tareas. El res
 - [9_RECETAS.md](9_RECETAS.md) — Costes y desbloqueos de edificios
 - [10_ARCHITECTURE.md](10_ARCHITECTURE.md) — Principios (simulación vs visual, managers)
 - [11_ENERGY_SYSTEM.md](11_ENERGY_SYSTEM.md) — Flujos numéricos, EnergyManager
+- [VISUALIZACION_ENERGIA.md](VISUALIZACION_ENERGIA.md) — Cómo funciona el haz + bola (estado actual, progreso de mecánicas)
 - [12_API_MANAGERS.md](12_API_MANAGERS.md) — API GridManager, EnergyManager, BuildingManager
 - [13_FILE_PROTOCOL.md](13_FILE_PROTOCOL.md) — Nombres y carpetas (snake_case, scripts/, scenes/)
 - [14_NOTAS_DESARROLLO.md](14_NOTAS_DESARROLLO.md) — Commit + push al decir "hasta mañana"

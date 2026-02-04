@@ -80,7 +80,8 @@ func unlock_tech(tech_name: String, silent: bool = false):
 	
 	if not silent:
 		emit_signal("tech_unlocked", tech_name)
-		print("[TECH] 🔓 Desbloqueado: ", tech_name)
+		if GameConstants.DEBUG_MODE:
+			print("[TECH] 🔓 Desbloqueado: ", tech_name)
 	
 	# Verificar si esto desbloquea otras tecnologías
 	_check_cascade_unlocks(tech_name)
@@ -211,7 +212,8 @@ func reset_to_initial():
 	unlocked_techs.clear()
 	unlocked_recipes.clear()
 	_unlock_initial_techs()
-	print("[TECH] Progreso reiniciado para nueva partida.")
+	if GameConstants.DEBUG_MODE:
+		print("[TECH] Progreso reiniciado para nueva partida.")
 
 # Guardar/cargar progreso
 func save_progress() -> Dictionary:

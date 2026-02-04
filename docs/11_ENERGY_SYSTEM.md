@@ -32,8 +32,9 @@ Emisor (Siphon/Compressor/Merger/Prism)
 
 ### PulseVisual (opcional)
 - Esfera que hace lerp de origen a destino
-- Duración = distancia / velocidad (6 u/s por defecto)
+- Duración = distancia / velocidad (ver `PULSO_VELOCIDAD_VISUAL` en GameConstants)
 - No afecta lógica, solo feedback visual
+- **Detalle completo (haz + bola + sincronización):** [VISUALIZACION_ENERGIA.md](VISUALIZACION_ENERGIA.md)
 
 ---
 

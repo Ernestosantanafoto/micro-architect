@@ -44,9 +44,13 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante/MarginContainer"]
 layout_mode = 2
 
-[node name="LabelTitulo" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
+[node name="CenterTitulo" type="CenterContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelTitulo" type="Label" parent="VentanaFlotante/MarginContainer/VBoxContainer/CenterTitulo"]
 layout_mode = 2
 text = "MODO DIOS"
+horizontal_alignment = 1
 
 [node name="OptionColor" type="OptionButton" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true

@@ -79,12 +79,14 @@ func _procesar_energia_numerica(cantidad: int, tipo_recurso: String, dir_salida:
 	# Solo crear pulso/flujo si el prisma tiene haz activo (mismo criterio que el beam)
 	if PulseValidator and not PulseValidator.haces_activos.has(self):
 		return
-	var resultado = beam_emitter.obtener_objetivo(global_position, dir_salida, alcance_maximo, map, space, self)
-	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * alcance_maximo
-	if EnergyManager.MOSTRAR_VISUAL_PULSO:
-		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self, tipo_recurso)
-	if resultado:
-		EnergyManager.register_flow(self, resultado["target"], cantidad, tipo_recurso, color_recurso)
+	var ruta_y_objetivo = beam_emitter.obtener_ruta_y_objetivo(global_position, dir_salida, alcance_maximo, map, space, self)
+	var path: Array = ruta_y_objetivo.get("path", [])
+	var resultado_target = ruta_y_objetivo.get("target", null)
+	var impact_pos = ruta_y_objetivo.get("impact_pos", from_pos + dir_flat * alcance_maximo)
+	if EnergyManager.MOSTRAR_VISUAL_PULSO and path.size() >= 2:
+		EnergyManager.spawn_pulse_visual(from_pos, impact_pos, color_recurso, self, tipo_recurso, path)
+	if resultado_target != null:
+		EnergyManager.register_flow(self, resultado_target, cantidad, tipo_recurso, color_recurso)
 
 func recibir_luz_instantanea(color: Color, _recurso: String, dir_entrada_global: Vector3):
 	if not esta_construido: return

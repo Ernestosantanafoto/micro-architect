@@ -13,6 +13,9 @@ var timer: float = 0.0
 var color: Color = Color.WHITE
 var source_origen: Node = null  # Si rota, nos destruimos
 var _rotacion_inicial: float = 0.0
+var _path_waypoints: Array = []  # Si no vacío, la bola recorre estos puntos (path del haz)
+var _trail_positions: Array[Vector3] = []  # Posiciones recientes para estela (solo si TRAIL_PULSO_HABILITADO)
+var _trail_mesh_instance: MeshInstance3D = null  # Hijo: línea de la estela
 
 var _mesh: MeshInstance3D
 
@@ -22,11 +25,22 @@ func _ready():
 	_mesh.mesh = SphereMesh.new()
 	add_child(_mesh)
 	_actualizar_material()
+	if GameConstants.TRAIL_PULSO_HABILITADO:
+		_trail_mesh_instance = MeshInstance3D.new()
+		add_child(_trail_mesh_instance)
 
-func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = null, tipo_recurso: String = ""):
+func setup(from: Vector3, to: Vector3, dur: float, col: Color, origen: Node = null, tipo_recurso: String = "", path_waypoints: Array = []):
 	from_pos = from
 	to_pos = to
-	duration = dur
+	_path_waypoints = path_waypoints.duplicate() if path_waypoints.size() > 0 else []
+	# Si hay waypoints, duración = longitud total del path / velocidad (bola recorre el path a velocidad constante)
+	if _path_waypoints.size() >= 2:
+		var path_len: float = 0.0
+		for i in range(_path_waypoints.size() - 1):
+			path_len += (Vector3(_path_waypoints[i]) - Vector3(_path_waypoints[i + 1])).length()
+		duration = path_len / GameConstants.PULSO_VELOCIDAD_VISUAL if path_len > 0.01 else dur
+	else:
+		duration = dur
 	color = col
 	source_origen = origen
 	_rotacion_inicial = origen.global_rotation.y if origen else 0.0
@@ -55,6 +69,48 @@ func _actualizar_material():
 	mat.emission = color
 	_mesh.set_surface_override_material(0, mat)
 
+## Dado progress en [0, 1], devuelve la posición interpolada a lo largo de _path_waypoints (por distancia).
+func _posicion_en_path(progress: float) -> Vector3:
+	if _path_waypoints.size() < 2:
+		return from_pos.lerp(to_pos, progress)
+	var points = _path_waypoints
+	var total_len: float = 0.0
+	for i in range(points.size() - 1):
+		total_len += (Vector3(points[i]) - Vector3(points[i + 1])).length()
+	if total_len < 0.001:
+		return Vector3(points[0])
+	var target_dist = progress * total_len
+	var acc: float = 0.0
+	for i in range(points.size() - 1):
+		var a = Vector3(points[i])
+		var b = Vector3(points[i + 1])
+		var seg_len = a.distance_to(b)
+		if acc + seg_len >= target_dist:
+			var t = (target_dist - acc) / seg_len if seg_len > 0.001 else 1.0
+			return a.lerp(b, t)
+		acc += seg_len
+	return Vector3(points[points.size() - 1])
+
+## Construye la malla de la estela (segmentos en espacio local: más reciente = posición actual).
+func _actualizar_trail_mesh() -> void:
+	if not _trail_mesh_instance or _trail_positions.size() < 2:
+		if _trail_mesh_instance:
+			_trail_mesh_instance.mesh = null
+		return
+	var trail_color := Color(color.r, color.g, color.b, 0.5)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = trail_color
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var im := ImmediateMesh.new()
+	im.surface_begin(Mesh.PRIMITIVE_LINE_STRIP, mat)
+	for i in range(_trail_positions.size()):
+		var w: Vector3 = _trail_positions[i]
+		var local_p := w - global_position
+		im.surface_add_vertex(local_p)
+	im.surface_end()
+	_trail_mesh_instance.mesh = im
+
 ## Recarga el material desde el .tres (ignorando caché) y lo reaplica. Llamar desde botón "Actualizar visual" para ver cambios sin reiniciar.
 func refresh_material_from_resource() -> void:
 	if not _mesh:
@@ -82,6 +138,16 @@ func _process(delta: float) -> void:
 			return
 	timer += delta
 	var progress = clampf(timer / duration, 0.0, 1.0)
-	global_position = from_pos.lerp(to_pos, progress)
+	if _path_waypoints.size() >= 2:
+		global_position = _posicion_en_path(progress)
+	else:
+		global_position = from_pos.lerp(to_pos, progress)
+	# Estela opcional: guardar posición y dibujar línea detrás
+	if GameConstants.TRAIL_PULSO_HABILITADO and _trail_mesh_instance:
+		_trail_positions.append(global_position)
+		var n := GameConstants.TRAIL_PULSO_NUM_PUNTOS
+		while _trail_positions.size() > n:
+			_trail_positions.remove_at(0)
+		_actualizar_trail_mesh()
 	if progress >= 1.0:
 		queue_free()

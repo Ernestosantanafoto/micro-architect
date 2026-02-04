@@ -107,7 +107,8 @@ func _on_category_pressed(boton: Button):
 	_construir_items_verticales(txt, boton)
 
 func _ejecutar_devolucion():
-	print("[HUD] Solicitando devolución de elemento al inventario...")
+	if GameConstants.DEBUG_MODE:
+		print("[HUD] Solicitando devolución de elemento al inventario...")
 	if construction_manager:
 		construction_manager.devolver_a_inventario()
 

@@ -63,16 +63,18 @@ func disparar():
 	var dir = -global_transform.basis.z
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
 	var longitud = 10
-	var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+	var ruta_y_objetivo = beam_emitter.obtener_ruta_y_objetivo(global_position, dir, longitud, map, space, self)
+	var path: Array = ruta_y_objetivo.get("path", [])
+	var resultado_target = ruta_y_objetivo.get("target", null)
+	var from_pos = global_position + Vector3(0, 0.5, 0)
+	var impact_pos = ruta_y_objetivo.get("impact_pos", from_pos + dir_flat * longitud)
 	# Solo crear pulso/flujo si hay haz activo
 	if PulseValidator and not PulseValidator.haces_activos.has(self):
 		return
-	var from_pos = global_position + Vector3(0, 0.5, 0)
-	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
-	if EnergyManager.MOSTRAR_VISUAL_PULSO:
-		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_elegido, self, recurso_actual)
-	if resultado:
-		EnergyManager.register_flow(self, resultado["target"], valor_energia, recurso_actual, color_elegido)
+	if EnergyManager.MOSTRAR_VISUAL_PULSO and path.size() >= 2:
+		EnergyManager.spawn_pulse_visual(from_pos, impact_pos, color_elegido, self, recurso_actual, path)
+	if resultado_target != null:
+		EnergyManager.register_flow(self, resultado_target, valor_energia, recurso_actual, color_elegido)
 
 # --- INTERACCIÓN CON EL MENÚ ---
 func _on_input_event(_camera, event, _position, _normal, _shape_idx):
@@ -106,7 +108,7 @@ func _gestionar_clic_derecho():
 			return
 		menu.abrir(self)
 	else:
-		print("ERROR: No encuentro 'GodSiphonUI' en la escena.")
+		push_error("GodSiphon: No se encontró 'GodSiphonUI' en la escena.")
 
 # --- CONFIGURACIÓN DESDE LA UI ---
 func configurar_dios(recurso, color, escala, valor, freq):

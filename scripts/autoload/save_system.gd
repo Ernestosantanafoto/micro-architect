@@ -6,6 +6,8 @@ const SAVE_PATH_PATTERN := "user://save_slot_%d.json"
 # #region agent log
 const _DEBUG_LOG := "res://.cursor/debug.log"
 func _debug_log(hypothesis_id: String, location: String, message: String, data: Dictionary) -> void:
+	if not GameConstants.DEBUG_MODE:
+		return
 	var payload := {"hypothesisId": hypothesis_id, "location": location, "message": message, "data": data, "timestamp": Time.get_ticks_msec(), "sessionId": "save_debug"}
 	var j := JSON.stringify(payload)
 	var d := DirAccess.open("res://")
@@ -45,7 +47,8 @@ func guardar_partida(slot_index: int = 1, custom_name: String = "") -> void:
 	_guardar_a_ruta(path, slot_index, custom_name)
 
 func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void:
-	print("[SAVE] Iniciando guardado en slot ", slot_index, " -> ", path)
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Iniciando guardado en slot ", slot_index, " -> ", path)
 	
 	var lista_edificios = []
 	var edificios_encontrados = []
@@ -114,7 +117,8 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 	if not raiz or not is_instance_valid(raiz):
 		raiz = _obtener_raiz_escena_juego()
 	
-	print("[SAVE] Edificios encontrados: ", edificios_encontrados.size())
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Edificios encontrados: ", edificios_encontrados.size())
 	
 	var skipped_esta_construido := 0
 	for edificio in edificios_encontrados:
@@ -151,7 +155,8 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 				datos_edificio["estado"] = estado
 		
 		lista_edificios.append(datos_edificio)
-		print("[SAVE] - ", edificio.name, " en ", edificio.global_position)
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] - ", edificio.name, " en ", edificio.global_position)
 	
 	# #region agent log
 	_debug_log("E", "save_system:after_loop", "filter loop", {"skipped_esta_construido": skipped_esta_construido, "lista_edificios_final": lista_edificios.size(), "encontrados_total": edificios_encontrados.size()})
@@ -214,9 +219,10 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 	if file:
 		file.store_line(JSON.stringify(data))
 		file.close()
-		print("[SAVE] ¡Guardado exitoso! Slot ", slot_index, " (", save_name, "), ", lista_edificios.size(), " edificios.")
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] ¡Guardado exitoso! Slot ", slot_index, " (", save_name, "), ", lista_edificios.size(), " edificios.")
 	else:
-		print("[SAVE] ERROR: No se pudo abrir el archivo para escritura.")
+		push_error("[SAVE] No se pudo abrir el archivo para escritura: " + path)
 
 ## Devuelve la raíz de la escena de juego (MainGame3D) cuando current_scene no está actualizado (partida cargada con add_child).
 func _obtener_raiz_escena_juego() -> Node:
@@ -262,15 +268,17 @@ func cargar_partida(slot_index: int = 1) -> bool:
 	return _cargar_desde_ruta(path)
 	
 func _cargar_desde_ruta(path: String) -> bool:
-	print("[SAVE] Intentando cargar partida desde ", path)
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Intentando cargar partida desde ", path)
 	
 	if not FileAccess.file_exists(path):
-		print("[SAVE] No existe archivo de guardado.")
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] No existe archivo de guardado.")
 		return false
 	
 	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:
-		print("[SAVE] ERROR: No se pudo abrir el archivo.")
+		push_error("[SAVE] No se pudo abrir el archivo: " + path)
 		return false
 	
 	var texto = file.get_as_text()
@@ -278,7 +286,7 @@ func _cargar_desde_ruta(path: String) -> bool:
 	
 	var data = JSON.parse_string(texto)
 	if not data:
-		print("[SAVE] ERROR: JSON inválido.")
+		push_error("[SAVE] JSON inválido en: " + path)
 		return false
 	
 	# Restaurar datos básicos
@@ -299,7 +307,8 @@ func _cargar_desde_ruta(path: String) -> bool:
 	# Guardar lista de edificios para reconstruir después del cambio de escena
 	if data.has("mundo"):
 		GlobalInventory.edificios_para_reconstruir = data["mundo"]
-		print("[SAVE] Edificios a reconstruir: ", GlobalInventory.edificios_para_reconstruir.size())
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] Edificios a reconstruir: ", GlobalInventory.edificios_para_reconstruir.size())
 	
 	# Guardar datos de cámara
 	if data.has("cam"):
@@ -309,19 +318,22 @@ func _cargar_desde_ruta(path: String) -> bool:
 			"size": c.get("s", 100.0)
 		}
 	
-	print("[SAVE] Partida cargada correctamente.")
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Partida cargada correctamente.")
 	return true
 
 # Esta función debe llamarse desde la escena principal después de cargar
 func reconstruir_edificios():
-	print("[SAVE] Reconstruyendo edificios...")
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Reconstruyendo edificios...")
 	
 	if GridManager:
 		GridManager.limpiar()
 	
 	var edificios = GlobalInventory.edificios_para_reconstruir
 	if edificios.size() == 0:
-		print("[SAVE] No hay edificios para reconstruir.")
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] No hay edificios para reconstruir.")
 		return
 	
 	# Raíz de la escena de juego: current_scene puede ser null si la partida se cargó con add_child
@@ -329,7 +341,7 @@ func reconstruir_edificios():
 	if not raiz or not is_instance_valid(raiz):
 		raiz = _obtener_raiz_escena_juego()
 	if not raiz:
-		print("[SAVE] ERROR: no se pudo obtener raíz de escena de juego, no se pueden reconstruir edificios.")
+		push_error("[SAVE] No se pudo obtener raíz de escena de juego, no se pueden reconstruir edificios.")
 		return
 	
 	# Guardar referencias de las instancias para activarlas por referencia (no depender de búsqueda en árbol)
@@ -338,7 +350,7 @@ func reconstruir_edificios():
 	for datos in edificios:
 		var ruta_escena = datos.get("scene", "")
 		if ruta_escena == "" or not ResourceLoader.exists(ruta_escena):
-			print("[SAVE] ADVERTENCIA: Escena no encontrada: ", ruta_escena)
+			push_warning("[SAVE] Escena no encontrada: " + ruta_escena)
 			continue
 		
 		var escena = load(ruta_escena)
@@ -381,7 +393,8 @@ func reconstruir_edificios():
 	await get_tree().process_frame
 	_activar_lista_edificios(instancias_recien_anadidas)
 	
-	print("[SAVE] Reconstrucción completada.")
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Reconstrucción completada.")
 
 ## Genera una partida de test con ~100 edificios en tiles válidos. F9 en partida.
 func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
@@ -389,7 +402,7 @@ func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
 	var wg = escena.find_child("WorldGenerator", true, false) if escena else null
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	if not map or not (map is GridMap):
-		print("[SAVE] ERROR: No se encontró GridMap.")
+		push_error("[SAVE] No se encontró GridMap para generar partida test.")
 		return false
 	if wg and wg.has_method("forzar_generar_rango"):
 		wg.forzar_generar_rango(-5, 5, -5, 5)
@@ -468,7 +481,7 @@ func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
 	}
 	var file = FileAccess.open(get_save_path(1), FileAccess.WRITE)
 	if not file:
-		print("[SAVE] ERROR al escribir partida test.")
+		push_error("[SAVE] No se pudo abrir archivo para escribir partida test.")
 		return false
 	file.store_line(JSON.stringify(data))
 	file.close()
@@ -477,7 +490,8 @@ func generar_partida_test(cantidad_objetivo: int = 100) -> bool:
 	GlobalInventory.edificios_para_reconstruir = lista_edificios
 	GlobalInventory.estados_edificios = {}
 	GlobalInventory.datos_camara = {"pos": Vector3(centro_x, 0, centro_z), "size": 100.0}
-	print("[SAVE] Partida test generada: ", lista_edificios.size(), " edificios. Recarga o carga desde menú.")
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Partida test generada: ", lista_edificios.size(), " edificios. Recarga o carga desde menú.")
 	return true
 
 func _agregar_edificio(lista: Array, map: GridMap, escena: String, celda: Vector3i, usado: Dictionary) -> void:
@@ -525,7 +539,8 @@ func _activar_lista_edificios(lista: Array) -> void:
 				GridManager.register_building(pos_2d, edificio)
 		if BuildingManager:
 			BuildingManager.register_building(edificio)
-	print("[SAVE] Total edificios activados: ", activados_count)
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Total edificios activados: ", activados_count)
 
 func _activar_edificios_reconstruidos(raiz: Node):
 	if not is_instance_valid(raiz):
@@ -536,7 +551,8 @@ func _activar_edificios_reconstruidos(raiz: Node):
 		var has_meta = c.has_meta("necesita_activacion")
 		if has_meta:
 			hijos_nombres.append("  -> tiene meta!")
-	print("[SAVE] raiz = ", raiz.name, " hijos = ", raiz.get_child_count(), " ", hijos_nombres)
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] raiz = ", raiz.name, " hijos = ", raiz.get_child_count(), " ", hijos_nombres)
 	var edificios = []
 	_buscar_edificios_recursivo(raiz, edificios)
 	# Si la búsqueda por scene_file_path no encuentra ninguno con meta, buscar por meta (los que acabamos de añadir)
@@ -547,9 +563,11 @@ func _activar_edificios_reconstruidos(raiz: Node):
 	if con_meta_count == 0:
 		edificios.clear()
 		_recoger_nodos_con_meta_activacion(raiz, edificios)
-		print("[SAVE] Fallback por meta: edificios a activar = ", edificios.size())
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] Fallback por meta: edificios a activar = ", edificios.size())
 	else:
-		print("[SAVE] Por búsqueda normal: edificios a activar = ", con_meta_count)
+		if GameConstants.DEBUG_MODE:
+			print("[SAVE] Por búsqueda normal: edificios a activar = ", con_meta_count)
 	
 	var map = get_tree().get_first_node_in_group("MapaPrincipal")
 	
@@ -558,7 +576,8 @@ func _activar_edificios_reconstruidos(raiz: Node):
 		if edificio.has_meta("necesita_activacion") and edificio.get_meta("necesita_activacion"):
 			edificio.remove_meta("necesita_activacion")
 			activados_count += 1
-			print("[SAVE] Activando edificio: ", edificio.name, " en ", edificio.global_position)
+			if GameConstants.DEBUG_MODE:
+				print("[SAVE] Activando edificio: ", edificio.name, " en ", edificio.global_position)
 			
 			# Forzar activación completa
 			if edificio.has_method("check_ground"):
@@ -582,5 +601,7 @@ func _activar_edificios_reconstruidos(raiz: Node):
 				else:
 					GridManager.register_building(pos_2d, edificio)
 			
-			if GameConstants.DEBUG_MODE: print("[SAVE] Activado: ", edificio.name)
-	print("[SAVE] Total edificios activados: ", activados_count)
+			if GameConstants.DEBUG_MODE:
+				print("[SAVE] Activado: ", edificio.name)
+	if GameConstants.DEBUG_MODE:
+		print("[SAVE] Total edificios activados: ", activados_count)

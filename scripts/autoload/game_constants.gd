@@ -1,7 +1,8 @@
 extends Node
 ## Autoload singleton "GameConstants" (sin class_name para no ocultar el autoload).
 ## Modo desarrollo: God Siphon en HUD, tecla 0, etc. Toggle en juego con botón DEBUG (panel sistema).
-var DEBUG_MODE = false 
+## var (no const): el botón DEBUG del panel sistema alterna este valor en runtime.
+var DEBUG_MODE = false  # Cambiar a true solo en desarrollo; o usar botón DEBUG en juego 
 
 # --- POPUPS (Guardar, Cargar, Opciones ingame: mismo tamaño y posición) ---
 const POPUP_OVERLAY_GROUP := "PopupOverlay"
@@ -56,6 +57,9 @@ const UMBRAL_COMPRESION = 10
 # --- PULSOS ---
 const PULSO_VELOCIDAD_BASE = 2.0
 const PULSO_VELOCIDAD_VISUAL = 1.0  # Unidades/seg para visual constante
+## Estela detrás de la bola de energía (configurable). Ver docs/VISUALIZACION_ENERGIA.md.
+const TRAIL_PULSO_HABILITADO = false
+const TRAIL_PULSO_NUM_PUNTOS = 12  # Número de posiciones recientes para la estela
 const PULSO_RANGO_MAXIMO = 6
 const PULSO_INTENSIDAD_BRILLO = 3.0
 const PULSO_TIEMPO_DESAPARECER = 0.2

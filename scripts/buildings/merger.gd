@@ -142,12 +142,14 @@ func emitir_producto(nombre: String, color: Color):
 		if PulseValidator and not PulseValidator.haces_activos.has(self):
 			pass
 		else:
-			var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
-			var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
-			if EnergyManager.MOSTRAR_VISUAL_PULSO:
-				EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, nombre)
-			if resultado:
-				EnergyManager.register_flow(self, resultado["target"], CANTIDAD_QUARKS, nombre, color)
+			var ruta_y_objetivo = beam_emitter.obtener_ruta_y_objetivo(global_position, dir, longitud, map, space, self)
+			var path: Array = ruta_y_objetivo.get("path", [])
+			var resultado_target = ruta_y_objetivo.get("target", null)
+			var impact_pos = ruta_y_objetivo.get("impact_pos", from_pos + dir_flat * longitud)
+			if EnergyManager.MOSTRAR_VISUAL_PULSO and path.size() >= 2:
+				EnergyManager.spawn_pulse_visual(from_pos, impact_pos, color, self, nombre, path)
+			if resultado_target != null:
+				EnergyManager.register_flow(self, resultado_target, CANTIDAD_QUARKS, nombre, color)
 	# Contabilizar producción en inventario global para desbloqueos (F2)
 	if GlobalInventory:
 		GlobalInventory.add_item(nombre, 1)

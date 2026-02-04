@@ -17,22 +17,31 @@ func register_flow(from: Node, to: Node, amount: int, tipo_recurso: String, colo
 	energy_flows.append(flow)
 	return flow
 
-## Spawnear visual de pulso (siempre, con o sin objetivo). Velocidad constante.
+## Spawnear visual de pulso (solo donde hay beam si se pasa path_waypoints). Velocidad constante.
+## path_waypoints: si no vacío y size >= 2, se usan path[0] y path[-1] como from/to (garantiza pulso sobre el haz).
 ## tipo_recurso: "Stability"/"Charge" = elemental (bola 1/3), "Compressed-*" = condensada (2/3), resto = 1.
 ## source_origen: si rota, el visual se destruye para no flotar en el aire.
-func spawn_pulse_visual(from_pos: Vector3, to_pos: Vector3, color: Color, source_origen: Node = null, tipo_recurso: String = "") -> void:
+func spawn_pulse_visual(from_pos: Vector3, to_pos: Vector3, color: Color, source_origen: Node = null, tipo_recurso: String = "", path_waypoints: Array = []) -> void:
 	if not MOSTRAR_VISUAL_PULSO:
 		return
+	# Validación path: solo spawnear si hay ruta válida del haz (pulsos solo donde hay beam)
+	if path_waypoints.size() > 0 and path_waypoints.size() < 2:
+		return
+	var use_from := from_pos
+	var use_to := to_pos
+	if path_waypoints.size() >= 2:
+		use_from = path_waypoints[0]
+		use_to = path_waypoints[path_waypoints.size() - 1]
 	var scene = GameConstants.get_scene_root_for(source_origen) if source_origen else get_tree().current_scene
 	if not scene:
 		scene = get_tree().root.get_child(0) if get_tree().root.get_child_count() > 0 else null
 	if not scene:
 		return
-	var dist = from_pos.distance_to(to_pos)
+	var dist = use_from.distance_to(use_to)
 	var duration = dist / GameConstants.PULSO_VELOCIDAD_VISUAL if dist > 0.01 else FLUJO_DURACION_BASE
 	var visual = PulseVisual.new()
 	scene.add_child(visual)
-	visual.setup(from_pos, to_pos, duration, color, source_origen, tipo_recurso)
+	visual.setup(use_from, use_to, duration, color, source_origen, tipo_recurso, path_waypoints)
 
 func unregister_flow(flow: EnergyFlow) -> void:
 	energy_flows.erase(flow)

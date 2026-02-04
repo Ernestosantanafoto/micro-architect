@@ -158,7 +158,8 @@ func _restaurar_mapa_guardado(gm: GridMap) -> void:
 		var clave = Vector2i(sx, sz)
 		if not sectores_cargados.has(clave):
 			sectores_cargados.append(clave)
-	print("[WorldGenerator] Mapa restaurado: ", GlobalInventory.mapa_guardado.size(), " celdas.")
+	if GameConstants.DEBUG_MODE:
+		print("[WorldGenerator] Mapa restaurado: ", GlobalInventory.mapa_guardado.size(), " celdas.")
 
 ## Llamar desde carga in-game: restaura el mapa desde GlobalInventory.mapa_guardado y limpia la variable.
 func restaurar_mapa_desde_inventario() -> void:

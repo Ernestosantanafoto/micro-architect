@@ -471,7 +471,8 @@ func _quitar_aislamiento_visual(restaurar_grilla_y_tiles: bool = true) -> void:
 		_restaurar_visibilidad_grilla_y_tiles()
 
 func guardar_partida():
-	print("[DEBUG-SAVE] Iniciando volcado total...")
+	if GameConstants.DEBUG_MODE:
+		print("[DEBUG-SAVE] Iniciando volcado total...")
 	var gm = get_tree().get_first_node_in_group("MapaPrincipal")
 	var lista_entidades = []
 	
@@ -497,7 +498,8 @@ func guardar_partida():
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	file.store_line(JSON.stringify(paquete))
 	file.close()
-	print("[DEBUG-SAVE] Guardado con éxito: ", lista_entidades.size(), " edificios.")
+	if GameConstants.DEBUG_MODE:
+		print("[DEBUG-SAVE] Guardado con éxito: ", lista_entidades.size(), " edificios.")
 
 func cargar_partida() -> bool:
 	if not FileAccess.file_exists(SAVE_PATH): return false

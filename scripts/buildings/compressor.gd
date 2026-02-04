@@ -89,12 +89,14 @@ func disparar_comprimido():
 		if PulseValidator and not PulseValidator.haces_activos.has(self):
 			pass
 		else:
-			var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
-			var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
-			if EnergyManager.MOSTRAR_VISUAL_PULSO:
-				EnergyManager.spawn_pulse_visual(from_pos, to_pos, color, self, tipo_comprimido)
-			if resultado:
-				EnergyManager.register_flow(self, resultado["target"], GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
+			var ruta_y_objetivo = beam_emitter.obtener_ruta_y_objetivo(global_position, dir, longitud, map, space, self)
+			var path: Array = ruta_y_objetivo.get("path", [])
+			var resultado_target = ruta_y_objetivo.get("target", null)
+			var impact_pos = ruta_y_objetivo.get("impact_pos", from_pos + dir_flat * longitud)
+			if EnergyManager.MOSTRAR_VISUAL_PULSO and path.size() >= 2:
+				EnergyManager.spawn_pulse_visual(from_pos, impact_pos, color, self, tipo_comprimido, path)
+			if resultado_target != null:
+				EnergyManager.register_flow(self, resultado_target, GameConstants.ENERGIA_COMPRIMIDA, tipo_comprimido, color)
 		# Contabilizar producción en inventario global para desbloqueos (F2)
 		if GlobalInventory:
 			GlobalInventory.add_item(tipo_comprimido, 1)
@@ -122,7 +124,7 @@ func _gestionar_haz(longitud):
 
 func actualizar_interfaz():
 	if label_texto:
-		label_texto.text = "%.1f" % tiempo_restante_carga if cargando else str(buffer)+"/10"
+		label_texto.text = "%.1f" % tiempo_restante_carga if cargando else "%d / 10" % buffer
 		var color_ui = GameConstants.COLOR_STABILITY if ("Stability" in recurso_actual or recurso_actual.is_empty()) else GameConstants.COLOR_CHARGE
 		label_texto.modulate = color_ui
 	if barra_visual:

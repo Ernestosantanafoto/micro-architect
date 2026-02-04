@@ -79,7 +79,8 @@ func _on_backdrop_input(event):
 
 func _on_tech_unlocked(tech_name: String):
 	# Mostrar notificación
-	print("[RECIPE] 🔓 Nueva tecnología desbloqueada: ", tech_name)
+	if GameConstants.DEBUG_MODE:
+		print("[RECIPE] 🔓 Nueva tecnología desbloqueada: ", tech_name)
 
 func _populate_recipes():
 	# Limpiar contenedor

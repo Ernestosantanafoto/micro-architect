@@ -27,19 +27,22 @@ func _conectar_botones():
 	for btn_save in btns_save:
 		if btn_save is BaseButton and not btn_save.pressed.is_connected(_on_btn_guardar_pressed):
 			btn_save.pressed.connect(_on_btn_guardar_pressed)
-			print("[MAIN] Botón GUARDAR conectado: ", btn_save.get_path())
+			if GameConstants.DEBUG_MODE:
+				print("[MAIN] Botón GUARDAR conectado: ", btn_save.get_path())
 	
 	# Salir al menú principal: solo BtnSalir (dentro del dropdown MENU)
 	var btn_salir = _buscar_boton("BtnSalir")
 	if btn_salir and not btn_salir.pressed.is_connected(_on_btn_menu_pressed):
 		btn_salir.pressed.connect(_on_btn_menu_pressed)
-		print("[MAIN] Botón SALIR conectado.")
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] Botón SALIR conectado.")
 	
 	# Cargar partida (entre SALIR y SELECCIÓN)
 	var btn_cargar = _buscar_boton("BtnCargar")
 	if btn_cargar and not btn_cargar.pressed.is_connected(_on_btn_cargar_pressed):
 		btn_cargar.pressed.connect(_on_btn_cargar_pressed)
-		print("[MAIN] Botón CARGAR conectado.")
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] Botón CARGAR conectado.")
 	
 	# Modo selección (Button toggle_mode): mismo aspecto que GUARDAR/MENÚ
 	var btn_modo_sel = find_child("BtnModoSeleccion", true, false)
@@ -49,7 +52,8 @@ func _conectar_botones():
 		var sm = find_child("SelectionManager", true, false)
 		if sm and sm.has_method("set_selection_mode_enabled"):
 			sm.selection_mode_enabled = btn_modo_sel.button_pressed
-		print("[MAIN] Botón SELECCIÓN conectado.")
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] Botón SELECCIÓN conectado.")
 	
 
 func _on_btn_modo_seleccion_toggled(button_pressed: bool) -> void:
@@ -269,7 +273,7 @@ func _on_btn_guardar_pressed() -> void:
 	if SaveSystem:
 		_mostrar_popup_guardar()
 	else:
-		print("[MAIN] ERROR: SaveSystem no encontrado")
+		push_error("[MAIN] SaveSystem no encontrado")
 
 func _cerrar_popups_overlay() -> void:
 	for n in get_tree().get_nodes_in_group(GameConstants.POPUP_OVERLAY_GROUP):
@@ -333,7 +337,8 @@ func _mostrar_popup_guardar() -> void:
 		var nombre = nombre_edit.text.strip_edges()
 		SaveSystem.guardar_partida(slot, nombre)
 		_cerrar_popups_overlay()
-		print("[MAIN] ¡Partida guardada en slot ", slot, "!")
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] ¡Partida guardada en slot ", slot, "!")
 	)
 	var btn_cancelar = Button.new()
 	btn_cancelar.text = "Cancelar"
@@ -371,7 +376,7 @@ func _panel_estilo_guardar() -> StyleBoxFlat:
 
 func _on_btn_cargar_pressed() -> void:
 	if not SaveSystem:
-		print("[MAIN] ERROR: SaveSystem no encontrado")
+		push_error("[MAIN] SaveSystem no encontrado")
 		return
 	_mostrar_popup_cargar_ingame()
 
@@ -383,7 +388,8 @@ func _mostrar_popup_cargar_ingame() -> void:
 			has_any = true
 			break
 	if not has_any:
-		print("[MAIN] No hay partida guardada para cargar.")
+		if GameConstants.DEBUG_MODE:
+			print("[MAIN] No hay partida guardada para cargar.")
 		return
 	_cerrar_popups_overlay()
 	var layer = CanvasLayer.new()
@@ -471,21 +477,23 @@ func _aplicar_carga_ingame(slot: int) -> void:
 	var menu_drop = get_node_or_null("CanvasLayer/MenuDropdownPanel")
 	if menu_drop and menu_drop.visible:
 		menu_drop.visible = false
-	print("[MAIN] Partida cargada en slot ", slot)
+	if GameConstants.DEBUG_MODE:
+		print("[MAIN] Partida cargada en slot ", slot)
 
 func _on_btn_menu_pressed() -> void:
-	print("[MAIN] Volviendo al menú...")
+	if GameConstants.DEBUG_MODE:
+		print("[MAIN] Volviendo al menú...")
 	# Solo se guarda cuando el jugador pulsa GUARDAR; al salir al menú no se guarda automáticamente.
 	# Cambio manual: quitar esta escena del árbol, liberarla y añadir el menú (evita acumular escenas y que se vea más brillante).
 	var ruta_menu = "res://scenes/ui/main_menu.tscn"
 	if not ResourceLoader.exists(ruta_menu):
-		print("[MAIN] ERROR: No existe la ruta: ", ruta_menu)
+		push_error("[MAIN] No existe la ruta: " + ruta_menu)
 		return
 	var pack = load(ruta_menu) as PackedScene
 	var menu = pack.instantiate() if pack else null
 	if not menu:
 		var resultado = get_tree().change_scene_to_file(ruta_menu)
-		if resultado == OK:
+		if resultado == OK and GameConstants.DEBUG_MODE:
 			print("[MAIN] Cambio de escena exitoso (fallback).")
 		return
 	var root = get_tree().root
@@ -494,4 +502,5 @@ func _on_btn_menu_pressed() -> void:
 		root.remove_child(escena_juego)
 	escena_juego.queue_free()
 	root.add_child(menu)
-	print("[MAIN] Cambio de escena exitoso.")
+	if GameConstants.DEBUG_MODE:
+		print("[MAIN] Cambio de escena exitoso.")

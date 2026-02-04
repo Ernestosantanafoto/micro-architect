@@ -31,8 +31,9 @@ func seleccionar_para_construir(escena: PackedScene, nombre_item: String):
 	var es_debug = (nombre_item == "GodSiphon") or GameConstants.DEBUG_MODE
 	if not es_debug:
 		if GlobalInventory.get_amount(nombre_item) <= 0:
-			print("[CM] Sin stock de: ", nombre_item)
-			return 
+			if GameConstants.DEBUG_MODE:
+				print("[CM] Sin stock de: ", nombre_item)
+			return
 
 	# Consumir del inventario
 	if not es_debug:
@@ -103,7 +104,8 @@ func confirmar_colocacion():
 		t.tween_property(edificio, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK)
 	if TechTree:
 		TechTree._check_unlock_conditions()
-	print("[CM] Edificio colocado con éxito.")
+	if GameConstants.DEBUG_MODE:
+		print("[CM] Edificio colocado con éxito.")
 
 # --- INTERACCIÓN CON EL MUNDO (CLIC IZQUIERDO) ---
 func gestionar_clic_izquierdo():
@@ -133,9 +135,11 @@ func devolver_a_inventario():
 	if fantasma:
 		if nombre_item_en_mano != "":
 			GlobalInventory.refund_item(nombre_item_en_mano, 1)
-			print("[CM] Devolución exitosa: ", nombre_item_en_mano)
+			if GameConstants.DEBUG_MODE:
+				print("[CM] Devolución exitosa: ", nombre_item_en_mano)
 		else:
-			print("[CM] Aviso: Item desconocido, no se sumó al inventario.")
+			if GameConstants.DEBUG_MODE:
+				print("[CM] Aviso: Item desconocido, no se sumó al inventario.")
 		
 		fantasma.queue_free()
 		fantasma = null
@@ -146,7 +150,8 @@ func devolver_a_inventario():
 
 func destruir_item_en_mano():
 	if fantasma:
-		print("[CM] Item eliminado permanentemente.")
+		if GameConstants.DEBUG_MODE:
+			print("[CM] Item eliminado permanentemente.")
 		fantasma.queue_free()
 		fantasma = null
 		nombre_item_en_mano = ""
@@ -406,7 +411,7 @@ func _intentar_rotar_edificio_suelo():
 	var res = _lanzar_raycast_a_edificios()
 	if res:
 		var edificio = res.collider
-		# Clic derecho en edificio con menú = abrir menú (rotar desde dentro con botón "Rotar")
+		# Clic derecho en edificio que abre UI = abrir su panel (no rotar al abrir)
 		if edificio.is_in_group("AbreUIClicDerecho") and edificio.has_method("abrir_ui"):
 			edificio.abrir_ui()
 			get_viewport().set_input_as_handled()
@@ -420,4 +425,5 @@ func _intentar_rotar_edificio_suelo():
 		edificio.rotate_y(deg_to_rad(-90))
 		if edificio.has_method("_actualizar_mi_estado_global"):
 			edificio._actualizar_mi_estado_global()
-		print("[CM] Edificio rotado en suelo.")
+		if GameConstants.DEBUG_MODE:
+			print("[CM] Edificio rotado en suelo.")

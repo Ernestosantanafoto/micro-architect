@@ -80,16 +80,18 @@ func disparar():
 	var dir = -global_transform.basis.z
 	var dir_flat = Vector3(dir.x, 0, dir.z).normalized()
 	var longitud = GameConstants.HAZ_LONGITUD_MAXIMA
-	var resultado = beam_emitter.obtener_objetivo(global_position, dir, longitud, map, space, self)
+	var ruta_y_objetivo = beam_emitter.obtener_ruta_y_objetivo(global_position, dir, longitud, map, space, self)
+	var path: Array = ruta_y_objetivo.get("path", [])
+	var resultado_target = ruta_y_objetivo.get("target", null)
+	var impact_pos = ruta_y_objetivo.get("impact_pos", global_position + dir_flat * longitud)
 	# Solo crear pulso/flujo si hay haz activo (evitar bolas flotando sin beam)
 	if PulseValidator and not PulseValidator.haces_activos.has(self):
 		return
-	var from_pos = global_position + Vector3(0, GameConstants.SIFON_OFFSET_SALIDA_Y, 0)
-	var to_pos = resultado["impact_pos"] if resultado else from_pos + dir_flat * longitud
-	if EnergyManager.MOSTRAR_VISUAL_PULSO:
-		EnergyManager.spawn_pulse_visual(from_pos, to_pos, color_recurso, self, recurso_actual)
-	if resultado:
-		EnergyManager.register_flow(self, resultado["target"], energia_por_disparo, recurso_actual, color_recurso)
+	# Pulsos visuales solo donde hay beam: pasar path para validación en EnergyManager
+	if EnergyManager.MOSTRAR_VISUAL_PULSO and path.size() >= 2:
+		EnergyManager.spawn_pulse_visual(global_position + Vector3(0, GameConstants.SIFON_OFFSET_SALIDA_Y, 0), impact_pos, color_recurso, self, recurso_actual, path)
+	if resultado_target != null:
+		EnergyManager.register_flow(self, resultado_target, energia_por_disparo, recurso_actual, color_recurso)
 
 func _detectar_recurso_bajo_pies():
 	var scene = GameConstants.get_scene_root_for(self)

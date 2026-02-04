@@ -1,0 +1,139 @@
+# Changelog
+
+Todos los cambios notables del proyecto se documentan aquí.  
+**Origen:** sesiones de desarrollo + documentos en `docs/` (PROGRESO, TASKLIST, PROJECT_STATE, ROADMAP, REFACTORING_PLAN, POLISH_PLAN, COSAS_POR_HACER, etc.).  
+**Reglas:** [0_REGLAS_UNIVERSALES.md](docs/0_REGLAS_UNIVERSALES.md).
+
+---
+
+## [Unreleased] – 2025-02-03
+
+### Añadido
+
+- **CHANGELOG.md**: este archivo, con historial de desarrollo según los MD del proyecto y cambios recientes.
+
+### Cambiado (alineación con reglas universales)
+
+- **UI – Títulos centrados en paneles de edificios**
+  - **Compressor UI**: título "COMPRESOR" dentro de `CenterContainer` + `horizontal_alignment = 1`.
+  - **God Siphon UI**: título "MODO DIOS" dentro de `CenterContainer` + `horizontal_alignment = 1`.
+
+- **UI – Formato de cantidades unificado**
+  - **Compressor**: buffer con estilo "x / y" (espacios). En `compressor_ui.tscn` texto por defecto "Buffer: 0 / 10"; en `compressor.gd` etiqueta 3D `"%d / 10" % buffer`.
+
+- **Comentarios**
+  - **Construction Manager**: comentario sobre clic derecho actualizado a "abrir su panel (no rotar al abrir)".
+
+### Revisado
+
+- Auditoría frente a reglas universales: INFRAESTRUCTURA, BuildingManager, save/load, dim, fantasma, Constructor, cambio de escena; sin cambios necesarios en esos puntos.
+
+---
+
+## Historial de desarrollo (según docs)
+
+Resumen de lo realizado y registrado en los archivos MD del proyecto (PROGRESO, TASKLIST, PROJECT_STATE, ROADMAP, REFACTORING_PLAN, POLISH_PLAN, COSAS_POR_HACER).  
+Fechas aproximadas según "Última actualización" en cada doc (2025-01-31 / 2025-02-01).
+
+---
+
+### Sistema de energía numérico (Refactorización)
+
+- **GridManager**: registro de celdas ocupadas, `register_building` / `unregister_building` / `is_cell_occupied` / `get_building_at`; Autoload.
+- **EnergyManager**: flujos numéricos (`EnergyFlow`), `register_flow` / `unregister_flow`, actualización en `_process`; energía como datos, no nodos físicos.
+- **BuildingManager**: `active_buildings`, registro/desregistro; fuente fiable para conteo (menú INFRAESTRUCTURA, TechTree, save/load).
+- **Migración de edificios**: Siphon, Compressor, Prisma, Merger, Constructor, God Siphon migrados a energía numérica; eliminada instanciación de `energy_pulse.tscn`.
+- **PulseVisual**: visual opcional (bolas en movimiento) conectado a señales de EnergyManager; no afecta lógica.
+- **Cleanup**: eliminación/deprecación de `energy_pulse.tscn` y código viejo.
+
+---
+
+### Save/Load y persistencia
+
+- Guardado/carga de edificios (lista, posición, rotación, estado interno).
+- Reconstrucción por referencia (`instancias_recien_anadidas`, `_activar_lista_edificios`), no por búsqueda en árbol.
+- Reconstrucción diferida desde WorldGenerator (`_reconstruir_edificios_deferred`) para no hacer `add_child` durante `_ready`.
+- TechTree integrado en SaveSystem: tecnologías desbloqueadas (F2) persisten al guardar/cargar.
+- Zoom de cámara restaurado al cargar (world_generator).
+- Sifones funcionando tras cargar (game_tick + esta_construido).
+- Constructor: `_recuperar_estado_guardado` con guarda `is_inside_tree()`; `check_ground` diferido al activar edificios reconstruidos.
+- Restauración de mapa (GridMap), cámara y TechTree en la carga.
+- Múltiples slots de guardado (ej. save_1.json, save_2.json, etc.).
+
+---
+
+### Menú INFRAESTRUCTURA (ex RECURSOS) y dim
+
+- Botón renombrado a **INFRAESTRUCTURA** en la UI (nodos internos siguen BtnRecursos/RecursosDropdownPanel).
+- Al abrir panel: oscurecer todo el mundo, ocultar red (plano cámara) y tiles (GridMap).
+- Tiles y red permanecen ocultos al pulsar un ítem del dropdown hasta cerrar el panel.
+- Conteo de edificios colocados desde BuildingManager (menú actualizado en partida).
+- Clic fuera cierra panel y restaura visibilidad y materiales.
+- Mismo efecto dim al abrir menú de categorías (SIFONES, PRISMAS, etc.) en la barra inferior; HUD Manager llama `aplicar_dim_menu_edificios`.
+
+---
+
+### Colocación y edificios
+
+- **Prismas**: solo se colocan en TILE_VACIO; placement_logic por grupo; corregido bug de prismas colocados como God Siphons.
+- **Void Generator**: lógica real de borrado de tiles; reescrito (ya no copia de construction_manager).
+- **Fabricador Hadrón**: quarks → protones/neutrones (2U+1D, 1U+2D); recibe pulsos, añade productos al inventario; forma 12×12 (get_footprint_offsets 144 celdas); doc HADRON_6x6_CSG actualizado.
+- **Edificios en mano (fantasma)**: scale = 1.0 (mismo tamaño que en suelo); posición: solo X y Z desde el mapa, Y se mantiene como en la escena del edificio (.tscn).
+- HUD con `mouse_filter = IGNORE` para que los clics lleguen al mapa; botón SELECCIÓN desactivado por defecto.
+
+---
+
+### UI/UX y pulido
+
+- **HUD**: categorías (ENERGÍA | QUARKS | EDIFICIOS) con colores; barra SIFONES, PRISMAS, MANIPULA, CONSTR; botón INFRAESTRUCTURA (dropdown).
+- **UIs de edificios**: eliminación de "Rotar 90°" y texto "Abrir: clic derecho"; títulos centrados (CONSTRUCTOR, FUSIONADOR); Purga todo centrado; Merger con selector quarks (Down/Up) y purga por fila.
+- **Constructor UI**: título CONSTRUCTOR centrado; botón X junto a E/C; Purga todo centrado; requisitos de receta visibles; grid de iconos; hotkeys 1–9.
+- **God Siphon UI**: sliders energía/frecuencia, vista previa, aplicar/resetear.
+- **Panel Ayuda F1**: 4 pestañas (Recursos, Edificios, Controles, Objetivos); contenido actualizado (Fabricador Hadrón, Protón, Neutrón).
+- **Recetario F2**: tech tree con desbloqueos; actualizado.
+- **Tutorial**: 5 pasos básicos.
+- **Menú principal**: nuevo, cargar, salir, opciones.
+- **Opciones**: volumen música, volumen efectos, pantalla completa, guardado en user://settings.cfg.
+- **Hotkeys**: R rotar, ESC cancelar, 0 God Siphon (DEBUG), 1–9 edificios.
+- **Clic central**: copiar edificio / colocar y mantener otro.
+- **Selección múltiple** por arrastre.
+- **Grid guía**: pulso 50–100 %, desvanecimiento por zoom.
+- **Feedback al colocar**: pop/shake al colocar edificio.
+- **StyleBox** en HUD, paneles unificados, tooltips.
+
+---
+
+### Bugs y estabilidad (ROADMAP Bloques 1–4)
+
+- **Bloque 1**: haces visuales cortados en prismas (HAZ_OFFSET_ORIGEN 0.25); salidas de mergers (posición/visual); verificación de que visuales no afectan lógica.
+- **Bloque 2**: feedback visual al colocar (pop/shake); mejoras en menús (transiciones, versión).
+- **Bloque 3**: unificación RECETAS vs menu_data; limpieza deprecated (energy_pulse eliminado).
+- **Bloque 4**: Fabricador Hadrón completo; F1/F2 actualizados.
+- **Bloque 5 (parcial)**: edificios guardan/cargan; zoom restaurado; sifones tras cargar; tech persistente; prismas y Void Generator corregidos.
+
+---
+
+### Documentación y organización
+
+- Creación de **PROGRESO.md** (estado del proyecto).
+- Creación de **TASKLIST.md** (qué hacer ahora).
+- **README.md** reescrito con "Empieza aquí" y niveles (diario / cuando toque / referencia).
+- Archivo de docs redundantes (Nuevos MDs, ANALISIS_UNIFICACION_MDS, MD_ACTUALIZADO).
+- **0_REGLAS_UNIVERSALES.md**: reglas de UI, texto, "todos los…", save/load, BuildingManager, menú INFRAESTRUCTURA y dim; sección "Puntos no tocar".
+- **14_NOTAS_DESARROLLO**: flujo commit/push al cerrar sesión; notas sobre fantasma (Y, scale).
+- **Análisis null-safety** en beam_emitter, god_siphon, save_system, world_generator, inventory_button, hud.
+
+---
+
+### Pendiente (según docs)
+
+- Verificar save/load con 20+ edificios (TEST_CHECKLIST 10.3).
+- Verificar colocación de todos los edificios en tiles correctos (TEST_CHECKLIST 6.5).
+- Ejecutar TEST_CHECKLIST completo; documentar y arreglar bugs críticos.
+- Preparar demo: export HTML5/Windows, itch.io, descripción, screenshots/GIF.
+- Opcional: persistir bolas en vuelo (PulseVisual) al cargar o quitar dim.
+- Prioridad P: volumen música (UI), partida corrupta/inexistente, logs debug, export estable, texto itch.io.
+
+---
+
+*Formato inspirado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).*
