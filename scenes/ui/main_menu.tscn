@@ -86,6 +86,10 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
+[node name="MuteCheck" type="CheckButton" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
+layout_mode = 2
+text = "Silenciar música"
+
 [node name="LabelEfectos" type="Label" parent="ColorRect/CenterContainer/OptionsMenuContainer"]
 layout_mode = 2
 text = "Volumen de efectos"

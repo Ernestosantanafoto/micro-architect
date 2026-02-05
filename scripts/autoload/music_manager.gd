@@ -42,6 +42,12 @@ func toggle_muted() -> void:
 	_apply_volume()
 	_save_mute_to_config()
 
+func set_muted(pressed: bool) -> void:
+	if muted != pressed:
+		muted = pressed
+		_apply_volume()
+		_save_mute_to_config()
+
 func is_muted() -> bool:
 	return muted
 
