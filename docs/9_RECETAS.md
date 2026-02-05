@@ -39,7 +39,7 @@ Fuente de verdad en código: `GameConstants.RECETAS` y `TechTree` (tech_tree.gd)
 | Edificio | Coste de fabricación | Tiempo | Desbloqueo |
 |----------|----------------------|--------|------------|
 | **Fusionador** | 80 Cond.-Estabilidad, 80 Cond.-Carga | 10 s | **5 Cond.-Estabilidad** en inventario |
-| **Constructor** | 40 Up-Quark, 40 Down-Quark | 30 s | **1 Up-Quark** en inventario |
+| **Constructor** | 5 Up-Quark, 5 Down-Quark | 30 s | **1 Up-Quark** en inventario |
 | **Fabricador Hadrón** | 30 Up-Quark, 30 Down-Quark | 15 s | **10 Constructores** colocados |
 
 ---

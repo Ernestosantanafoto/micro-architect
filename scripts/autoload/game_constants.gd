@@ -255,7 +255,7 @@ const RECETAS = {
 		"tiempo": 10.0 
 	},
 	"Constructor": { 
-		"inputs": { "Up-Quark": 40, "Down-Quark": 40 }, 
+		"inputs": { "Up-Quark": 5, "Down-Quark": 5 }, 
 		"output_scene": "res://scenes/buildings/constructor.tscn", 
 		"tiempo": 30.0 
 	},
