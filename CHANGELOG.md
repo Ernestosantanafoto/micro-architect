@@ -87,6 +87,12 @@ Todos los cambios notables del proyecto se documentan aquí.
   - GameConstants: CAMARA_ZOOM_INICIAL 15 → 40 (nueva partida más alejada, vista más amplia).
   - Zoom ya se persistía al guardar/cargar (SaveSystem cam.s, world_generator _posicionar_camara).
 
+- **[#31](https://github.com/Ernestosantanafoto/micro-architect/issues/31) – Feature: Camera starts at origin and add Center button to recenter**  
+  Cerrado: 2025-02-03  
+  - GameConstants: CAMARA_CENTRO_INICIAL_Z = 10 (centro 10 celdas más abajo).
+  - camera_pivot: posición inicial (0,0,10); centrar_en_origen() tween suave a (0,0,10).
+  - main_game_3d: botón CENTRAR en PanelSistema (junto a MENU); system_hud conecta y llama centrar_en_origen.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

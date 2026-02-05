@@ -35,6 +35,8 @@ const LAYER_EDIFICIOS = 4
 # --- CÁMARA ---
 const CAMARA_SENSIBILIDAD = 0.05
 const CAMARA_INCLINACION_X = -80.0
+## Centro del mapa: cámara inicia y botón CENTRAR llevan aquí (Z = 10 celdas más abajo).
+const CAMARA_CENTRO_INICIAL_Z := 10
 ## Zoom al iniciar nueva partida (más alejado = vista más amplia). Cargar partida restaura el zoom guardado.
 const CAMARA_ZOOM_INICIAL = 40.0
 const CAMARA_ZOOM_MIN = 15.0

@@ -100,6 +100,7 @@ func _estilizar_botones_paneles():
 	var estilo_pressed = _crear_estilo_boton(Color(0.08, 0.1, 0.14, 1.0))
 	var botones: Array[Node] = []
 	botones.append(get_node_or_null("PanelSistema/HBoxContainer/BtnMenu"))
+	botones.append(get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar"))
 	botones.append(get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos"))
 	var menu_drop = get_node_or_null("MenuDropdownPanel/MenuDropdown")
 	if menu_drop:
@@ -107,11 +108,12 @@ func _estilizar_botones_paneles():
 			if c is BaseButton:
 				botones.append(c)
 	var btn_menu = get_node_or_null("PanelSistema/HBoxContainer/BtnMenu")
+	var btn_centrar = get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar")
 	for btn in botones:
 		if btn and btn is BaseButton:
-			# Botón MENÚ: mismo ancho que los del dropdown (160px) para que no se vea pequeño
-			if btn == btn_menu:
-				(btn as Control).custom_minimum_size = Vector2(160, 56)
+			# MENÚ y CENTRAR: mismo ancho (100px) en la barra izquierda
+			if btn == btn_menu or btn == btn_centrar:
+				(btn as Control).custom_minimum_size = Vector2(100, 56)
 			else:
 				(btn as Control).custom_minimum_size = Vector2(90, 56)
 			(btn as BaseButton).add_theme_stylebox_override("normal", estilo_normal.duplicate())
@@ -144,6 +146,9 @@ func _conectar_menu_dropdown():
 	var btn_menu = get_node_or_null("PanelSistema/HBoxContainer/BtnMenu")
 	if btn_menu and btn_menu is BaseButton:
 		(btn_menu as BaseButton).pressed.connect(_on_btn_menu_toggle)
+	var btn_centrar = get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar")
+	if btn_centrar and btn_centrar is BaseButton:
+		(btn_centrar as BaseButton).pressed.connect(_on_btn_centrar_pressed)
 	var panel = get_node_or_null("MenuDropdownPanel")
 	if not panel:
 		return
@@ -168,6 +173,13 @@ func _conectar_menu_dropdown():
 	var btn_actualizar_visual = vbox.get_node_or_null("BtnActualizarVisual")
 	if btn_actualizar_visual and btn_actualizar_visual is BaseButton:
 		(btn_actualizar_visual as BaseButton).pressed.connect(_on_btn_actualizar_visual_pressed)
+
+func _on_btn_centrar_pressed() -> void:
+	# Este script está en CanvasLayer; el padre es la escena de juego (MainGame3D), CameraPivot es hermano
+	var escena_juego = get_parent()
+	var cam_pivot = escena_juego.find_child("CameraPivot", true, false) if escena_juego else null
+	if cam_pivot and cam_pivot.has_method("centrar_en_origen"):
+		cam_pivot.centrar_en_origen()
 
 func _on_btn_actualizar_visual_pressed() -> void:
 	# Recarga pulse_visual_material.tres y reaplica a todas las bolas en escena (ver cambios sin reiniciar)

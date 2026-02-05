@@ -12,6 +12,7 @@ func _ready():
 	elevation.rotation_degrees.x = GameConstants.CAMARA_INCLINACION_X
 	camera.size = GameConstants.CAMARA_ZOOM_INICIAL
 	camera.position.z = GameConstants.CAMARA_ZOOM_INICIAL
+	position = Vector3(0, 0, GameConstants.CAMARA_CENTRO_INICIAL_Z)
 
 func _unhandled_input(event):
 	# Si el ratón está sobre UI (F1, F2, etc.), no zoom ni arrastre
@@ -131,6 +132,14 @@ func _is_mouse_over_ui() -> bool:
 				if c.is_visible_in_tree() and c.get_global_rect().has_point(c.get_global_mouse_position()):
 					return true
 	return false
+
+## Centra la cámara en el punto de referencia (0, 0, CAMARA_CENTRO_INICIAL_Z). No modifica el zoom.
+func centrar_en_origen() -> void:
+	var destino = Vector3(0, 0, GameConstants.CAMARA_CENTRO_INICIAL_Z)
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(self, "position", destino, 0.4)
 
 ## True si no debemos aplicar WASD/QE: popup de guardar/cargar/opciones abierto o foco en LineEdit/TextEdit.
 func _debe_ignorar_teclado_camara() -> bool:
