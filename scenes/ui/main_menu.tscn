@@ -21,38 +21,45 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MainMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ColorRect/CenterContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 56
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="MainMenuContainer" type="VBoxContainer" parent="ColorRect/CenterContainer/MarginContainer"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 16
+theme_override_constants/separation = 24
 
-[node name="Label" type="Label" parent="ColorRect/CenterContainer/MainMenuContainer"]
+[node name="Label" type="Label" parent="ColorRect/CenterContainer/MarginContainer/MainMenuContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "MICRO-ARCHITECT"
 
-[node name="ButtonNueva" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+[node name="ButtonNueva" type="Button" parent="ColorRect/CenterContainer/MarginContainer/MainMenuContainer"]
 custom_minimum_size = Vector2(10, 40)
 layout_mode = 2
 theme_override_constants/h_separation = 30
 theme_override_font_sizes/font_size = 50
 text = "NUEVA"
 
-[node name="ButtonCargar" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+[node name="ButtonCargar" type="Button" parent="ColorRect/CenterContainer/MarginContainer/MainMenuContainer"]
 custom_minimum_size = Vector2(10, 40)
 layout_mode = 2
 theme_override_constants/h_separation = 30
 theme_override_font_sizes/font_size = 50
 text = "CARGAR"
 
-[node name="ButtonOpciones" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+[node name="ButtonOpciones" type="Button" parent="ColorRect/CenterContainer/MarginContainer/MainMenuContainer"]
 custom_minimum_size = Vector2(10, 40)
 layout_mode = 2
 theme_override_constants/h_separation = 30
 theme_override_font_sizes/font_size = 50
 text = "OPCIONES"
 
-[node name="ButtonSalir" type="Button" parent="ColorRect/CenterContainer/MainMenuContainer"]
+[node name="ButtonSalir" type="Button" parent="ColorRect/CenterContainer/MarginContainer/MainMenuContainer"]
 custom_minimum_size = Vector2(10, 40)
 layout_mode = 2
 theme_override_constants/h_separation = 30

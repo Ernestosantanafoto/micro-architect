@@ -13,7 +13,7 @@ const KEY_FULLSCREEN := GameConstants.PREF_KEY_FULLSCREEN
 var _escena_precargada: Variant = null
 
 # Referencias (rutas explícitas)
-@onready var main_container: Control = $ColorRect/CenterContainer/MainMenuContainer
+@onready var main_container: Control = $ColorRect/CenterContainer/MarginContainer/MainMenuContainer
 @onready var options_container: Control = $ColorRect/CenterContainer/OptionsMenuContainer
 @onready var volume_slider: HSlider = $ColorRect/CenterContainer/OptionsMenuContainer/VolumeSlider
 @onready var sfx_slider: HSlider = $ColorRect/CenterContainer/OptionsMenuContainer/SfxSlider
@@ -39,10 +39,10 @@ func _ready():
 	_cargar_y_aplicar_preferencias()
 
 	# --- CONEXIONES DE BOTONES (rutas $ desde este nodo) ---
-	$ColorRect/CenterContainer/MainMenuContainer/ButtonNueva.pressed.connect(_on_nueva_pressed)
-	$ColorRect/CenterContainer/MainMenuContainer/ButtonCargar.pressed.connect(_on_cargar_pressed)
-	$ColorRect/CenterContainer/MainMenuContainer/ButtonOpciones.pressed.connect(_on_options_pressed)
-	$ColorRect/CenterContainer/MainMenuContainer/ButtonSalir.pressed.connect(_on_btn_salir_pressed)
+	$ColorRect/CenterContainer/MarginContainer/MainMenuContainer/ButtonNueva.pressed.connect(_on_nueva_pressed)
+	$ColorRect/CenterContainer/MarginContainer/MainMenuContainer/ButtonCargar.pressed.connect(_on_cargar_pressed)
+	$ColorRect/CenterContainer/MarginContainer/MainMenuContainer/ButtonOpciones.pressed.connect(_on_options_pressed)
+	$ColorRect/CenterContainer/MarginContainer/MainMenuContainer/ButtonSalir.pressed.connect(_on_btn_salir_pressed)
 	$ColorRect/CenterContainer/OptionsMenuContainer/ButtonBack.pressed.connect(_on_back_pressed)
 	
 	# Feedback hover/pressed en todos los botones
@@ -172,6 +172,8 @@ func _anadir_version_al_menu():
 	label_ver.text = VERSION_TEXTO
 	label_ver.add_theme_font_size_override("font_size", 24)
 	label_ver.add_theme_color_override("font_color", Color(0.7, 0.7, 0.8))
+	label_ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label_ver.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_container.add_child(label_ver)
 	main_container.move_child(label_ver, 1)  # Justo después del título (Label)
 
