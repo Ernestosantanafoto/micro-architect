@@ -345,7 +345,12 @@ func _mostrar_popup_guardar() -> void:
 	nombre_edit.placeholder_text = "Nombre (opcional)"
 	nombre_edit.custom_minimum_size.y = 32
 	vbox.add_child(nombre_edit)
+	var spacer = Control.new()
+	spacer.custom_minimum_size.y = 12
+	vbox.add_child(spacer)
+	var center_btns = CenterContainer.new()
 	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 12)
 	var btn_guardar = Button.new()
 	btn_guardar.text = "Guardar"
 	btn_guardar.pressed.connect(func():
@@ -361,7 +366,8 @@ func _mostrar_popup_guardar() -> void:
 	btn_cancelar.pressed.connect(_cerrar_popups_overlay)
 	hbox.add_child(btn_guardar)
 	hbox.add_child(btn_cancelar)
-	vbox.add_child(hbox)
+	center_btns.add_child(hbox)
+	vbox.add_child(center_btns)
 	_popup_slot_guardar = 1
 	slot_buttons[0].emit_signal("pressed")
 
@@ -414,6 +420,7 @@ func _mostrar_popup_opciones() -> void:
 	var vol = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUSIC_VOLUME, 1.0), 0.0, 1.0) if load_ok else 1.0
 	var sfx_val = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, 1.0), 0.0, 1.0) if load_ok else 1.0
 	var full = cfg.get_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, false) if load_ok else false
+	var mute = cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUTE, false) if load_ok else false
 
 	var layer = CanvasLayer.new()
 	layer.layer = 100
@@ -451,6 +458,10 @@ func _mostrar_popup_opciones() -> void:
 	slider_vol.value = vol
 	slider_vol.custom_minimum_size.y = 24
 	vbox.add_child(slider_vol)
+	var check_mute = CheckButton.new()
+	check_mute.text = "Silenciar música"
+	check_mute.button_pressed = mute
+	vbox.add_child(check_mute)
 	var lbl_sfx = Label.new()
 	lbl_sfx.text = "Efectos"
 	vbox.add_child(lbl_sfx)
@@ -469,21 +480,27 @@ func _mostrar_popup_opciones() -> void:
 	# Aplicar valores iniciales (música vía MusicManager, efectos vía bus SFX)
 	if MusicManager:
 		MusicManager.set_volume(vol)
+		MusicManager.set_muted(mute)
 	_aplicar_sfx_ingame(sfx_val)
 	_aplicar_fullscreen_ingame(full)
 
 	slider_vol.value_changed.connect(func(v: float):
 		if MusicManager:
 			MusicManager.set_volume(v)
-		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed, check_mute.button_pressed)
+	)
+	check_mute.toggled.connect(func(p: bool):
+		if MusicManager:
+			MusicManager.set_muted(p)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed, p)
 	)
 	slider_sfx.value_changed.connect(func(v: float):
 		_aplicar_sfx_ingame(v)
-		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed, check_mute.button_pressed)
 	)
 	check_full.toggled.connect(func(p: bool):
 		_aplicar_fullscreen_ingame(p)
-		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
+		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, p, check_mute.button_pressed)
 	)
 
 	var btn_cerrar = Button.new()
@@ -502,11 +519,12 @@ func _aplicar_fullscreen_ingame(enabled: bool) -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
-func _guardar_preferencias_ingame(vol: float, sfx: float, full: bool) -> void:
+func _guardar_preferencias_ingame(vol: float, sfx: float, full: bool, mute: bool = false) -> void:
 	var cfg = ConfigFile.new()
 	var _err = cfg.load(GameConstants.PREFERENCIAS_PATH)
 	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUSIC_VOLUME, clampf(vol, 0.0, 1.0))
 	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, clampf(sfx, 0.0, 1.0))
+	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUTE, mute)
 	cfg.set_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, full)
 	cfg.save(GameConstants.PREFERENCIAS_PATH)
 
@@ -577,6 +595,10 @@ func _mostrar_popup_cargar_ingame() -> void:
 
 func _aplicar_carga_ingame(slot: int) -> void:
 	if not SaveSystem or not SaveSystem.cargar_partida(slot):
+		var msg: String = SaveSystem.last_load_error if SaveSystem else ""
+		if msg.is_empty():
+			msg = "No se pudo cargar la partida."
+		_mostrar_popup_error_carga_ingame(msg)
 		return
 	# Quitar edificios actuales del mundo
 	if BuildingManager:
@@ -609,6 +631,38 @@ func _aplicar_carga_ingame(slot: int) -> void:
 		menu_drop.visible = false
 	if GameConstants.DEBUG_MODE:
 		print("[MAIN] Partida cargada en slot ", slot)
+
+func _mostrar_popup_error_carga_ingame(mensaje: String) -> void:
+	var layer = CanvasLayer.new()
+	layer.layer = 100
+	layer.add_to_group(GameConstants.POPUP_OVERLAY_GROUP)
+	add_child(layer)
+	var backdrop = ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.01)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(_on_popup_backdrop_input)
+	layer.add_child(backdrop)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = GameConstants.POPUP_OFFSET_LEFT
+	panel.offset_top = GameConstants.POPUP_OFFSET_TOP
+	panel.offset_right = GameConstants.POPUP_OFFSET_RIGHT
+	panel.offset_bottom = GameConstants.POPUP_OFFSET_BOTTOM
+	panel.add_theme_stylebox_override("panel", _panel_estilo_guardar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	panel.add_child(vbox)
+	var lbl = Label.new()
+	lbl.text = mensaje
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(lbl)
+	var btn = Button.new()
+	btn.text = "Cerrar"
+	btn.pressed.connect(_cerrar_popups_overlay)
+	vbox.add_child(btn)
 
 func _on_btn_menu_pressed() -> void:
 	if GameConstants.DEBUG_MODE:
