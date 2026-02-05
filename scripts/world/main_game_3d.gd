@@ -402,7 +402,7 @@ func _mostrar_popup_opciones() -> void:
 	_asegurar_bus_sfx()
 	var cfg = ConfigFile.new()
 	var load_ok = cfg.load(GameConstants.PREFERENCIAS_PATH) == OK
-	var vol = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_VOLUME, 1.0), 0.0, 1.0) if load_ok else 1.0
+	var vol = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUSIC_VOLUME, 1.0), 0.0, 1.0) if load_ok else 1.0
 	var sfx_val = clampf(cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, 1.0), 0.0, 1.0) if load_ok else 1.0
 	var full = cfg.get_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, false) if load_ok else false
 
@@ -457,13 +457,15 @@ func _mostrar_popup_opciones() -> void:
 	check_full.button_pressed = full
 	vbox.add_child(check_full)
 
-	# Aplicar valores iniciales
-	_aplicar_volumen_ingame(vol)
+	# Aplicar valores iniciales (música vía MusicManager, efectos vía bus SFX)
+	if MusicManager:
+		MusicManager.set_volume(vol)
 	_aplicar_sfx_ingame(sfx_val)
 	_aplicar_fullscreen_ingame(full)
 
 	slider_vol.value_changed.connect(func(v: float):
-		_aplicar_volumen_ingame(v)
+		if MusicManager:
+			MusicManager.set_volume(v)
 		_guardar_preferencias_ingame(slider_vol.value, slider_sfx.value, check_full.button_pressed)
 	)
 	slider_sfx.value_changed.connect(func(v: float):
@@ -480,11 +482,6 @@ func _mostrar_popup_opciones() -> void:
 	btn_cerrar.pressed.connect(_cerrar_popups_overlay)
 	vbox.add_child(btn_cerrar)
 
-func _aplicar_volumen_ingame(val: float) -> void:
-	var master_bus = AudioServer.get_bus_index("Master")
-	if master_bus >= 0:
-		AudioServer.set_bus_volume_db(master_bus, linear_to_db(pow(clampf(val, 0.0, 1.0), 2)))
-
 func _aplicar_sfx_ingame(val: float) -> void:
 	var idx = AudioServer.get_bus_index("SFX")
 	if idx >= 0:
@@ -499,7 +496,7 @@ func _aplicar_fullscreen_ingame(enabled: bool) -> void:
 func _guardar_preferencias_ingame(vol: float, sfx: float, full: bool) -> void:
 	var cfg = ConfigFile.new()
 	var _err = cfg.load(GameConstants.PREFERENCIAS_PATH)
-	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_VOLUME, clampf(vol, 0.0, 1.0))
+	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUSIC_VOLUME, clampf(vol, 0.0, 1.0))
 	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_SFX, clampf(sfx, 0.0, 1.0))
 	cfg.set_value(GameConstants.PREF_SECTION_DISPLAY, GameConstants.PREF_KEY_FULLSCREEN, full)
 	cfg.save(GameConstants.PREFERENCIAS_PATH)

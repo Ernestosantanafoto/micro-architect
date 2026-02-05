@@ -8,6 +8,36 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 ## [Unreleased] – 2025-02-03
 
+### Issues resueltos (GitHub)
+
+*(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
+
+- **[#20](https://github.com/Ernestosantanafoto/micro-architect/issues/20) – UI: Add "Quark" suffix to UP and DOWN terms**  
+  Cerrado: 2025-02-03  
+  - GameConstants: nombres "Up-Quark"/"Down-Quark", `get_nombre_visible_recurso` y `get_nombre_visible_recurso_cantidad` (singular/plural).
+  - constructor_ui, recipe_book, help_panel, god_siphon_ui, merger_ui, HUD: etiquetas y colores actualizados.
+
+- **[#15](https://github.com/Ernestosantanafoto/micro-architect/issues/15) – Docs: Complete recipe book – Costs, times, unlock conditions**  
+  Cerrado: 2025-02-03  
+  - 9_RECETAS.md: costes, tiempos y condiciones de desbloqueo documentados y alineados con el código.
+
+- **[#12](https://github.com/Ernestosantanafoto/micro-architect/issues/12) – Hadron Factory unlock: 10 factories placed**  
+  Cerrado: 2025-02-03  
+  - tech_tree.gd: Fabricador Hadrón desbloqueo por 10 Constructores colocados (antes 4). goal_hints y 9_RECETAS.md actualizados.
+
+- **[#22](https://github.com/Ernestosantanafoto/micro-architect/issues/22) – UI: Constructor menu excessively tall**  
+  Cerrado: 2025-02-03  
+  - constructor_ui: VBoxContainer separation 6, ScrollContainer sin expandir; ALTURA_POR_FILA 26, ALTURA_MAX_LISTA 140 para menú más compacto.
+
+- **[#18](https://github.com/Ernestosantanafoto/micro-architect/issues/18) – Simplify: Remove redundant tech unlock requirements**  
+  Cerrado: 2025-02-03  
+  - tech_tree: `requires` vacío para techs con solo condición (T2, Fusionador, Constructor, Fabricador Hadrón).
+  - goal_hints y 9_RECETAS.md sin "Tech: X"; recipe_book ya no muestra "Disponible desde el inicio" cuando hay unlock_condition.
+
+- **[#13](https://github.com/Ernestosantanafoto/micro-architect/issues/13) – Constructor (Producer) recipe: 5 Up-Quarks + 5 Down-Quarks**  
+  Cerrado: 2025-02-03  
+  - GameConstants RECETAS Constructor: inputs 40/40 → 5/5. 9_RECETAS.md actualizado.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

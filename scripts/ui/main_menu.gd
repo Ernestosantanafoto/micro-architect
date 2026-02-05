@@ -5,6 +5,7 @@ const DURACION_TRANSICION := 0.2
 const SETTINGS_PATH := GameConstants.PREFERENCIAS_PATH
 const SECTION_AUDIO := GameConstants.PREF_SECTION_AUDIO
 const KEY_VOLUME := GameConstants.PREF_KEY_VOLUME
+const KEY_MUSIC_VOLUME := GameConstants.PREF_KEY_MUSIC_VOLUME
 const KEY_SFX_VOLUME := GameConstants.PREF_KEY_SFX
 const SECTION_DISPLAY := GameConstants.PREF_SECTION_DISPLAY
 const KEY_FULLSCREEN := GameConstants.PREF_KEY_FULLSCREEN
@@ -89,7 +90,7 @@ func _cargar_y_aplicar_preferencias() -> void:
 	var sfx_val = 1.0
 	var full = false
 	if load_ok:
-		vol = clampf(cfg.get_value(SECTION_AUDIO, KEY_VOLUME, 1.0), 0.0, 1.0)
+		vol = clampf(cfg.get_value(SECTION_AUDIO, KEY_MUSIC_VOLUME, 1.0), 0.0, 1.0)
 		sfx_val = clampf(cfg.get_value(SECTION_AUDIO, KEY_SFX_VOLUME, 1.0), 0.0, 1.0)
 		full = cfg.get_value(SECTION_DISPLAY, KEY_FULLSCREEN, false)
 	if volume_slider:
@@ -109,9 +110,8 @@ func _cargar_y_aplicar_preferencias() -> void:
 			fullscreen_check.toggled.connect(_on_fullscreen_toggled)
 
 func _aplicar_volumen(slider_value: float) -> void:
-	var master_bus = AudioServer.get_bus_index("Master")
-	var progressive_volume = pow(slider_value, 2)
-	AudioServer.set_bus_volume_db(master_bus, linear_to_db(progressive_volume))
+	if MusicManager:
+		MusicManager.set_volume(slider_value)
 
 func _aplicar_sfx_volume(slider_value: float) -> void:
 	var idx = AudioServer.get_bus_index("SFX")
@@ -129,7 +129,7 @@ func _guardar_preferencias() -> void:
 	var cfg = ConfigFile.new()
 	cfg.load(SETTINGS_PATH)
 	if volume_slider:
-		cfg.set_value(SECTION_AUDIO, KEY_VOLUME, clampf(volume_slider.value, 0.0, 1.0))
+		cfg.set_value(SECTION_AUDIO, KEY_MUSIC_VOLUME, clampf(volume_slider.value, 0.0, 1.0))
 	if sfx_slider:
 		cfg.set_value(SECTION_AUDIO, KEY_SFX_VOLUME, clampf(sfx_slider.value, 0.0, 1.0))
 	if fullscreen_check:
