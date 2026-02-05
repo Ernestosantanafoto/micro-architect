@@ -40,7 +40,7 @@ Fuente de verdad en código: `GameConstants.RECETAS` y `TechTree` (tech_tree.gd)
 |----------|----------------------|--------|------------|
 | **Fusionador** | 80 Cond.-Estabilidad, 80 Cond.-Carga | 10 s | Tech: Compresor · **5 Cond.-Estabilidad** en inventario |
 | **Constructor** | 40 Up-Quark, 40 Down-Quark | 30 s | Tech: Fusionador · **1 Up-Quark** en inventario |
-| **Fabricador Hadrón** | 30 Up-Quark, 30 Down-Quark | 15 s | Tech: Fusionador · **4 Constructores** colocados |
+| **Fabricador Hadrón** | 30 Up-Quark, 30 Down-Quark | 15 s | Tech: Fusionador · **10 Constructores** colocados |
 
 ---
 
