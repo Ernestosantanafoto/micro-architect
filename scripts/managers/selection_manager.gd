@@ -224,6 +224,8 @@ func _action_refund(cells: Array[Vector2i]) -> bool:
 	for building in buildings:
 		if not is_instance_valid(building):
 			continue
+		if building.has_meta("starter_constructor") and building.get_meta("starter_constructor"):
+			continue
 		if GridManager:
 			GridManager.unregister_building_all(building)
 		var nombre = _identificar_item_por_ruta(building.scene_file_path)
@@ -242,6 +244,8 @@ func _action_delete(cells: Array[Vector2i]) -> bool:
 	var map = get_parent().get_node_or_null("GridMap")
 	for building in buildings:
 		if not is_instance_valid(building):
+			continue
+		if building.has_meta("starter_constructor") and building.get_meta("starter_constructor"):
 			continue
 		if GridManager:
 			GridManager.unregister_building_all(building)

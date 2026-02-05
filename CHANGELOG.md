@@ -62,6 +62,20 @@ Todos los cambios notables del proyecto se documentan aquí.
   - main_game_3d: _mostrar_tutorial_si_nueva_partida() — muestra tutorial solo en nueva partida (sin edificios a reconstruir).
   - tutorial_manager: intro con botón "No, ya sé jugar" (persiste tutorial_completed y cierra); "Saltar tutorial" en pasos siguientes.
 
+- **[#27](https://github.com/Ernestosantanafoto/micro-architect/issues/27) – UI: 9x9 macro grid subtly blurred/unfocused**  
+  Cerrado: 2025-02-03  
+  - main_game_3d.gdshader: uniform line_softness; transición smoothstep en líneas cuando softness > 0.
+  - GridMacro (ShaderMaterial_macro): line_softness = 0.55 para líneas suaves; grid detalle sigue nítido (0).
+
+- **[#28](https://github.com/Ernestosantanafoto/micro-architect/issues/28) – Feature: Starter Constructor pre-placed at origin, locked in inventory**  
+  Cerrado: 2025-02-03  
+  - GlobalInventory: preparar_nueva_partida() — inventario a 0, Constructor en (1.5,0,1.5) con esquina en celda (0,0), meta starter.
+  - main_menu: nueva partida usa preparar_nueva_partida() en lugar de cargar_starter_pack().
+  - TechTree: Constructor fuera de tecnologías iniciales (desbloqueo con 1 Up-Quark).
+  - SaveSystem: guardar/cargar meta starter_constructor; reconstruir aplica meta si datos.starter.
+  - construction_manager: no recoger edificio con meta starter_constructor.
+  - selection_manager: no reembolsar ni borrar edificio con meta starter_constructor.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

@@ -162,6 +162,8 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 				"z": edificio.global_rotation.z
 			}
 		}
+		if edificio.has_meta("starter_constructor") and edificio.get_meta("starter_constructor"):
+			datos_edificio["starter"] = true
 		
 		# Guardar estado interno si tiene
 		var map = get_tree().get_first_node_in_group("MapaPrincipal")
@@ -399,6 +401,8 @@ func reconstruir_edificios():
 		
 		# Activar el edificio - debe hacerse DESPUÉS de posicionar y rotar
 		instancia.set_meta("necesita_activacion", true)
+		if datos.get("starter") == true:
+			instancia.set_meta("starter_constructor", true)
 		instancias_recien_anadidas.append(instancia)
 		
 		if GameConstants.DEBUG_MODE: print("[SAVE] - Reconstruido: ", instancia.name, " en ", instancia.global_position)

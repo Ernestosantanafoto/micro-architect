@@ -69,8 +69,8 @@ func _ready():
 		GlobalInventory.inventory_changed.connect(_check_unlock_conditions)
 
 func _unlock_initial_techs():
-	# Tecnologías disponibles desde el inicio. Constructor en starter pack → desbloqueado para aparecer en lista infraestructura.
-	var initial = ["Sifón", "Prisma Recto", "Prisma Angular", "Constructor"]
+	# Tecnologías disponibles desde el inicio. Constructor se desbloquea con 1 Up-Quark (hay uno precolocado en origen).
+	var initial = ["Sifón", "Prisma Recto", "Prisma Angular"]
 	for tech in initial:
 		unlock_tech(tech, true)
 

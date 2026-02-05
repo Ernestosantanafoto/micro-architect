@@ -154,9 +154,8 @@ func _on_btn_salir_pressed():
 
 func _on_nueva_pressed():
 	GameConstants.DEBUG_MODE = false  # Nueva partida siempre con debug OFF
-	GlobalInventory.limpiar_inventario()
 	GlobalInventory.semilla_mundo = 0
-	GlobalInventory.cargar_starter_pack()
+	GlobalInventory.preparar_nueva_partida()
 	if TechTree:
 		TechTree.reset_to_initial()
 	_intentar_cambio_escena()

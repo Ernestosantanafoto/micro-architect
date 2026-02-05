@@ -113,6 +113,8 @@ func gestionar_clic_izquierdo():
 	if not res: return
 	
 	var edificio = res.collider
+	if edificio.has_meta("starter_constructor") and edificio.get_meta("starter_constructor"):
+		return
 	
 	# Desregistrar de GridManager (todas las celdas si es multi-celda como el merger)
 	if GridManager:
