@@ -142,8 +142,12 @@ const COMPRESOR_T2_TIEMPO_CARGA = 2.5
 
 # --- FUSIONADOR ---
 const MERGER_TIEMPO_PROCESO = 15.0 
-const MERGER_COSTO_STABILITY = 100
-const MERGER_COSTO_CHARGE = 200
+# Up-Quark: 150 Cond-Stability + 150 Cond-Charge
+const MERGER_COSTO_UP_STABILITY = 150
+const MERGER_COSTO_UP_CHARGE = 150
+# Down-Quark: 120 Cond-Stability + 180 Cond-Charge
+const MERGER_COSTO_DOWN_STABILITY = 120
+const MERGER_COSTO_DOWN_CHARGE = 180
 ## Máximo 1000 unidades de energía total (100 partículas condensadas en total de ambos tipos)
 const MERGER_MAX_ALMACEN := 1000
 const MERGER_ANIM_SQUASH = Vector3(1.1, 0.9, 1.1)
@@ -196,64 +200,65 @@ const VOID_GEN_FADE_TILES = 0.5
 const VOID_GEN_WAVE_SPEED = 0.02
 
 # --- SISTEMA DE CRAFTEO ---
+# Referencia: issue recipe book (fabrication costs, times, unlocks).
 const RECETAS = {
 	"Prisma Recto": { 
-		"inputs": { "Stability": 5, "Charge": 5 }, 
+		"inputs": { "Stability": 4, "Charge": 4 }, 
 		"output_scene": "res://scenes/buildings/prism_straight.tscn", 
 		"tiempo": 2.0 
 	},
 	"Prisma Angular": { 
-		"inputs": { "Stability": 5, "Charge": 10 }, 
+		"inputs": { "Stability": 4, "Charge": 8 }, 
 		"output_scene": "res://scenes/buildings/prism_angle.tscn", 
 		"tiempo": 2.0 
 	},
 	"Sifón": { 
-		"inputs": { "Stability": 15, "Charge": 5 }, 
+		"inputs": { "Stability": 12, "Charge": 4 }, 
 		"output_scene": "res://scenes/buildings/siphon_t1.tscn", 
 		"tiempo": 3.0 
 	},
 	"Prisma Recto T2": { 
-		"inputs": { "Stability": 50, "Charge": 50 }, 
+		"inputs": { "Stability": 40, "Charge": 40 }, 
 		"output_scene": "res://scenes/buildings/prism_straight_t2.tscn", 
 		"tiempo": 4.0 
 	},
 	"Prisma Angular T2": { 
-		"inputs": { "Stability": 50, "Charge": 50 }, 
+		"inputs": { "Stability": 40, "Charge": 40 }, 
 		"output_scene": "res://scenes/buildings/prism_angle_t2.tscn", 
 		"tiempo": 4.0 
 	},
 	"Sifón T2": { 
-		"inputs": { "Compressed-Stability": 5, "Compressed-Charge": 5 }, 
+		"inputs": { "Compressed-Stability": 3, "Compressed-Charge": 3 }, 
 		"output_scene": "res://scenes/buildings/siphon_t2.tscn", 
 		"tiempo": 5.0 
 	},
 	"Void Generator": { 
-		"inputs": { "Stability": 200, "Charge": 200 },  
+		"inputs": { "Stability": 160, "Charge": 160 },  
 		"output_scene": "res://scenes/buildings/void_generator.tscn",   
 		"tiempo": 10.0 
 	},
 	"Compresor": { 
-		"inputs": { "Stability": 150, "Charge": 150 }, 
+		"inputs": { "Stability": 120, "Charge": 120 }, 
 		"output_scene": "res://scenes/buildings/compressor.tscn", 
 		"tiempo": 8.0 
 	},
 	"Compresor T2": { 
-		"inputs": { "Compressed-Stability": 20, "Compressed-Charge": 20 }, 
+		"inputs": { "Compressed-Stability": 15, "Compressed-Charge": 15 }, 
 		"output_scene": "res://scenes/buildings/compressor_t2.tscn", 
 		"tiempo": 12.0 
 	},
 	"Fusionador": { 
-		"inputs": { "Compressed-Stability": 100, "Compressed-Charge": 100 }, 
+		"inputs": { "Compressed-Stability": 80, "Compressed-Charge": 80 }, 
 		"output_scene": "res://scenes/buildings/merger.tscn", 
 		"tiempo": 10.0 
 	},
 	"Constructor": { 
-		"inputs": { "Up-Quark": 50, "Down-Quark": 50 }, 
+		"inputs": { "Up-Quark": 40, "Down-Quark": 40 }, 
 		"output_scene": "res://scenes/buildings/constructor.tscn", 
 		"tiempo": 30.0 
 	},
 	"Fabricador Hadrón": { 
-		"inputs": { "Up-Quark": 40, "Down-Quark": 40 }, 
+		"inputs": { "Up-Quark": 30, "Down-Quark": 30 }, 
 		"output_scene": "res://scenes/buildings/hadron_factory.tscn", 
 		"tiempo": 15.0 
 	}

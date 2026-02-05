@@ -25,11 +25,12 @@ var tech_tree = {
 	"Prisma Angular T2": {"requires": ["Prisma Angular"], "unlocks": []},
 	
 	# Nivel 4 - Producción avanzada
-	"Fusionador": {"requires": ["Compresor"], "unlocks": ["Constructor", "Fabricador Hadrón"]},
+	# Fabricador Hadrón NO va en unlocks de Fusionador: se desbloquea solo por condición (4 Constructores)
+	"Fusionador": {"requires": ["Compresor"], "unlocks": ["Constructor"]},
 	"Constructor": {"requires": ["Fusionador"], "unlocks": []},
 	"Fabricador Hadrón": {"requires": ["Fusionador"], "unlocks": []},
 	
-	# Especiales: Void Generator requiere 5 Constructores colocados
+	# Especiales: Void Generator requiere 3 Constructores colocados (independiente de Hadrón)
 	"Void Generator": {"requires": [], "unlocks": []},
 }
 
@@ -38,11 +39,13 @@ var unlock_conditions = {
 	"Compresor": {},  # Solo requisito tech (Sifón)
 	"Fusionador": {"type": "resource", "resource": "Compressed-Stability", "amount": 5},
 	"Constructor": {"type": "resource", "resource": "Up-Quark", "amount": 1},
-	"Sifón T2": {"type": "building_count", "building": "Sifón", "amount": 20},
-	"Prisma Recto T2": {"type": "building_count", "building": "Prisma Recto", "amount": 100},
-	"Prisma Angular T2": {"type": "building_count", "building": "Prisma Angular", "amount": 100},
-	"Compresor T2": {"type": "building_count", "building": "Compresor", "amount": 50},
-	"Void Generator": {"type": "building_count", "building": "Constructor", "amount": 5},
+	"Sifón T2": {"type": "building_count", "building": "Sifón", "amount": 12},
+	"Prisma Recto T2": {"type": "building_count", "building": "Prisma Recto", "amount": 48},
+	"Prisma Angular T2": {"type": "building_count", "building": "Prisma Angular", "amount": 48},
+	"Compresor T2": {"type": "building_count", "building": "Compresor", "amount": 9},
+	"Void Generator": {"type": "building_count", "building": "Constructor", "amount": 3},
+	# Fabricador Hadrón: Fusionador (tech) + 4 Constructores colocados
+	"Fabricador Hadrón": {"type": "building_count", "building": "Constructor", "amount": 4},
 }
 
 # Texto para el jugador: cómo conseguir cada objetivo (F2).
@@ -50,11 +53,12 @@ var goal_hints = {
 	"Compresor": "",
 	"Fusionador": "Producir 5 Estabilidad condensada: coloca Compresores conectados a Sifones; cada 10 pulsos un Compresor añade 1 al inventario.",
 	"Constructor": "Producir 1 Up-Quark: desbloquea primero Fusionador, luego Fabricador Hadrón; el Hadrón produce Up-Quark.",
-	"Sifón T2": "Coloca 20 Sifones T1 en el mundo.",
-	"Prisma Recto T2": "Coloca 100 Prismas Rectos T1 en el mundo.",
-	"Prisma Angular T2": "Coloca 100 Prismas Angulares T1 en el mundo.",
-	"Compresor T2": "Coloca 50 Compresores T1 en el mundo.",
-	"Void Generator": "Coloca 5 Constructores en el mundo.",
+	"Fabricador Hadrón": "Requiere Fusionador (tech). Además: coloca 4 Constructores en el mundo.",
+	"Sifón T2": "Coloca 12 Sifones T1 en el mundo.",
+	"Prisma Recto T2": "Coloca 48 Prismas Rectos T1 en el mundo.",
+	"Prisma Angular T2": "Coloca 48 Prismas Angulares T1 en el mundo.",
+	"Compresor T2": "Coloca 9 Compresores T1 en el mundo.",
+	"Void Generator": "Coloca 3 Constructores en el mundo.",
 }
 
 func _ready():

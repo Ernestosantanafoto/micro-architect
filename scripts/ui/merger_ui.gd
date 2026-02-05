@@ -120,11 +120,11 @@ func actualizar_vista():
 	var req_e_cond: int
 	var req_c_cond: int
 	if es_up:
-		req_e_cond = GameConstants.MERGER_COSTO_CHARGE / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
-		req_c_cond = GameConstants.MERGER_COSTO_STABILITY / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+		req_e_cond = GameConstants.MERGER_COSTO_UP_STABILITY / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+		req_c_cond = GameConstants.MERGER_COSTO_UP_CHARGE / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
 	else:
-		req_e_cond = GameConstants.MERGER_COSTO_STABILITY / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
-		req_c_cond = GameConstants.MERGER_COSTO_CHARGE / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+		req_e_cond = GameConstants.MERGER_COSTO_DOWN_STABILITY / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
+		req_c_cond = GameConstants.MERGER_COSTO_DOWN_CHARGE / GameConstants.UNIDADES_COMPRIMIDAS_POR_UNIDAD
 	if lbl_e:
 		lbl_e.text = "E: %d / %d" % [v_cond, req_e_cond]
 		lbl_e.add_theme_color_override("font_color", GameConstants.COLOR_STABILITY)

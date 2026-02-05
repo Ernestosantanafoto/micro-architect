@@ -95,13 +95,13 @@ func verificar_recetas():
 	var key_charg = GameConstants.PREFIJO_COMPRIMIDO + GameConstants.RECURSO_CHARGE
 	var v = buffer.get(key_stab, 0)
 	var a = buffer.get(key_charg, 0)
-	# Solo fusionar el producto elegido por el jugador (UP o DOWN)
+	# Solo fusionar el producto elegido por el jugador (UP o DOWN). Costes por spec: Up 150+150, Down 120+180.
 	if producto_objetivo == GameConstants.RECURSO_DOWN_QUARK:
-		if v >= GameConstants.MERGER_COSTO_STABILITY and a >= GameConstants.MERGER_COSTO_CHARGE:
-			iniciar_fusion(GameConstants.RECURSO_DOWN_QUARK, GameConstants.MERGER_COSTO_STABILITY, GameConstants.MERGER_COSTO_CHARGE, GameConstants.COLOR_DOWN_QUARK)
+		if v >= GameConstants.MERGER_COSTO_DOWN_STABILITY and a >= GameConstants.MERGER_COSTO_DOWN_CHARGE:
+			iniciar_fusion(GameConstants.RECURSO_DOWN_QUARK, GameConstants.MERGER_COSTO_DOWN_STABILITY, GameConstants.MERGER_COSTO_DOWN_CHARGE, GameConstants.COLOR_DOWN_QUARK)
 	elif producto_objetivo == GameConstants.RECURSO_UP_QUARK:
-		if v >= GameConstants.MERGER_COSTO_CHARGE and a >= GameConstants.MERGER_COSTO_STABILITY:
-			iniciar_fusion(GameConstants.RECURSO_UP_QUARK, GameConstants.MERGER_COSTO_CHARGE, GameConstants.MERGER_COSTO_STABILITY, GameConstants.COLOR_UP_QUARK)
+		if v >= GameConstants.MERGER_COSTO_UP_STABILITY and a >= GameConstants.MERGER_COSTO_UP_CHARGE:
+			iniciar_fusion(GameConstants.RECURSO_UP_QUARK, GameConstants.MERGER_COSTO_UP_STABILITY, GameConstants.MERGER_COSTO_UP_CHARGE, GameConstants.COLOR_UP_QUARK)
 
 func iniciar_fusion(producto: String, costo_v: int, costo_a: int, color: Color):
 	procesando = true
