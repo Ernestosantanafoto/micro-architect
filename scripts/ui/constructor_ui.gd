@@ -16,8 +16,8 @@ var constructor_activo: Node3D = null
 @onready var scroll_lista = %ScrollContainer
 @onready var btn_reclamar = %BotonReclamar
 
-const ALTURA_POR_FILA := 28
-const ALTURA_MAX_LISTA := 200
+const ALTURA_POR_FILA := 26
+const ALTURA_MAX_LISTA := 140
 
 func _ready():
 	visible = false

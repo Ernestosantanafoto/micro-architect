@@ -25,6 +25,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VentanaFlotante/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="CenterTitulo" type="CenterContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -70,6 +71,7 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
+size_flags_vertical = 0
 
 [node name="ListaRecursos" type="VBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
