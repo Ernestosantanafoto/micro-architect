@@ -38,6 +38,10 @@ Todos los cambios notables del proyecto se documentan aquí.
   Cerrado: 2025-02-03  
   - GameConstants RECETAS Constructor: inputs 40/40 → 5/5. 9_RECETAS.md actualizado.
 
+- **[#23](https://github.com/Ernestosantanafoto/micro-architect/issues/23) – Bug: Audio briefly plays on new game start despite mute/minimum volume**  
+  Cerrado: 2025-02-03  
+  - MusicManager: aplicar volumen/mute antes de play_random_song(); _fade_to_track respeta mute (target_db -80 si muted).
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

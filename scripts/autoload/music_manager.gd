@@ -15,10 +15,11 @@ func _ready():
 	players = [p1, p2]
 	_load_mute_from_config()
 	_load_volume_from_config()
+	# Aplicar volumen/mute antes de cualquier reproducción para evitar glitch al iniciar
+	_apply_volume()
 	await get_tree().process_frame
 	if playlist.size() > 0:
 		play_random_song()
-	_apply_volume()
 
 func set_volume(val: float) -> void:
 	music_volume = clampf(val, 0.0, 1.0)
@@ -88,7 +89,7 @@ func _fade_to_track(stream: AudioStream):
 	p_new.volume_db = -80 
 	p_new.play()
 	
-	var target_db := _volume_to_db()
+	var target_db := -80.0 if muted else _volume_to_db()
 	var t = create_tween().set_parallel(true)
 	t.tween_property(p_old, "volume_db", -80, 3.0) 
 	t.tween_property(p_new, "volume_db", target_db, 3.0) 
