@@ -59,6 +59,18 @@ func _process(_delta: float) -> void:
 		return
 	_reaplicar_dim_elementos_volatiles()
 
+func _unhandled_input(event: InputEvent) -> void:
+	# P: pausar/reanudar (misma lógica que el botón PAUSA)
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_P:
+		get_tree().paused = not get_tree().paused
+		var vbox = get_node_or_null("MenuDropdownPanel/MenuDropdown")
+		if vbox:
+			var btn_pausa = vbox.get_node_or_null("BtnPausa") as Button
+			if btn_pausa:
+				_actualizar_texto_pausa(btn_pausa)
+		get_viewport().set_input_as_handled()
+		return
+
 func _input(event: InputEvent) -> void:
 	# Clic fuera del menú RECURSOS (dropdown BtnRecursos): cerrar y quitar dim
 	var panel = get_node_or_null("RecursosDropdownPanel")

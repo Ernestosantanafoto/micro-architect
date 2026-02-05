@@ -134,6 +134,7 @@ var help_content: Dictionary:
 [b]Sistema:[/b]
 • F1: Abrir/cerrar esta ayuda
 • ESC: Abrir menú de pausa
+• P: Pausar/reanudar
 • GUARDAR: Guardar partida actual
 """,
 	
