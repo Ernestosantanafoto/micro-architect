@@ -35,7 +35,8 @@ const LAYER_EDIFICIOS = 4
 # --- CÁMARA ---
 const CAMARA_SENSIBILIDAD = 0.05
 const CAMARA_INCLINACION_X = -80.0
-const CAMARA_ZOOM_INICIAL = 15.0
+## Zoom al iniciar nueva partida (más alejado = vista más amplia). Cargar partida restaura el zoom guardado.
+const CAMARA_ZOOM_INICIAL = 40.0
 const CAMARA_ZOOM_MIN = 15.0
 const CAMARA_ZOOM_MAX = 200.0
 const CAMARA_ZOOM_PASO = 3.0

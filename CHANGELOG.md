@@ -82,6 +82,11 @@ Todos los cambios notables del proyecto se documentan aquí.
   - main_game_3d: VignetteLayer (layer -1) con ColorRect y ShaderMaterial; debajo de UI.
   - vignette_layer.gd: radios según zoom — cercano (suelo) casi inexistente (solo márgenes), lejano un poco más amplia; transición smoothstep.
 
+- **[#30](https://github.com/Ernestosantanafoto/micro-architect/issues/30) – Feature: Adjust initial zoom level and persist zoom on save**  
+  Cerrado: 2025-02-03  
+  - GameConstants: CAMARA_ZOOM_INICIAL 15 → 40 (nueva partida más alejada, vista más amplia).
+  - Zoom ya se persistía al guardar/cargar (SaveSystem cam.s, world_generator _posicionar_camara).
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**
