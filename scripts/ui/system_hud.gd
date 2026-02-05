@@ -106,9 +106,14 @@ func _estilizar_botones_paneles():
 		for c in menu_drop.get_children():
 			if c is BaseButton:
 				botones.append(c)
+	var btn_menu = get_node_or_null("PanelSistema/HBoxContainer/BtnMenu")
 	for btn in botones:
 		if btn and btn is BaseButton:
-			(btn as Control).custom_minimum_size = Vector2(90, 56)
+			# Botón MENÚ: mismo ancho que los del dropdown (160px) para que no se vea pequeño
+			if btn == btn_menu:
+				(btn as Control).custom_minimum_size = Vector2(160, 56)
+			else:
+				(btn as Control).custom_minimum_size = Vector2(90, 56)
 			(btn as BaseButton).add_theme_stylebox_override("normal", estilo_normal.duplicate())
 			(btn as BaseButton).add_theme_stylebox_override("hover", estilo_hover.duplicate())
 			(btn as BaseButton).add_theme_stylebox_override("pressed", estilo_pressed.duplicate())

@@ -178,7 +178,8 @@ text = "MENU"
 [node name="MenuDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
 visible = false
 layout_mode = 0
-offset_right = 160.0
+offset_left = 20.0
+offset_right = 180.0
 offset_bottom = 380.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
