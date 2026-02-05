@@ -115,4 +115,4 @@ El Constructor usa exactamente las recetas y tiempos documentados en las tablas 
 - [x] Contadores «colocados» para desbloqueos
 - [x] Condiciones «en inventario» (Fusionador, Constructor)
 
-*Documento alineado con el recipe book de referencia del proyecto.*
+*Documento alineado con el recipe book de referencia del proyecto. Documentación de costes, tiempos y desbloqueos completada.*
