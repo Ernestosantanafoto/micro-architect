@@ -19,19 +19,19 @@ var help_content: Dictionary:
 		return {
 	"Recursos": """[b]RECURSOS DE ENERGÍA[/b]
 
-🔋 Estabilidad [color=%s]E[/color] — Energía base
+[color=%s]🔋 Estabilidad[/color] — Energía base
    • Se extrae de losetas con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-⚡ Carga [color=%s]C[/color] — Energía base
+[color=%s]⚡ Carga[/color] — Energía base
    • Se extrae de losetas con Sifones
    • Velocidad: 1 unidad cada 5 ticks
 
-💠 Estabilidad Condensada [color=%s]E[/color] — Energía condensada
+[color=%s]💠 Estabilidad Condensada[/color] — Energía condensada
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
 
-⚗️ Carga Condensada [color=%s]C[/color] — Energía condensada
+[color=%s]⚗️ Carga Condensada[/color] — Energía condensada
    • Se crea con Compresores (10:1 ratio)
    • Más valiosa para producción avanzada
 """ % [h_est, h_car, h_est, h_car] +

@@ -221,10 +221,10 @@ func _color_nombre_recurso_bbcode(nombre: String) -> String:
 	var h_est = "#%02x%02x%02x" % [int(c_est.r * 255), int(c_est.g * 255), int(c_est.b * 255)]
 	var h_car = "#%02x%02x%02x" % [int(c_car.r * 255), int(c_car.g * 255), int(c_car.b * 255)]
 	var colores = {
-		"Stability": "[color=%s]Estabilidad E[/color]" % h_est,
-		"Charge": "[color=%s]Carga C[/color]" % h_car,
-		"Compressed-Stability": "[color=%s]Estabilidad Condensada E[/color]" % h_est,
-		"Compressed-Charge": "[color=%s]Carga Condensada C[/color]" % h_car,
+		"Stability": "[color=%s]Estabilidad[/color]" % h_est,
+		"Charge": "[color=%s]Carga[/color]" % h_car,
+		"Compressed-Stability": "[color=%s]Estabilidad Condensada[/color]" % h_est,
+		"Compressed-Charge": "[color=%s]Carga Condensada[/color]" % h_car,
 		"Up-Quark": "[color=#ffff00]UP[/color]",
 		"Down-Quark": "[color=#ff8000]DOWN[/color]"
 	}

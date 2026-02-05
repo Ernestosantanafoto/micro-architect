@@ -121,7 +121,7 @@ func _update_resources(_item_name: String = "", _new_amount: int = -1) -> void:
 		category_label.text = category + ":"
 		category_label.add_theme_font_size_override("font_size", 15)
 		category_label.add_theme_color_override("font_color", category_colors[category])
-		category_label.tooltip_text = "Estabilidad E y Carga C" if category == "ENERGÍA" else ""
+		category_label.tooltip_text = "Estabilidad y Carga" if category == "ENERGÍA" else ""
 		category_label.custom_minimum_size.x = 95
 		resource_container.add_child(category_label)
 		

@@ -311,13 +311,13 @@ const STARTER_PACK = {
 }
 
 # --- FORMATO DE VISUALIZACIÓN (unidades comprimidas, nunca valor expandido) ---
-## Nombre en español para UI: Estabilidad (E), Carga (C), Estabilidad condensada (E), Carga condensada (C).
+## Nombre en español para UI (solo término completo; colores en HUD/paneles).
 func get_nombre_visible_recurso(clave: String) -> String:
 	match clave:
-		"Stability": return "Estabilidad E"
-		"Charge": return "Carga C"
-		"Compressed-Stability": return "Estabilidad Condensada E"
-		"Compressed-Charge": return "Carga Condensada C"
+		"Stability": return "Estabilidad"
+		"Charge": return "Carga"
+		"Compressed-Stability": return "Estabilidad Condensada"
+		"Compressed-Charge": return "Carga Condensada"
 		"Up-Quark": return "UP"
 		"Down-Quark": return "DOWN"
 		_: return clave
