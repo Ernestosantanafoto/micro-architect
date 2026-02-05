@@ -37,22 +37,22 @@ var help_content: Dictionary:
 """ % [h_est, h_car, h_est, h_car] +
 """[b]QUARKS[/b]
 
-[color=#ffff66]UP[/color]
+[color=#ffff66]Up-Quark[/color]
    • Se crea fusionando energías comprimidas
    • Necesario para crear protones
 
-[color=#ffaa44]DOWN[/color]
+[color=#ffaa44]Down-Quark[/color]
    • Se crea fusionando energías comprimidas
    • Necesario para crear neutrones
 
 [b]NUCLEONES[/b]
 
 [color=#e65959]Proton[/color] — Partícula nuclear
-   • Se crea en Fabricador Hadrón: 2 [color=#ffff66]UP[/color] + 1 [color=#ffaa44]DOWN[/color]
+   • Se crea en Fabricador Hadrón: 2 [color=#ffff66]Up-Quarks[/color] + 1 [color=#ffaa44]Down-Quark[/color]
    • Base de los átomos
 
 [color=#b3b3bf]Neutron[/color] — Partícula nuclear
-   • Se crea en Fabricador Hadrón: 1 [color=#ffff66]UP[/color] + 2 [color=#ffaa44]DOWN[/color]
+   • Se crea en Fabricador Hadrón: 1 [color=#ffff66]Up-Quark[/color] + 2 [color=#ffaa44]Down-Quarks[/color]
    • Junto con protones forman núcleos
 """,
 	"Edificios": """[b]EXTRACTORES[/b]
@@ -90,14 +90,14 @@ var help_content: Dictionary:
    • Mayor velocidad de procesamiento
 
 🔀 [b]Fusionador (Merger)[/b]
-   • Combina 2 energías comprimidas → 1 [color=#ffff66]UP[/color] o [color=#ffaa44]DOWN[/color]
+   • Combina 2 energías comprimidas → 1 [color=#ffff66]Up-Quark[/color] o [color=#ffaa44]Down-Quark[/color]
    • Debe colocarse en loseta roja
 
 ⚛ [b]Fabricador Hadrón[/b]
-   • Convierte [color=#ffff66]UP[/color] y [color=#ffaa44]DOWN[/color] en nucleones
-   • Protón: 2 [color=#ffff66]UP[/color] + 1 [color=#ffaa44]DOWN[/color]
-   • Neutrón: 1 [color=#ffff66]UP[/color] + 2 [color=#ffaa44]DOWN[/color]
-   • Colocar en celda vacía; recibe [color=#ffff66]UP[/color] y [color=#ffaa44]DOWN[/color] por pulsos
+   • Convierte [color=#ffff66]Up-Quarks[/color] y [color=#ffaa44]Down-Quarks[/color] en nucleones
+   • Protón: 2 [color=#ffff66]Up-Quarks[/color] + 1 [color=#ffaa44]Down-Quark[/color]
+   • Neutrón: 1 [color=#ffff66]Up-Quark[/color] + 2 [color=#ffaa44]Down-Quarks[/color]
+   • Colocar en celda vacía; recibe [color=#ffff66]Up-Quark[/color] y [color=#ffaa44]Down-Quark[/color] por pulsos
 
 [b]ESPECIALES[/b]
 
@@ -152,8 +152,8 @@ Construir una cadena de producción completa desde energía básica hasta crear 
 """ % [h_est, h_car, h_est, h_car] +
 """
 
-3. [color=#ffff66]UP[/color] / [color=#ffaa44]DOWN[/color]
-   ↓ [Fusionadores: 2 comprimidas→1 [color=#ffff66]UP[/color] o [color=#ffaa44]DOWN[/color]]
+3. [color=#ffff66]Up-Quark[/color] / [color=#ffaa44]Down-Quark[/color]
+   ↓ [Fusionadores: 2 comprimidas→1 [color=#ffff66]Up-Quark[/color] o [color=#ffaa44]Down-Quark[/color]]
 
 4. [color=#ff6666]Protones/Neutrones[/color]
    ↓ [Fabricador Hadrón: 2U+1D→Protón, 1U+2D→Neutrón]

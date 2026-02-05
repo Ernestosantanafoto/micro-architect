@@ -231,8 +231,8 @@ func _color_nombre_recurso(nombre: String) -> String:
 		"Charge": "[color=%s]Carga[/color]" % h_car,
 		"Compressed-Stability": "[color=%s]Estabilidad Condensada[/color]" % h_est,
 		"Compressed-Charge": "[color=%s]Carga Condensada[/color]" % h_car,
-		"Up-Quark": "[color=#ffff66]UP[/color]",
-		"Down-Quark": "[color=#ffaa44]DOWN[/color]"
+		"Up-Quark": "[color=#ffff66]Up-Quark[/color]",
+		"Down-Quark": "[color=#ffaa44]Down-Quark[/color]"
 	}
 	return colores.get(nombre, nombre)
 

@@ -218,8 +218,8 @@ func _requisito_etiqueta_bbcode(nombre: String) -> String:
 		"Charge": "[color=%s]C:[/color]" % h_car,
 		"Compressed-Stability": "[color=%s]E. Condensada:[/color]" % h_est,
 		"Compressed-Charge": "[color=%s]C. Condensada:[/color]" % h_car,
-		"Up-Quark": "[color=#ffff00]UP:[/color]",
-		"Down-Quark": "[color=#ff8000]DOWN:[/color]"
+		"Up-Quark": "[color=#ffff00]Up-Quark:[/color]",
+		"Down-Quark": "[color=#ff8000]Down-Quark:[/color]"
 	}
 	return etiquetas.get(nombre, nombre + ":")
 
@@ -234,8 +234,8 @@ func _color_nombre_recurso_bbcode(nombre: String) -> String:
 		"Charge": "[color=%s]Carga[/color]" % h_car,
 		"Compressed-Stability": "[color=%s]Estabilidad Condensada[/color]" % h_est,
 		"Compressed-Charge": "[color=%s]Carga Condensada[/color]" % h_car,
-		"Up-Quark": "[color=#ffff00]UP[/color]",
-		"Down-Quark": "[color=#ff8000]DOWN[/color]"
+		"Up-Quark": "[color=#ffff00]Up-Quark[/color]",
+		"Down-Quark": "[color=#ff8000]Down-Quark[/color]"
 	}
 	return colores.get(nombre, nombre)
 

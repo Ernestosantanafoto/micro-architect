@@ -55,8 +55,8 @@ func _ready():
 		opt_tipo.clear()
 		opt_tipo.add_item("Energía Base", 0)
 		opt_tipo.add_item("Comprimida", 1)
-		opt_tipo.add_item("UP", 2)
-		opt_tipo.add_item("DOWN", 3)
+		opt_tipo.add_item("Up-Quark", 2)
+		opt_tipo.add_item("Down-Quark", 3)
 	
 	# 2. Configurar sliders
 	if slider_energia:
@@ -235,7 +235,7 @@ func _actualizar_preview():
 	var energia = slider_energia.value if slider_energia else default_energia
 	var freq = slider_freq.value if slider_freq else default_freq
 	
-	var tipo_texto = ["Energía básica", "Comprimida", "UP", "DOWN"][idx_tipo]
+	var tipo_texto = ["Energía básica", "Comprimida", "Up-Quark", "Down-Quark"][idx_tipo]
 	var color_texto = ["Stability", "Charge"][idx_color]
 	
 	lbl_preview.text = "VISTA PREVIA:\nProducción: %.1f %s/seg\nTipo: %s\nFrecuencia: %d ticks" % [energia, color_texto, tipo_texto, int(freq)]

@@ -16,6 +16,7 @@ const PREFERENCIAS_PATH := "user://settings.cfg"
 const PREF_SECTION_AUDIO := "audio"
 const PREF_KEY_VOLUME := "volume"
 const PREF_KEY_SFX := "sfx_volume"
+const PREF_KEY_MUSIC_VOLUME := "music_volume"
 const PREF_KEY_MUTE := "mute"
 const PREF_SECTION_DISPLAY := "display"
 const PREF_KEY_FULLSCREEN := "fullscreen"
@@ -318,9 +319,17 @@ func get_nombre_visible_recurso(clave: String) -> String:
 		"Charge": return "Carga"
 		"Compressed-Stability": return "Estabilidad Condensada"
 		"Compressed-Charge": return "Carga Condensada"
-		"Up-Quark": return "UP"
-		"Down-Quark": return "DOWN"
+		"Up-Quark": return "Up-Quark"
+		"Down-Quark": return "Down-Quark"
 		_: return clave
+
+## Para listados con cantidad: singular (1) o plural (2+). Ej: "40 Up-Quarks".
+func get_nombre_visible_recurso_cantidad(clave: String, cantidad: int) -> String:
+	if clave == "Up-Quark":
+		return "Up-Quark" if cantidad == 1 else "Up-Quarks"
+	if clave == "Down-Quark":
+		return "Down-Quark" if cantidad == 1 else "Down-Quarks"
+	return get_nombre_visible_recurso(clave)
 
 ## Solo la cifra para mostrar junto al nombre coloreado (evita duplicar "Estabilidad", "Carga", etc. en F2).
 ## Ej: 15 → "15"; 100 Stability → "1 Quark"; 50 Compressed → "5"; Up-Quark 1 → "1".
