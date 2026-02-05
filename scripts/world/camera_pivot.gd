@@ -33,6 +33,7 @@ func _process(delta: float) -> void:
 	if _debe_ignorar_teclado_camara():
 		_set_grid_zoom_fade(camera.size)
 		_actualizar_visibilidad_particulas_por_zoom()
+		_actualizar_musica_muffle_zoom()
 		return
 
 	# WASD: movimiento lineal por teclado (sin depender de UI del ratón)
@@ -57,6 +58,23 @@ func _process(delta: float) -> void:
 
 	_set_grid_zoom_fade(camera.size)
 	_actualizar_visibilidad_particulas_por_zoom()
+	_actualizar_musica_muffle_zoom()
+
+## Zoom extremo: música se apaga de forma progresiva (low-pass + ligera bajada de volumen).
+func _actualizar_musica_muffle_zoom() -> void:
+	var umbral = GameConstants.CAMARA_ZOOM_UMBRAL_MUSICA_MUFFLE
+	if camera.size <= umbral:
+		if MusicManager:
+			MusicManager.set_zoom_muffle(0.0)
+		return
+	var rango = float(GameConstants.CAMARA_ZOOM_MAX - umbral)
+	if rango <= 0.0:
+		return
+	var t = clampf((camera.size - umbral) / rango, 0.0, 1.0)
+	# Smoothstep: transición más progresiva (suave al inicio y al final)
+	var t_smooth = t * t * (3.0 - 2.0 * t)
+	if MusicManager:
+		MusicManager.set_zoom_muffle(t_smooth)
 
 ## Ajusta zoom (y posición) para que el rectángulo en XZ quepa en pantalla.
 ## Solo aleja el zoom, nunca acerca: mantiene la distancia máxima alcanzada.

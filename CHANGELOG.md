@@ -42,6 +42,12 @@ Todos los cambios notables del proyecto se documentan aquí.
   Cerrado: 2025-02-03  
   - MusicManager: aplicar volumen/mute antes de play_random_song(); _fade_to_track respeta mute (target_db -80 si muted).
 
+- **[#24](https://github.com/Ernestosantanafoto/micro-architect/issues/24) – Feature: Music muffle/fade during extreme zoom out**  
+  Cerrado: 2025-02-03  
+  - MusicManager: bus Music con AudioEffectLowPassFilter, set_zoom_muffle(); ligera bajada de volumen con zoom.
+  - camera_pivot: _actualizar_musica_muffle_zoom() con umbral 38 y smoothstep para transición progresiva.
+  - GameConstants: CAMARA_ZOOM_UMBRAL_MUSICA_MUFFLE.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

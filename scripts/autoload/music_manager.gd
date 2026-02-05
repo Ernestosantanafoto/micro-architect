@@ -10,9 +10,17 @@ var music_volume : float = 1.0
 var players : Array = []
 var active_player : int = 0
 
+const BUS_MUSIC := "Music"
+const MUFFLE_CUTOFF_MIN := 400.0   # Hz cuando zoom máximo (muy apagado)
+const MUFFLE_CUTOFF_MAX := 20000.0 # Hz cuando zoom normal (sin filtro efectivo)
+const MUFFLE_VOLUME_MIN := 0.65   # Factor volumen cuando zoom máximo (ligera bajada)
+
+var _zoom_muffle_normalized := 0.0
+
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS 
 	players = [p1, p2]
+	_ensure_music_bus()
 	_load_mute_from_config()
 	_load_volume_from_config()
 	# Aplicar volumen/mute antes de cualquier reproducción para evitar glitch al iniciar
@@ -36,6 +44,23 @@ func toggle_muted() -> void:
 
 func is_muted() -> bool:
 	return muted
+
+func _ensure_music_bus() -> void:
+	var bus_idx = -1
+	for i in range(AudioServer.bus_count):
+		if AudioServer.get_bus_name(i) == BUS_MUSIC:
+			bus_idx = i
+			break
+	if bus_idx < 0:
+		AudioServer.add_bus(AudioServer.bus_count)
+		bus_idx = AudioServer.bus_count - 1
+		AudioServer.set_bus_name(bus_idx, BUS_MUSIC)
+		var lowpass = AudioEffectLowPassFilter.new()
+		lowpass.cutoff_hz = MUFFLE_CUTOFF_MAX
+		AudioServer.add_bus_effect(bus_idx, lowpass, 0)
+	for p in players:
+		if p is AudioStreamPlayer:
+			p.bus = BUS_MUSIC
 
 func _load_mute_from_config() -> void:
 	var cfg = ConfigFile.new()
@@ -65,12 +90,27 @@ func _volume_to_db() -> float:
 	return linear_to_db(music_volume)
 
 func _apply_volume() -> void:
-	var db := _volume_to_db() if not muted else -80.0
-	for i in players.size():
-		if muted:
+	if muted:
+		for i in players.size():
 			players[i].volume_db = -80.0
-		else:
-			players[i].volume_db = db if (i == active_player) else -80.0
+		return
+	var base_db := _volume_to_db()
+	var vol_mult := 1.0 - _zoom_muffle_normalized * (1.0 - MUFFLE_VOLUME_MIN)
+	var linear_base := db_to_linear(base_db) if base_db > -80.0 else 0.0
+	var db := linear_to_db(linear_base * vol_mult) if linear_base > 0.0 else -80.0
+	for i in players.size():
+		players[i].volume_db = db if (i == active_player) else -80.0
+
+## 0 = sin apagar, 1 = máximo apagado (zoom extremo). Afecta low-pass y ligera bajada de volumen.
+func set_zoom_muffle(normalized: float) -> void:
+	_zoom_muffle_normalized = clampf(normalized, 0.0, 1.0)
+	var bus_idx = AudioServer.get_bus_index(BUS_MUSIC)
+	if bus_idx >= 0 and AudioServer.get_bus_effect_count(bus_idx) > 0:
+		var eff = AudioServer.get_bus_effect(bus_idx, 0)
+		if eff is AudioEffectLowPassFilter:
+			eff.cutoff_hz = lerpf(MUFFLE_CUTOFF_MAX, MUFFLE_CUTOFF_MIN, _zoom_muffle_normalized)
+	if not muted:
+		_apply_volume()
 
 func play_random_song():
 	var next_index = randi() % playlist.size()
