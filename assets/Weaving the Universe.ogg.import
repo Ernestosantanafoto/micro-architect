@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://khyd1abswqi6"
+path="res://.godot/imported/Weaving the Universe.ogg-033e15d63a3bc3d5f8d002dc5ea3212b.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/Weaving the Universe.ogg"
+dest_files=["res://.godot/imported/Weaving the Universe.ogg-033e15d63a3bc3d5f8d002dc5ea3212b.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

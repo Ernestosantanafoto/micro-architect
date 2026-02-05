@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://byb1t6u1jxwrp"
+path="res://.godot/imported/Quark Synthesis.ogg-f64723b163111a968b53676e7c02546c.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/Quark Synthesis.ogg"
+dest_files=["res://.godot/imported/Quark Synthesis.ogg-f64723b163111a968b53676e7c02546c.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

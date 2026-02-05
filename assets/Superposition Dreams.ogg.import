@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bqiw01mhcnmic"
+path="res://.godot/imported/Superposition Dreams.ogg-4b2629a57c02178e8c7c44cbf0c2f7af.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/Superposition Dreams.ogg"
+dest_files=["res://.godot/imported/Superposition Dreams.ogg-4b2629a57c02178e8c7c44cbf0c2f7af.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
