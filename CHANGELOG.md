@@ -76,6 +76,12 @@ Todos los cambios notables del proyecto se documentan aquí.
   - construction_manager: no recoger edificio con meta starter_constructor.
   - selection_manager: no reembolsar ni borrar edificio con meta starter_constructor.
 
+- **[#29](https://github.com/Ernestosantanafoto/micro-architect/issues/29) – Feature: Radial edge fog to fade game world to black**  
+  Cerrado: 2025-02-03  
+  - vignette.gdshader: degradado radial (centro visible, bordes negros) con aspect ratio.
+  - main_game_3d: VignetteLayer (layer -1) con ColorRect y ShaderMaterial; debajo de UI.
+  - vignette_layer.gd: radios según zoom — cercano (suelo) casi inexistente (solo márgenes), lejano un poco más amplia; transición smoothstep.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**
