@@ -16,6 +16,7 @@ const PREFERENCIAS_PATH := "user://settings.cfg"
 const PREF_SECTION_AUDIO := "audio"
 const PREF_KEY_VOLUME := "volume"
 const PREF_KEY_SFX := "sfx_volume"
+const PREF_KEY_MUTE := "mute"
 const PREF_SECTION_DISPLAY := "display"
 const PREF_KEY_FULLSCREEN := "fullscreen"
 

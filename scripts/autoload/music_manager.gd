@@ -12,6 +12,7 @@ var active_player : int = 0
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS 
 	players = [p1, p2]
+	_load_mute_from_config()
 	await get_tree().process_frame
 	if playlist.size() > 0:
 		play_random_song()
@@ -20,9 +21,21 @@ func _ready():
 func toggle_muted() -> void:
 	muted = not muted
 	_apply_mute()
+	_save_mute_to_config()
 
 func is_muted() -> bool:
 	return muted
+
+func _load_mute_from_config() -> void:
+	var cfg = ConfigFile.new()
+	if cfg.load(GameConstants.PREFERENCIAS_PATH) == OK:
+		muted = cfg.get_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUTE, false)
+
+func _save_mute_to_config() -> void:
+	var cfg = ConfigFile.new()
+	var _err = cfg.load(GameConstants.PREFERENCIAS_PATH)
+	cfg.set_value(GameConstants.PREF_SECTION_AUDIO, GameConstants.PREF_KEY_MUTE, muted)
+	cfg.save(GameConstants.PREFERENCIAS_PATH)
 
 func _apply_mute() -> void:
 	for i in players.size():
