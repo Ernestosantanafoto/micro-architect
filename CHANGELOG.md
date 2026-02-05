@@ -93,6 +93,10 @@ Todos los cambios notables del proyecto se documentan aquí.
   - camera_pivot: posición inicial (0,0,10); centrar_en_origen() tween suave a (0,0,10).
   - main_game_3d: botón CENTRAR en PanelSistema (junto a MENU); system_hud conecta y llama centrar_en_origen.
 
+- **[#32](https://github.com/Ernestosantanafoto/micro-architect/issues/32) – Fix: Move starter Constructor initial position to (-1, -1)**  
+  Cerrado: 2025-02-03  
+  - GlobalInventory: preparar_nueva_partida() — posición del Constructor inicial (1.5,0,1.5) → (0.5,0,0.5); esquina en celda (-1,-1), centro en (0,0).
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**
