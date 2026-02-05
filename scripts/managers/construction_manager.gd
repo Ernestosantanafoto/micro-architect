@@ -27,17 +27,8 @@ func seleccionar_para_construir(escena: PackedScene, nombre_item: String):
 		_aplicar_stats_god_siphon_duplicado = true
 		_god_siphon_stats_duplicado = copia_stats
 	
-	# Verificar stock (excepto en modo debug o GodSiphon)
+	# Permitir selección siempre (inventario se comprueba y consume al colocar)
 	var es_debug = (nombre_item == "GodSiphon") or GameConstants.DEBUG_MODE
-	if not es_debug:
-		if GlobalInventory.get_amount(nombre_item) <= 0:
-			if GameConstants.DEBUG_MODE:
-				print("[CM] Sin stock de: ", nombre_item)
-			return
-
-	# Consumir del inventario
-	if not es_debug:
-		GlobalInventory.consume_item(nombre_item, 1)
 
 	nombre_item_en_mano = nombre_item
 	fantasma = escena.instantiate()
@@ -67,7 +58,15 @@ func seleccionar_para_construir(escena: PackedScene, nombre_item: String):
 # --- CONFIRMACIÓN Y COLOCACIÓN ---
 func confirmar_colocacion():
 	if not fantasma: return
-	
+
+	# En modo normal, comprobar inventario y consumir al colocar (no al seleccionar)
+	var es_debug = (nombre_item_en_mano == "GodSiphon") or GameConstants.DEBUG_MODE
+	if not es_debug:
+		if GlobalInventory.get_amount(nombre_item_en_mano) <= 0:
+			_feedback_colocacion_invalida()
+			return
+		GlobalInventory.consume_item(nombre_item_en_mano, 1)
+
 	_limpiar_materiales_fantasma(fantasma)
 	
 	# Void Generator: colocar en estado latente (clic derecho = activar, clic izquierdo = recoger)

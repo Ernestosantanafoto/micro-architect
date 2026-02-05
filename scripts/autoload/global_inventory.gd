@@ -87,10 +87,12 @@ func cargar_starter_pack():
 	for item in GameConstants.STARTER_PACK:
 		set_amount(item, GameConstants.STARTER_PACK[item])
 
-## Nueva partida: inventario a 0 y Constructor inicial precolocado con su esquina en celda (-1,-1).
+## Nueva partida: inventario = STARTER_PACK y Constructor inicial precolocado con su esquina en celda (-1,-1).
 ## Centro en celda (0,0) → posición mundo (0.5, 0, 0.5); 1 tile izquierda y 1 arriba del origen.
 func preparar_nueva_partida():
 	limpiar_inventario()
+	for item in GameConstants.STARTER_PACK:
+		set_amount(item, GameConstants.STARTER_PACK[item])
 	edificios_para_reconstruir.append({
 		"scene": "res://scenes/buildings/constructor.tscn",
 		"pos": {"x": 0.5, "y": 0.0, "z": 0.5},

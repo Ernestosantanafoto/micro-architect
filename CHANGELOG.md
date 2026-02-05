@@ -12,6 +12,15 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 *(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
 
+- **HUD y menús: cierre unificado y sin DIM en barra central**  
+  Cerrado: 2025-02-03  
+  - Regla única: todos los menús se cierran al clic fuera o al clic en el botón que los abrió; si se cierra por el mismo botón se consume el clic.
+  - system_hud: MENÚ y RECURSOS (Infraestructura) aplican la regla; al cerrar por mismo botón se marca input como manejado.
+  - hud_manager: cierre por fuera o por el botón de la categoría activa; no consumir clic cuando es en MENÚ, INFRAEST o otra categoría para que abran en el mismo clic.
+  - Ruta corregida a CanvasLayer: raíz = get_parent().get_parent().get_parent() (MainContainer → InventoryHUD → HUD → raíz) para detectar clic en PanelSistema/PanelInfraestructura.
+  - DIM solo en menú INFRAESTRUCTURA: eliminadas _avisar_dim_menu_edificios(true/false) del menú del HUD central (SIFONES, PRISMAS, etc.).
+  - Etiquetas: MANIPULA→GESTION, CONSTR→CREACION; Compresor desbloqueado al inicio; nueva partida aplica STARTER_PACK; ancho botones barra +35px.
+
 - **[#36](https://github.com/Ernestosantanafoto/micro-architect/issues/36) – UI: Menu button width should match upper buttons**  
   Cerrado: 2025-02-03  
   - Panel lateral (PanelSistema y MenuDropdownPanel) con fondo y margen invisibles (StyleBoxEmpty).

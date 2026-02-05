@@ -72,20 +72,40 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 func _input(event: InputEvent) -> void:
-	# Clic fuera del menú RECURSOS (dropdown BtnRecursos): cerrar y quitar dim
-	var panel = get_node_or_null("RecursosDropdownPanel")
-	if not panel or not panel.visible:
+	if not event is InputEventMouseButton or not event.pressed:
 		return
-	if event is InputEventMouseButton and event.pressed:
-		var btn = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos")
-		if panel and btn and panel is Control and btn is Control:
-			var pos = (panel as Control).get_global_mouse_position()
-			if not (panel as Control).get_global_rect().has_point(pos) and not (btn as Control).get_global_rect().has_point(pos):
-				panel.visible = false
-				_recursos_panel_abierto = false
-				_quitar_aislamiento_visual()
+	var ref := get_node_or_null("PanelSistema") as Control
+	var pos := ref.get_global_mouse_position() if ref else Vector2.ZERO
+
+	var btn_menu = get_node_or_null("PanelSistema/HBoxContainer/BtnMenu") as Control
+	var btn_centrar = get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar") as Control
+	var btn_rec = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos") as Control
+
+	# Regla única: cada menú se cierra si picas fuera de él O en el botón que lo abrió. Si cierras por el mismo botón, consumes el clic.
+
+	# Menú RECURSOS (Infraestructura): cerrar si fuera del panel O clic en INFRAEST
+	var panel_rec = get_node_or_null("RecursosDropdownPanel") as Control
+	if panel_rec and panel_rec.visible:
+		var fuera_panel = not panel_rec.get_global_rect().has_point(pos)
+		var en_btn_rec = btn_rec and btn_rec.get_global_rect().has_point(pos)
+		if fuera_panel or en_btn_rec:
+			panel_rec.visible = false
+			_recursos_panel_abierto = false
+			_quitar_aislamiento_visual()
+			if en_btn_rec:
 				get_viewport().set_input_as_handled()
-		return
+			return
+
+	# Menú MENÚ/CENTRAR: cerrar si fuera del panel O clic en MENÚ/CENTRAR
+	var panel_menu = get_node_or_null("MenuDropdownPanel") as Control
+	if panel_menu and panel_menu.visible:
+		var dentro_panel = panel_menu.get_global_rect().has_point(pos)
+		var en_boton_menu = (btn_menu and btn_menu.get_global_rect().has_point(pos)) or (btn_centrar and btn_centrar.get_global_rect().has_point(pos))
+		if not dentro_panel or en_boton_menu:
+			panel_menu.visible = false
+			if en_boton_menu:
+				get_viewport().set_input_as_handled()
+			return
 
 func _ocultar_barra_superior():
 	var hud = get_parent().get_node_or_null("HUD")
@@ -390,6 +410,18 @@ func _on_recursos_item_pressed(recipe_name: String):
 		return
 	_recursos_highlight_recipe = recipe_name
 	_aplicar_aislamiento_visual()
+	# Entrar en modo colocación: seleccionar edificio para construir (permite 0 inventario; se comprueba al colocar)
+	if not GameConstants.RECETAS.has(recipe_name):
+		return
+	var receta = GameConstants.RECETAS[recipe_name]
+	if not receta.get("output_scene"):
+		return
+	var escena = load(receta["output_scene"]) as PackedScene
+	if not escena:
+		return
+	var cm = get_parent().find_child("ConstructionManager", true, false)
+	if cm and cm.has_method("seleccionar_para_construir"):
+		cm.seleccionar_para_construir(escena, recipe_name)
 
 func _aplicar_dim_completo_sin_highlight() -> void:
 	_recursos_highlight_recipe = ""

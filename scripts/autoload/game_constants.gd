@@ -279,8 +279,8 @@ const RECETAS = {
 const HUD_CATEGORIAS = {
 	"SIFONES": ["Sifón", "Sifón T2"],
 	"PRISMAS": ["Prisma Recto", "Prisma Angular", "Prisma Recto T2", "Prisma Angular T2"],
-	"MANIPULA": ["Compresor", "Compresor T2", "Fusionador", "Fabricador Hadrón", "Void Generator"],
-	"CONSTR": ["Constructor"]
+	"GESTION": ["Compresor", "Compresor T2", "Fusionador", "Fabricador Hadrón", "Void Generator"],
+	"CREACION": ["Constructor"]
 }
 ## Etiqueta corta para botón (si no existe, se usa el nombre de RECETA).
 const HUD_LABELS = {

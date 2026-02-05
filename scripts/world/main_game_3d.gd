@@ -276,8 +276,10 @@ func _seleccionar_edificio_por_indice(indice: int):
 	var nombre_item = HOTKEY_EDIFICIOS[indice]
 	if not GameConstants.RECETAS.has(nombre_item):
 		return
+	if TechTree and not TechTree.is_unlocked(nombre_item):
+		return
 	var receta = GameConstants.RECETAS[nombre_item]
-	if not receta.has("output_scene") or GlobalInventory.get_amount(nombre_item) <= 0:
+	if not receta.has("output_scene"):
 		return
 	var cm = find_child("ConstructionManager", true, false)
 	if cm and cm.has_method("seleccionar_para_construir"):
