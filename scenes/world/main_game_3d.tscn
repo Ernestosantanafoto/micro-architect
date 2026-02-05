@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=23 format=3 uid="uid://cwhvblny03sya"]
 
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
@@ -36,6 +36,14 @@ shader_parameter/grid_color = Color(0, 0.16461393, 0.3610067, 1)
 shader_parameter/grid_density = 1.0
 shader_parameter/line_thickness = 0.045
 shader_parameter/zoom_fade = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_macro"]
+render_priority = 0
+shader = ExtResource("1_ibdhq")
+shader_parameter/grid_color = Color(0.92, 0.82, 0.45, 1)
+shader_parameter/grid_density = 0.111111
+shader_parameter/line_thickness = 0.04
+shader_parameter/zoom_fade = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recursos"]
 content_margin_left = 16.0
@@ -84,6 +92,10 @@ near = 0.015
 mesh = SubResource("PlaneMesh_ypd6b")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("ShaderMaterial_ypd6b")
+
+[node name="GridMacro" type="MeshInstance3D" parent="CameraPivot"]
+mesh = SubResource("PlaneMesh_ypd6b")
+surface_material_override/0 = SubResource("ShaderMaterial_macro")
 
 [node name="SelectionManager" type="Node" parent="."]
 script = ExtResource("14_selm")

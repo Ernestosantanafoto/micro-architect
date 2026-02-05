@@ -24,7 +24,7 @@ void fragment() {
 
 	ALBEDO = grid_color;
 
-	// Pulso 50%–100% de opacidad
-	float pulse = 0.5 + 0.5 * sin(TIME * 1.0);
-	ALPHA = line * 0.8 * pulse * (1.0 - zoom_fade);
+	// Pulso entre visibilidad mínima y máxima (siempre se ve un poco)
+	float pulse = 0.4 + 0.45 * (0.5 + 0.5 * sin(TIME * 1.0));
+	ALPHA = line * 0.85 * pulse * (1.0 - zoom_fade);
 }

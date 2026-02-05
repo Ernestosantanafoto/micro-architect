@@ -394,6 +394,9 @@ func _oscurecer_y_ocultar_grilla_y_tiles(ocultar: bool) -> void:
 			if grid_plane.visible:
 				_grid_plane_visible = true
 			grid_plane.visible = false
+		var grid_macro = camera_pivot.get_node_or_null("GridMacro")
+		if grid_macro and grid_macro is MeshInstance3D and ocultar:
+			grid_macro.visible = false
 	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
 	if gridmap and gridmap is Node3D and ocultar:
 		if gridmap.visible:
@@ -407,6 +410,9 @@ func _restaurar_visibilidad_grilla_y_tiles() -> void:
 		var grid_plane = camera_pivot.get_node_or_null("MeshInstance3D")
 		if grid_plane and grid_plane is MeshInstance3D:
 			grid_plane.visible = true
+		var grid_macro = camera_pivot.get_node_or_null("GridMacro")
+		if grid_macro and grid_macro is MeshInstance3D:
+			grid_macro.visible = true
 	var gridmap = get_tree().get_first_node_in_group("MapaPrincipal")
 	if gridmap and gridmap is Node3D:
 		gridmap.visible = true

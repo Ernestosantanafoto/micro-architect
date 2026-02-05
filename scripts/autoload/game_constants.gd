@@ -45,6 +45,9 @@ const CAMARA_VELOCIDAD_WASD := 40.0
 const CAMARA_ZOOM_VELOCIDAD_QE := 50.0
 ## Por encima de este size (≈33% del rango 5–200) se ocultan las partículas; al acercar de nuevo reaparecen.
 const CAMARA_ZOOM_UMBRAL_OCULTAR_PARTICULAS := 69.0
+## Grid dual: transición detail→macro entre este size y GRID_MACRO_ZOOM_END.
+const CAMARA_ZOOM_UMBRAL_GRID_MACRO := 69.0
+const CAMARA_ZOOM_GRID_MACRO_END := 88.0
 ## Por debajo de este size la música suena normal; por encima se apaga de forma progresiva (muffle).
 const CAMARA_ZOOM_UMBRAL_MUSICA_MUFFLE := 38.0
 ## Margen extra al encuadrar selección: la cuadrícula nunca toca los bordes (siempre un poco más de espacio).

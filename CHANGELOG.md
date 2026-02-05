@@ -48,6 +48,14 @@ Todos los cambios notables del proyecto se documentan aquí.
   - camera_pivot: _actualizar_musica_muffle_zoom() con umbral 38 y smoothstep para transición progresiva.
   - GameConstants: CAMARA_ZOOM_UMBRAL_MUSICA_MUFFLE.
 
+- **[#25](https://github.com/Ernestosantanafoto/micro-architect/issues/25) – Feature: Dual grid (detail + macro) with zoom transition**  
+  Cerrado: 2025-02-03  
+  - main_game_3d.tscn: nodo GridMacro (MeshInstance3D) con ShaderMaterial dorado, grid 9x9.
+  - GameConstants: CAMARA_ZOOM_UMBRAL_GRID_MACRO (69), CAMARA_ZOOM_GRID_MACRO_END (88).
+  - camera_pivot: _set_grid_zoom_fade() transición smoothstep entre grid detalle (1x1) y macro (9x9).
+  - system_hud: ocultar/restaurar GridMacro en _oscurecer_y_ocultar_grilla_y_tiles y _restaurar_visibilidad_grilla_y_tiles.
+  - main_game_3d.gdshader: pulso de rejillas entre 0.4 y 0.85 para que no desaparezcan por completo.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

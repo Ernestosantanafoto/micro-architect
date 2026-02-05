@@ -4,6 +4,7 @@ extends Node3D
 @onready var elevation = $CameraElevation
 @onready var camera = $CameraElevation/Camera3D
 @onready var grid_plane = $MeshInstance3D
+@onready var grid_macro = $GridMacro
 
 var _is_dragging = false
 
@@ -99,15 +100,19 @@ func fit_rect_in_view(center_x: float, center_z: float, size_x: float, size_z: f
 	position.z = center_z
 
 func _set_grid_zoom_fade(camera_size: float) -> void:
-	if not grid_plane: return
-	var mat = grid_plane.get_surface_override_material(0)
-	if not mat or not (mat is ShaderMaterial): return
-	# Desvanecer grid entre tamaño 70 y zoom máximo (cotas máximas = alejado)
-	var fade_start = 70.0
-	var fade_end = float(GameConstants.CAMARA_ZOOM_MAX)
-	var t = (camera_size - fade_start) / (fade_end - fade_start)
-	var zoom_fade = clampf(t, 0.0, 1.0)
-	mat.set_shader_parameter("zoom_fade", zoom_fade)
+	# Grid dual: detail (1x1 azul) y macro (9x9 dorado). Transición en el mismo umbral que partículas.
+	var umbral = GameConstants.CAMARA_ZOOM_UMBRAL_GRID_MACRO
+	var fade_end = GameConstants.CAMARA_ZOOM_GRID_MACRO_END
+	var t = clampf((camera_size - umbral) / (fade_end - umbral), 0.0, 1.0)
+	var transition_t = t * t * (3.0 - 2.0 * t)
+	if grid_plane:
+		var mat = grid_plane.get_surface_override_material(0)
+		if mat is ShaderMaterial:
+			mat.set_shader_parameter("zoom_fade", transition_t)
+	if grid_macro:
+		var mat_macro = grid_macro.get_surface_override_material(0)
+		if mat_macro is ShaderMaterial:
+			mat_macro.set_shader_parameter("zoom_fade", 1.0 - transition_t)
 
 ## Por encima del umbral (≈33% zoom out) las partículas se ocultan; al acercar reaparecen (memoria: no se destruyen).
 func _actualizar_visibilidad_particulas_por_zoom() -> void:
