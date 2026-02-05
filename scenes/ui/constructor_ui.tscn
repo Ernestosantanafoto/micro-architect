@@ -67,7 +67,8 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 
 [node name="ListaRecursos" type="VBoxContainer" parent="VentanaFlotante/MarginContainer/VBoxContainer/ScrollContainer"]

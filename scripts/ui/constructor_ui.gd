@@ -13,7 +13,11 @@ var constructor_activo: Node3D = null
 @onready var bar_almacen = %BarraAlmacen
 @onready var lbl_almacen = %LabelAlmacen
 @onready var lista_recursos = %ListaRecursos
+@onready var scroll_lista = %ScrollContainer
 @onready var btn_reclamar = %BotonReclamar
+
+const ALTURA_POR_FILA := 28
+const ALTURA_MAX_LISTA := 200
 
 func _ready():
 	visible = false
@@ -191,6 +195,11 @@ func actualizar_vista():
 			fila.add_child(lbl)
 			fila.add_child(btn)
 			lista_recursos.add_child(fila)
+
+		# Altura del área de lista según número de ítems (panel crece con los datos)
+		if scroll_lista:
+			var n = lista_recursos.get_child_count()
+			scroll_lista.custom_minimum_size.y = mini(n * ALTURA_POR_FILA, ALTURA_MAX_LISTA)
 
 	# 4. Reclamar
 	if btn_reclamar:
