@@ -664,6 +664,57 @@ func _mostrar_popup_error_carga_ingame(mensaje: String) -> void:
 	btn.pressed.connect(_cerrar_popups_overlay)
 	vbox.add_child(btn)
 
+## Llamado desde system_hud cuando el jugador pulsa DEBUG por primera vez en esta partida.
+## on_confirmar: activar DEBUG y marcar aviso visto; on_cancelar: no hacer nada.
+func mostrar_popup_aviso_debug(on_confirmar: Callable, on_cancelar: Callable) -> void:
+	_cerrar_popups_overlay()
+	var layer = CanvasLayer.new()
+	layer.layer = 100
+	layer.add_to_group(GameConstants.POPUP_OVERLAY_GROUP)
+	add_child(layer)
+	var backdrop = ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.01)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(_on_popup_backdrop_input)
+	layer.add_child(backdrop)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = GameConstants.POPUP_OFFSET_LEFT
+	panel.offset_top = GameConstants.POPUP_OFFSET_TOP
+	panel.offset_right = GameConstants.POPUP_OFFSET_RIGHT
+	panel.offset_bottom = GameConstants.POPUP_OFFSET_BOTTOM
+	panel.add_theme_stylebox_override("panel", _panel_estilo_guardar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	panel.add_child(vbox)
+	var lbl = Label.new()
+	lbl.text = "El modo DEBUG es una herramienta actual para el desarrollo del juego.\nAl activarlo se desactivará toda la progresión de desbloqueos de esta partida.\n¿Seguro que quieres continuar?"
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lbl.custom_minimum_size.x = 320
+	vbox.add_child(lbl)
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 12)
+	var center = CenterContainer.new()
+	center.add_child(hbox)
+	vbox.add_child(center)
+	var btn_confirmar = Button.new()
+	btn_confirmar.text = "Confirmar"
+	btn_confirmar.pressed.connect(func():
+		on_confirmar.call()
+		_cerrar_popups_overlay()
+	)
+	hbox.add_child(btn_confirmar)
+	var btn_cancelar = Button.new()
+	btn_cancelar.text = "Cancelar"
+	btn_cancelar.pressed.connect(func():
+		on_cancelar.call()
+		_cerrar_popups_overlay()
+	)
+	hbox.add_child(btn_cancelar)
+
 func _on_btn_menu_pressed() -> void:
 	if GameConstants.DEBUG_MODE:
 		print("[MAIN] Volviendo al menú...")

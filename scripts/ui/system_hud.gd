@@ -259,6 +259,15 @@ func _on_btn_mute_pressed() -> void:
 			_actualizar_texto_mute(btn_musica)
 
 func _on_btn_debug_pressed() -> void:
+	# Primera vez que activan DEBUG en esta partida: mostrar aviso
+	if not GameConstants.DEBUG_MODE and SaveSystem and not SaveSystem.debug_warning_shown_for_current_save:
+		var main = get_parent()
+		if not main or not main.has_method("mostrar_popup_aviso_debug"):
+			main = get_tree().current_scene
+		if main and main.has_method("mostrar_popup_aviso_debug"):
+			main.mostrar_popup_aviso_debug(_activar_debug_tras_confirmar, func(): pass)
+			return
+	# Toggle normal (ya vieron el aviso o desactivando DEBUG)
 	GameConstants.DEBUG_MODE = not GameConstants.DEBUG_MODE
 	var vbox = get_node_or_null("MenuDropdownPanel/MenuDropdown")
 	if vbox:
@@ -272,6 +281,20 @@ func _on_btn_debug_pressed() -> void:
 		for n in get_tree().get_nodes_in_group("BeamEmitter"):
 			if n.has_method("limpiar_debug_visual"):
 				n.limpiar_debug_visual()
+	var inventory_hud = get_parent().get_node_or_null("InventoryHUD/MainContainer")
+	if inventory_hud and inventory_hud.has_method("refresh_debug_menu"):
+		inventory_hud.refresh_debug_menu()
+
+func _activar_debug_tras_confirmar() -> void:
+	if SaveSystem:
+		SaveSystem.debug_warning_shown_for_current_save = true
+	GameConstants.DEBUG_MODE = true
+	var vbox = get_node_or_null("MenuDropdownPanel/MenuDropdown")
+	if vbox:
+		_actualizar_texto_debug(vbox.get_node_or_null("BtnDebug") as Button)
+	if TechTree:
+		TechTree.unlock_all_for_debug()
+	GlobalInventory.add_item("GodSiphon", 3)
 	var inventory_hud = get_parent().get_node_or_null("InventoryHUD/MainContainer")
 	if inventory_hud and inventory_hud.has_method("refresh_debug_menu"):
 		inventory_hud.refresh_debug_menu()

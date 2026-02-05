@@ -97,6 +97,13 @@ Todos los cambios notables del proyecto se documentan aquí.
   Cerrado: 2025-02-03  
   - GlobalInventory: preparar_nueva_partida() — posición del Constructor inicial (1.5,0,1.5) → (0.5,0,0.5); esquina en celda (-1,-1), centro en (0,0).
 
+- **[#34](https://github.com/Ernestosantanafoto/micro-architect/issues/34) – Feature: Warning popup on first DEBUG mode activation**  
+  Cerrado: 2025-02-03  
+  - SaveSystem: `debug_warning_shown_for_current_save`; se carga/guarda en el JSON del save (por partida).
+  - main_menu: reset del flag en nueva partida.
+  - main_game_3d: `mostrar_popup_aviso_debug(on_confirmar, on_cancelar)` — popup con texto del issue y botones Confirmar/Cancelar.
+  - system_hud: al pulsar DEBUG, si es la primera vez en esta partida se muestra el popup; Confirmar activa DEBUG y marca flag; uso de get_parent() para localizar la escena de juego.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

@@ -7,6 +7,7 @@ const SECTION_AUDIO := GameConstants.PREF_SECTION_AUDIO
 const KEY_VOLUME := GameConstants.PREF_KEY_VOLUME
 const KEY_MUSIC_VOLUME := GameConstants.PREF_KEY_MUSIC_VOLUME
 const KEY_SFX_VOLUME := GameConstants.PREF_KEY_SFX
+const KEY_MUTE := GameConstants.PREF_KEY_MUTE
 const SECTION_DISPLAY := GameConstants.PREF_SECTION_DISPLAY
 const KEY_FULLSCREEN := GameConstants.PREF_KEY_FULLSCREEN
 
@@ -17,6 +18,7 @@ var _escena_precargada: Variant = null
 @onready var main_container: Control = $ColorRect/CenterContainer/MarginContainer/MainMenuContainer
 @onready var options_container: Control = $ColorRect/CenterContainer/OptionsMenuContainer
 @onready var volume_slider: HSlider = $ColorRect/CenterContainer/OptionsMenuContainer/VolumeSlider
+@onready var mute_check: CheckButton = $ColorRect/CenterContainer/OptionsMenuContainer/MuteCheck
 @onready var sfx_slider: HSlider = $ColorRect/CenterContainer/OptionsMenuContainer/SfxSlider
 @onready var fullscreen_check: CheckButton = $ColorRect/CenterContainer/OptionsMenuContainer/FullscreenCheck
 
@@ -89,15 +91,23 @@ func _cargar_y_aplicar_preferencias() -> void:
 	var vol = 1.0
 	var sfx_val = 1.0
 	var full = false
+	var mute = false
 	if load_ok:
 		vol = clampf(cfg.get_value(SECTION_AUDIO, KEY_MUSIC_VOLUME, 1.0), 0.0, 1.0)
 		sfx_val = clampf(cfg.get_value(SECTION_AUDIO, KEY_SFX_VOLUME, 1.0), 0.0, 1.0)
 		full = cfg.get_value(SECTION_DISPLAY, KEY_FULLSCREEN, false)
+		mute = cfg.get_value(SECTION_AUDIO, KEY_MUTE, false)
 	if volume_slider:
 		volume_slider.value = vol
 		_aplicar_volumen(vol)
 		if not volume_slider.value_changed.is_connected(_on_volume_changed):
 			volume_slider.value_changed.connect(_on_volume_changed)
+	if mute_check:
+		mute_check.button_pressed = mute
+		if MusicManager:
+			MusicManager.set_muted(mute)
+		if not mute_check.toggled.is_connected(_on_mute_toggled):
+			mute_check.toggled.connect(_on_mute_toggled)
 	if sfx_slider:
 		sfx_slider.value = sfx_val
 		_aplicar_sfx_volume(sfx_val)
@@ -130,6 +140,8 @@ func _guardar_preferencias() -> void:
 	cfg.load(SETTINGS_PATH)
 	if volume_slider:
 		cfg.set_value(SECTION_AUDIO, KEY_MUSIC_VOLUME, clampf(volume_slider.value, 0.0, 1.0))
+	if mute_check:
+		cfg.set_value(SECTION_AUDIO, KEY_MUTE, mute_check.button_pressed)
 	if sfx_slider:
 		cfg.set_value(SECTION_AUDIO, KEY_SFX_VOLUME, clampf(sfx_slider.value, 0.0, 1.0))
 	if fullscreen_check:
@@ -147,6 +159,12 @@ func _on_sfx_changed(value: float) -> void:
 func _on_fullscreen_toggled(button_pressed: bool) -> void:
 	_aplicar_fullscreen(button_pressed)
 	_guardar_preferencias()
+
+func _on_mute_toggled(button_pressed: bool) -> void:
+	if MusicManager:
+		MusicManager.set_muted(button_pressed)
+	_guardar_preferencias()
+
 # --- LÓGICA DE PARTIDAS ---
 
 func _on_btn_salir_pressed():
@@ -156,6 +174,8 @@ func _on_nueva_pressed():
 	GameConstants.DEBUG_MODE = false  # Nueva partida siempre con debug OFF
 	GlobalInventory.semilla_mundo = 0
 	GlobalInventory.preparar_nueva_partida()
+	if SaveSystem:
+		SaveSystem.debug_warning_shown_for_current_save = false
 	if TechTree:
 		TechTree.reset_to_initial()
 	_intentar_cambio_escena()
@@ -262,6 +282,10 @@ func _hacer_cargar_slot(slot: int, layer: CanvasLayer) -> void:
 		_intentar_cambio_escena()
 	else:
 		layer.queue_free()
+		var msg = SaveSystem.last_load_error if SaveSystem else ""
+		if (msg as String).is_empty():
+			msg = "No se pudo cargar la partida."
+		_mostrar_popup_error_carga(msg)
 
 func _panel_estilo_cargar() -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
@@ -280,6 +304,32 @@ func _panel_estilo_cargar() -> StyleBoxFlat:
 	s.content_margin_right = 24.0
 	s.content_margin_bottom = 24.0
 	return s
+
+func _mostrar_popup_error_carga(mensaje: String) -> void:
+	var layer = CanvasLayer.new()
+	layer.layer = 110
+	add_child(layer)
+	var panel = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = -220
+	panel.offset_top = -80
+	panel.offset_right = 220
+	panel.offset_bottom = 80
+	panel.add_theme_stylebox_override("panel", _panel_estilo_cargar())
+	layer.add_child(panel)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	panel.add_child(vbox)
+	var lbl = Label.new()
+	lbl.text = mensaje
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lbl.custom_minimum_size.x = 360
+	vbox.add_child(lbl)
+	var btn = Button.new()
+	btn.text = "Cerrar"
+	btn.pressed.connect(func(): layer.queue_free())
+	vbox.add_child(btn)
 
 func _mostrar_aviso_ventana_embebida() -> void:
 	var layer = CanvasLayer.new()

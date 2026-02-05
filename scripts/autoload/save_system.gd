@@ -225,6 +225,7 @@ func _guardar_a_ruta(path: String, slot_index: int, custom_name: String) -> void
 		"mapa": lista_mapa,
 		"estados_vivos": GlobalInventory.estados_edificios,
 		"tech": tech_data,
+		"debug_warning_shown": debug_warning_shown_for_current_save,
 		"cam": {
 			"x": c_pos.x, 
 			"y": c_pos.y, 
@@ -280,31 +281,42 @@ func _buscar_edificios_recursivo(nodo: Node, lista: Array):
 	for hijo in nodo.get_children():
 		_buscar_edificios_recursivo(hijo, lista)
 
+## Mensaje legible cuando la última carga falló (archivo inexistente, corrupto, etc.).
+var last_load_error: String = ""
+
+## Si el jugador ya vio y confirmó el aviso de DEBUG en esta partida (por save). Se carga al cargar partida; se guarda al guardar.
+var debug_warning_shown_for_current_save: bool = false
+
 ## Carga la partida del slot indicado (1, 2 o 3).
 func cargar_partida(slot_index: int = 1) -> bool:
+	last_load_error = ""
 	slot_index = clamp(slot_index, 1, NUM_SLOTS)
 	var path = get_save_path(slot_index)
 	return _cargar_desde_ruta(path)
-	
+
 func _cargar_desde_ruta(path: String) -> bool:
 	if GameConstants.DEBUG_MODE:
 		print("[SAVE] Intentando cargar partida desde ", path)
-	
+
+	last_load_error = ""
 	if not FileAccess.file_exists(path):
+		last_load_error = "No existe partida guardada en este slot."
 		if GameConstants.DEBUG_MODE:
 			print("[SAVE] No existe archivo de guardado.")
 		return false
-	
+
 	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:
+		last_load_error = "No se pudo abrir el archivo de guardado."
 		push_error("[SAVE] No se pudo abrir el archivo: " + path)
 		return false
-	
+
 	var texto = file.get_as_text()
 	file.close()
-	
+
 	var data = JSON.parse_string(texto)
 	if not data:
+		last_load_error = "Partida corrupta o formato no válido."
 		push_error("[SAVE] JSON inválido en: " + path)
 		return false
 	
@@ -336,7 +348,9 @@ func _cargar_desde_ruta(path: String) -> bool:
 			"pos": Vector3(c.get("x", 0), c.get("y", 0), c.get("z", 0)),
 			"size": c.get("s", 100.0)
 		}
-	
+
+	debug_warning_shown_for_current_save = data.get("debug_warning_shown", false)
+
 	if GameConstants.DEBUG_MODE:
 		print("[SAVE] Partida cargada correctamente.")
 	return true
