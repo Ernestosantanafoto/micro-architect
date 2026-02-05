@@ -199,11 +199,11 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = -80.0
-offset_right = 180.0
+offset_right = 388.0
 offset_bottom = -20.0
 grow_vertical = 0
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_dropdown")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelSistema"]
 layout_mode = 2
@@ -220,9 +220,9 @@ text = "CENTRAR"
 [node name="MenuDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
 visible = false
 offset_left = 20.0
-offset_right = 180.0
+offset_right = 200.0
 offset_bottom = 380.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_dropdown")
 
 [node name="MenuDropdown" type="VBoxContainer" parent="CanvasLayer/MenuDropdownPanel"]
 layout_mode = 2

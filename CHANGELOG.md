@@ -12,6 +12,11 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 *(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
 
+- **[#36](https://github.com/Ernestosantanafoto/micro-architect/issues/36) – UI: Menu button width should match upper buttons**  
+  Cerrado: 2025-02-03  
+  - Panel lateral (PanelSistema y MenuDropdownPanel) con fondo y margen invisibles (StyleBoxEmpty).
+  - Todos los botones del panel lateral (MENÚ, CENTRAR, dropdown) unificados a 180×60 px.
+
 - **[#35](https://github.com/Ernestosantanafoto/micro-architect/issues/35) – UI: Ancho botón INFRAESTRUCTURA y menú RECURSOS**  
   Cerrado: 2025-02-03  
   - Ancho unificado a 228px (ANCHO_BOTON_RECURSOS) para botón INFRAESTRUCTURA e ítems del dropdown.

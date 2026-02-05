@@ -120,14 +120,15 @@ func _estilizar_botones_paneles():
 		ctrl.size_flags_horizontal = Control.SIZE_FILL
 	for btn in botones:
 		if btn and btn is BaseButton:
-			# MENÚ y CENTRAR: mismo ancho (100px) en la barra izquierda
+			# Panel lateral: MENÚ, CENTRAR y todos los del dropdown → 180×60 px
 			if btn == btn_menu or btn == btn_centrar:
-				(btn as Control).custom_minimum_size = Vector2(100, 56)
+				(btn as Control).custom_minimum_size = Vector2(180, 60)
 			elif btn == btn_recursos:
 				# INFRAESTRUCTURA: mismo ancho y altura que los ítems del dropdown
 				(btn as Control).custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
 			else:
-				(btn as Control).custom_minimum_size = Vector2(90, 56)
+				# Botones del dropdown del menú lateral: 180×60 px
+				(btn as Control).custom_minimum_size = Vector2(180, 60)
 			(btn as BaseButton).add_theme_stylebox_override("normal", estilo_normal.duplicate())
 			(btn as BaseButton).add_theme_stylebox_override("hover", estilo_hover.duplicate())
 			(btn as BaseButton).add_theme_stylebox_override("pressed", estilo_pressed.duplicate())
