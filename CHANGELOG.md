@@ -56,6 +56,12 @@ Todos los cambios notables del proyecto se documentan aquí.
   - system_hud: ocultar/restaurar GridMacro en _oscurecer_y_ocultar_grilla_y_tiles y _restaurar_visibilidad_grilla_y_tiles.
   - main_game_3d.gdshader: pulso de rejillas entre 0.4 y 0.85 para que no desaparezcan por completo.
 
+- **[#26](https://github.com/Ernestosantanafoto/micro-architect/issues/26) – Feature: First-time welcome popup with tutorial introduction**  
+  Cerrado: 2025-02-03  
+  - SaveSystem: get_value/set_value y user://game_prefs.cfg para preferencias globales (tutorial_completed).
+  - main_game_3d: _mostrar_tutorial_si_nueva_partida() — muestra tutorial solo en nueva partida (sin edificios a reconstruir).
+  - tutorial_manager: intro con botón "No, ya sé jugar" (persiste tutorial_completed y cierra); "Saltar tutorial" en pasos siguientes.
+
 ### Corregido
 
 - **Issue #1 – Beams ignore building interactions except at maximum range**

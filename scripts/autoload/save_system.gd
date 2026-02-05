@@ -2,6 +2,8 @@ extends Node
 
 const NUM_SLOTS := 3
 const SAVE_PATH_PATTERN := "user://save_slot_%d.json"
+const PREFS_PATH := "user://game_prefs.cfg"
+const PREFS_SECTION := "prefs"
 
 # #region agent log
 const _DEBUG_LOG := "res://.cursor/debug.log"
@@ -22,6 +24,21 @@ func _debug_log(hypothesis_id: String, location: String, message: String, data: 
 
 func get_save_path(slot_index: int) -> String:
 	return SAVE_PATH_PATTERN % clamp(slot_index, 1, NUM_SLOTS)
+
+## Preferencias globales (tutorial_completed, etc.). Persisten en user://game_prefs.cfg.
+func get_value(key: String, default: Variant = false) -> Variant:
+	var cfg = ConfigFile.new()
+	if cfg.load(PREFS_PATH) != OK:
+		return default
+	if not cfg.has_section_key(PREFS_SECTION, key):
+		return default
+	return cfg.get_value(PREFS_SECTION, key, default)
+
+func set_value(key: String, value: Variant) -> void:
+	var cfg = ConfigFile.new()
+	cfg.load(PREFS_PATH)
+	cfg.set_value(PREFS_SECTION, key, value)
+	cfg.save(PREFS_PATH)
 
 ## Devuelve info de cada slot: { "slot": 1, "name": "Mi partida", "timestamp": 123 } o name vacío si no hay guardado.
 func get_slots_info() -> Array:

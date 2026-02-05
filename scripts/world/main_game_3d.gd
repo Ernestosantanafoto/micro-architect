@@ -20,6 +20,15 @@ func _ready():
 	_crear_popup_desbloqueo()
 	if TechTree and TechTree.has_signal("tech_unlocked"):
 		TechTree.tech_unlocked.connect(_on_tech_unlocked)
+	call_deferred("_mostrar_tutorial_si_nueva_partida")
+
+func _mostrar_tutorial_si_nueva_partida() -> void:
+	if GlobalInventory.edificios_para_reconstruir.size() > 0:
+		return
+	if not SaveSystem or SaveSystem.get_value("tutorial_completed", false):
+		return
+	var tut = load("res://scenes/ui/tutorial_system.tscn").instantiate()
+	add_child(tut)
 
 func _conectar_botones():
 	# Conectar botón GUARDAR del menú desplegable (MENU → GUARDAR). El de la barra inferior es BtnSoltar (SOLTAR).

@@ -83,6 +83,8 @@ func _show_intro():
 	
 	btn_next.text = "Sí, enséñame"
 	btn_next.visible = true
+	btn_skip.text = "No, ya sé jugar"
+	btn_skip.visible = true
 	checkbox_no_show.visible = false
 
 func _show_place_siphon():
@@ -93,6 +95,8 @@ Deben colocarse en losetas AZULES (energía).
 Selecciona el Siphon y colócalo en una loseta azul.[/center]"
 	
 	btn_next.visible = false
+	btn_skip.text = "Saltar tutorial"
+	btn_skip.visible = true
 	# TODO: Añadir highlight al icono de Siphon en HUD
 
 func _show_understand_beams():
