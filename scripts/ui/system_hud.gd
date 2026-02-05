@@ -77,7 +77,7 @@ func _input(event: InputEvent) -> void:
 	if not panel or not panel.visible:
 		return
 	if event is InputEventMouseButton and event.pressed:
-		var btn = get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos")
+		var btn = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos")
 		if panel and btn and panel is Control and btn is Control:
 			var pos = (panel as Control).get_global_mouse_position()
 			if not (panel as Control).get_global_rect().has_point(pos) and not (btn as Control).get_global_rect().has_point(pos):
@@ -101,7 +101,7 @@ func _estilizar_botones_paneles():
 	var botones: Array[Node] = []
 	botones.append(get_node_or_null("PanelSistema/HBoxContainer/BtnMenu"))
 	botones.append(get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar"))
-	botones.append(get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos"))
+	botones.append(get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos"))
 	var menu_drop = get_node_or_null("MenuDropdownPanel/MenuDropdown")
 	if menu_drop:
 		for c in menu_drop.get_children():
@@ -109,11 +109,23 @@ func _estilizar_botones_paneles():
 				botones.append(c)
 	var btn_menu = get_node_or_null("PanelSistema/HBoxContainer/BtnMenu")
 	var btn_centrar = get_node_or_null("PanelSistema/HBoxContainer/BtnCentrar")
+	var btn_recursos = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos")
+	var panel_inf = get_node_or_null("PanelInfraestructura") as Control
+	if panel_inf:
+		# Fijar ancho del panel (162 = 160 contenido + 1px borde cada lado) para igualar al dropdown
+		panel_inf.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS + 2, ALTURA_BOTON_HUD)
+	if btn_recursos as Control:
+		var ctrl := (btn_recursos as Control)
+		ctrl.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
+		ctrl.size_flags_horizontal = Control.SIZE_FILL
 	for btn in botones:
 		if btn and btn is BaseButton:
 			# MENÚ y CENTRAR: mismo ancho (100px) en la barra izquierda
 			if btn == btn_menu or btn == btn_centrar:
 				(btn as Control).custom_minimum_size = Vector2(100, 56)
+			elif btn == btn_recursos:
+				# INFRAESTRUCTURA: mismo ancho y altura que los ítems del dropdown
+				(btn as Control).custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
 			else:
 				(btn as Control).custom_minimum_size = Vector2(90, 56)
 			(btn as BaseButton).add_theme_stylebox_override("normal", estilo_normal.duplicate())
@@ -123,6 +135,21 @@ func _estilizar_botones_paneles():
 				(btn as BaseButton).add_theme_stylebox_override("hover_pressed", estilo_hover.duplicate())
 			var font_sz = 14
 			(btn as BaseButton).add_theme_font_size_override("font_size", font_sz)
+	# Reaplicar ancho tras el primer layout por si en _ready los tamaños aún son 0
+	call_deferred("_aplicar_ancho_infra")
+
+func _aplicar_ancho_infra() -> void:
+	var panel_inf = get_node_or_null("PanelInfraestructura") as Control
+	var btn_rec = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos") as Control
+	if panel_inf:
+		panel_inf.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS + 2, ALTURA_BOTON_HUD)
+		# Forzar ancho del panel (230px = 228 + bordes) para que el contenido sea 228px
+		panel_inf.offset_left = -250
+		panel_inf.offset_right = -20
+	if btn_rec:
+		btn_rec.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
+		btn_rec.size_flags_horizontal = Control.SIZE_FILL
+		btn_rec.size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
 
 func _crear_estilo_boton(bg: Color) -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
@@ -188,7 +215,7 @@ func _on_btn_actualizar_visual_pressed() -> void:
 			node.refresh_material_from_resource()
 
 func _conectar_recursos_dropdown():
-	var btn_recursos = get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos")
+	var btn_recursos = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos")
 	if btn_recursos and btn_recursos is BaseButton:
 		(btn_recursos as BaseButton).pressed.connect(_on_btn_recursos_toggle)
 
@@ -310,15 +337,25 @@ func _on_btn_recursos_toggle():
 		_quitar_aislamiento_visual()
 		return
 	_rellenar_recursos_dropdown()
+	_aplicar_ancho_infra()
 	panel.visible = true
 	_recursos_panel_abierto = true
 	# Oscurecer todo y ocultar red + tiles al abrir el menú RECURSOS (mismo efecto que menú categorías)
 	_aplicar_dim_completo_sin_highlight()
-	var btn = get_node_or_null("PanelMusica/HBoxContainer/BtnRecursos")
+	var btn = get_node_or_null("PanelInfraestructura/MarginContainer/HBoxContainer/BtnRecursos")
 	if btn:
 		await get_tree().process_frame
-		panel.global_position.x = (btn as Control).global_position.x - panel.size.x + (btn as Control).size.x
-		panel.global_position.y = (btn as Control).global_position.y - panel.size.y - 8
+		# Altura del dropdown = número de botones * 60 + separación entre ellos (2px)
+		var n = drop.get_child_count()
+		const SEP := 2
+		var h = n * ALTURA_BOTON_HUD + max(0, n - 1) * SEP if n > 0 else 0
+		(panel as Control).size = Vector2(ANCHO_BOTON_RECURSOS, h)
+		# Justo encima del botón INFRAESTRUCTURA, 10px de separación
+		panel.global_position.x = (btn as Control).global_position.x - (panel as Control).size.x + (btn as Control).size.x
+		panel.global_position.y = (btn as Control).global_position.y - (panel as Control).size.y - 10
+
+const ALTURA_BOTON_HUD := 60   # Misma altura que panel INFRAESTRUCTURA y botones del HUD
+const ANCHO_BOTON_RECURSOS := 228  # Ancho de cada ítem del dropdown e INFRAESTRUCTURA
 
 func _rellenar_recursos_dropdown():
 	var drop = get_node_or_null("RecursosDropdownPanel/RecursosDropdown")
@@ -327,7 +364,9 @@ func _rellenar_recursos_dropdown():
 	for c in drop.get_children():
 		c.queue_free()
 	var estilo = _crear_estilo_boton(Color(0.1, 0.12, 0.16, 0.95))
-	for recipe_name in RECURSOS_ORDEN:
+	# Orden invertido: primero desbloqueado (ej. Sifón) abajo, último arriba; añadimos en orden inverso
+	for i in range(RECURSOS_ORDEN.size() - 1, -1, -1):
+		var recipe_name = RECURSOS_ORDEN[i]
 		if not GameConstants.RECETAS.has(recipe_name):
 			continue
 		if not TechTree or not TechTree.is_unlocked(recipe_name):
@@ -336,7 +375,8 @@ func _rellenar_recursos_dropdown():
 		var label = RECURSOS_LABELS.get(recipe_name, recipe_name)
 		var btn = Button.new()
 		btn.text = "%s: %d" % [label, count]
-		btn.custom_minimum_size = Vector2(160, 36)
+		btn.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
+		btn.size_flags_horizontal = Control.SIZE_FILL
 		btn.add_theme_stylebox_override("normal", estilo.duplicate())
 		btn.pressed.connect(_on_recursos_item_pressed.bind(recipe_name))
 		drop.add_child(btn)

@@ -12,6 +12,12 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 *(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
 
+- **[#35](https://github.com/Ernestosantanafoto/micro-architect/issues/35) – UI: Ancho botón INFRAESTRUCTURA y menú RECURSOS**  
+  Cerrado: 2025-02-03  
+  - Ancho unificado a 228px (ANCHO_BOTON_RECURSOS) para botón INFRAESTRUCTURA e ítems del dropdown.
+  - MarginContainer entre PanelInfraestructura y HBoxContainer (márgenes 1px) para fijar ancho de contenido.
+  - Separación de 10px entre menú RECURSOS y botón INFRAESTRUCTURA; altura del panel dropdown ajustada al contenido.
+
 - **[#20](https://github.com/Ernestosantanafoto/micro-architect/issues/20) – UI: Add "Quark" suffix to UP and DOWN terms**  
   Cerrado: 2025-02-03  
   - GameConstants: nombres "Up-Quark"/"Down-Quark", `get_nombre_visible_recurso` y `get_nombre_visible_recurso_cantidad` (singular/plural).

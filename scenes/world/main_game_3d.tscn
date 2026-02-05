@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cwhvblny03sya"]
+[gd_scene load_steps=27 format=3 uid="uid://cwhvblny03sya"]
 
 [ext_resource type="Script" uid="uid://d2prf3sknrv5w" path="res://scripts/world/camera_pivot.gd" id="1_1dsme"]
 [ext_resource type="Script" uid="uid://dby4rujw2o5ug" path="res://scripts/world/main_game_3d.gd" id="1_bxm63"]
@@ -15,13 +15,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/recipe_book.tscn" id="13_recipe"]
 [ext_resource type="Script" uid="uid://bclk3pc1m7h0g" path="res://scripts/managers/selection_manager.gd" id="14_selm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/merger_ui.tscn" id="15_merger"]
-[ext_resource type="Shader" path="res://vignette.gdshader" id="16_vignette"]
-[ext_resource type="Script" path="res://scripts/ui/vignette_layer.gd" id="17_vignette_script"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
-shader = ExtResource("16_vignette")
-shader_parameter/radius_inner = 0.35
-shader_parameter/radius_outer = 0.85
+[ext_resource type="Shader" uid="uid://b2wyl7iiebloe" path="res://vignette.gdshader" id="16_vignette"]
+[ext_resource type="Script" uid="uid://bsukwvg47p4y2" path="res://scripts/ui/vignette_layer.gd" id="17_vignette_script"]
 
 [sub_resource type="Environment" id="Environment_t5qdf"]
 background_mode = 1
@@ -54,6 +49,11 @@ shader_parameter/line_thickness = 0.04
 shader_parameter/zoom_fade = 1.0
 shader_parameter/line_softness = 0.82
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("16_vignette")
+shader_parameter/radius_inner = 0.35
+shader_parameter/radius_outer = 0.85
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recursos"]
 content_margin_left = 16.0
 content_margin_top = 12.0
@@ -73,6 +73,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.2, 0.35, 0.5, 0.6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dropdown"]
 
 [node name="MainGame3D" type="Node3D"]
 script = ExtResource("1_bxm63")
@@ -131,14 +133,13 @@ layer = -1
 script = ExtResource("17_vignette_script")
 
 [node name="VignetteRect" type="ColorRect" parent="VignetteLayer"]
-layout_mode = 1
+material = SubResource("ShaderMaterial_vignette")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-material = SubResource("ShaderMaterial_vignette")
 color = Color(0, 0, 0, 0)
 
 [node name="HUD" type="Control" parent="."]
@@ -269,13 +270,14 @@ text = "PAUSA"
 layout_mode = 2
 text = "GUARDAR"
 
-[node name="PanelMusica" type="PanelContainer" parent="CanvasLayer"]
+[node name="PanelInfraestructura" type="PanelContainer" parent="CanvasLayer"]
+custom_minimum_size = Vector2(230, 60)
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -140.0
+offset_left = -250.0
 offset_top = -80.0
 offset_right = -20.0
 offset_bottom = -20.0
@@ -284,20 +286,28 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelMusica"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/PanelInfraestructura"]
+layout_mode = 2
+theme_override_constants/margin_left = 1
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 1
+theme_override_constants/margin_bottom = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelInfraestructura/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BtnRecursos" type="Button" parent="CanvasLayer/PanelMusica/HBoxContainer"]
+[node name="BtnRecursos" type="Button" parent="CanvasLayer/PanelInfraestructura/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(228, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "INFRAESTRUCTURA"
 
 [node name="RecursosDropdownPanel" type="PanelContainer" parent="CanvasLayer"]
 visible = false
-offset_right = 200.0
+offset_right = 228.0
 offset_bottom = 260.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_dropdown")
 
 [node name="RecursosDropdown" type="VBoxContainer" parent="CanvasLayer/RecursosDropdownPanel"]
 layout_mode = 2
