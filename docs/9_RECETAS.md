@@ -27,10 +27,10 @@ Fuente de verdad en código: `GameConstants.RECETAS` y `TechTree` (tech_tree.gd)
 
 | Edificio | Coste de fabricación | Tiempo | Desbloqueo |
 |----------|----------------------|--------|------------|
-| **Sifón T2** | 3 Cond.-Estabilidad, 3 Cond.-Carga | 5 s | Tech: Sifón · **12 Sifones T1** colocados |
-| **Prisma Recto T2** | 40 Estabilidad, 40 Carga | 4 s | Tech: Prisma Recto · **48 Prismas T1** colocados |
-| **Prisma Angular T2** | 40 Estabilidad, 40 Carga | 4 s | Tech: Prisma Angular · **48 Prismas T1** colocados |
-| **Compresor T2** | 15 Cond.-Estabilidad, 15 Cond.-Carga | 12 s | Tech: Compresor · **9 Compresores T1** colocados |
+| **Sifón T2** | 3 Cond.-Estabilidad, 3 Cond.-Carga | 5 s | **12 Sifones T1** colocados |
+| **Prisma Recto T2** | 40 Estabilidad, 40 Carga | 4 s | **48 Prismas T1** colocados |
+| **Prisma Angular T2** | 40 Estabilidad, 40 Carga | 4 s | **48 Prismas T1** colocados |
+| **Compresor T2** | 15 Cond.-Estabilidad, 15 Cond.-Carga | 12 s | **9 Compresores T1** colocados |
 
 ---
 
@@ -38,9 +38,9 @@ Fuente de verdad en código: `GameConstants.RECETAS` y `TechTree` (tech_tree.gd)
 
 | Edificio | Coste de fabricación | Tiempo | Desbloqueo |
 |----------|----------------------|--------|------------|
-| **Fusionador** | 80 Cond.-Estabilidad, 80 Cond.-Carga | 10 s | Tech: Compresor · **5 Cond.-Estabilidad** en inventario |
-| **Constructor** | 40 Up-Quark, 40 Down-Quark | 30 s | Tech: Fusionador · **1 Up-Quark** en inventario |
-| **Fabricador Hadrón** | 30 Up-Quark, 30 Down-Quark | 15 s | Tech: Fusionador · **10 Constructores** colocados |
+| **Fusionador** | 80 Cond.-Estabilidad, 80 Cond.-Carga | 10 s | **5 Cond.-Estabilidad** en inventario |
+| **Constructor** | 40 Up-Quark, 40 Down-Quark | 30 s | **1 Up-Quark** en inventario |
+| **Fabricador Hadrón** | 30 Up-Quark, 30 Down-Quark | 15 s | **10 Constructores** colocados |
 
 ---
 

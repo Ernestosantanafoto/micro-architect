@@ -18,17 +18,16 @@ var tech_tree = {
 	# Nivel 2 - Manipulación básica
 	"Compresor": {"requires": ["Sifón"], "unlocks": ["Compresor T2", "Fusionador"]},
 	
-	# Nivel 3 - Avanzado (T2 por cantidad de T1 colocados)
-	"Sifón T2": {"requires": ["Sifón"], "unlocks": []},
-	"Compresor T2": {"requires": ["Compresor"], "unlocks": []},
-	"Prisma Recto T2": {"requires": ["Prisma Recto"], "unlocks": []},
-	"Prisma Angular T2": {"requires": ["Prisma Angular"], "unlocks": []},
+	# Nivel 3 - Avanzado (solo condición: N edificios colocados; sin requisito tech redundante)
+	"Sifón T2": {"requires": [], "unlocks": []},
+	"Compresor T2": {"requires": [], "unlocks": []},
+	"Prisma Recto T2": {"requires": [], "unlocks": []},
+	"Prisma Angular T2": {"requires": [], "unlocks": []},
 	
-	# Nivel 4 - Producción avanzada
-	# Fabricador Hadrón NO va en unlocks de Fusionador: se desbloquea solo por condición (10 Constructores)
-	"Fusionador": {"requires": ["Compresor"], "unlocks": ["Constructor"]},
-	"Constructor": {"requires": ["Fusionador"], "unlocks": []},
-	"Fabricador Hadrón": {"requires": ["Fusionador"], "unlocks": []},
+	# Nivel 4 - Producción (solo condición: recurso en inventario o N colocados)
+	"Fusionador": {"requires": [], "unlocks": ["Constructor"]},
+	"Constructor": {"requires": [], "unlocks": []},
+	"Fabricador Hadrón": {"requires": [], "unlocks": []},
 	
 	# Especiales: Void Generator requiere 3 Constructores colocados (independiente de Hadrón)
 	"Void Generator": {"requires": [], "unlocks": []},
@@ -52,8 +51,8 @@ var unlock_conditions = {
 var goal_hints = {
 	"Compresor": "",
 	"Fusionador": "Producir 5 Estabilidad condensada: coloca Compresores conectados a Sifones; cada 10 pulsos un Compresor añade 1 al inventario.",
-	"Constructor": "Producir 1 Up-Quark: desbloquea primero Fusionador, luego Fabricador Hadrón; el Hadrón produce Up-Quark.",
-	"Fabricador Hadrón": "Requiere Fusionador (tech). Además: coloca 10 Constructores en el mundo.",
+	"Constructor": "Producir 1 Up-Quark en inventario (Fusionadores producen Up-Quark).",
+	"Fabricador Hadrón": "Coloca 10 Constructores en el mundo.",
 	"Sifón T2": "Coloca 12 Sifones T1 en el mundo.",
 	"Prisma Recto T2": "Coloca 48 Prismas Rectos T1 en el mundo.",
 	"Prisma Angular T2": "Coloca 48 Prismas Angulares T1 en el mundo.",

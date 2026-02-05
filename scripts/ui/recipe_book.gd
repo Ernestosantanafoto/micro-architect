@@ -171,12 +171,13 @@ func _create_tech_entry(tech_info: Dictionary):
 				var ok = requires_ok.get(req, false)
 				parts.append("%s %s" % ["✓" if ok else "✗", req])
 			txt = "Requisitos: " + ", ".join(parts)
-		else:
+		elif not tech_info.has("unlock_condition"):
 			txt = "Disponible desde el inicio"
 		
 		# Objetivo: recurso (inventario) o cantidad de edificios colocados
 		if tech_info.has("unlock_condition"):
 			var cond = tech_info["unlock_condition"]
+			var prefix = "\n" if txt.length() > 0 else ""
 			if cond.get("type") == "resource":
 				var current = GlobalInventory.get_amount(cond["resource"])
 				var needed = cond["amount"]
@@ -184,14 +185,14 @@ func _create_tech_entry(tech_info: Dictionary):
 				var res_colored = _color_nombre_recurso(res_name)
 				var cifra_needed = GameConstants.format_cantidad_solo_cifra(res_name, needed)
 				var cifra_current = GameConstants.format_cantidad_solo_cifra(res_name, current)
-				txt += "\n[b]Objetivo:[/b] Producir %s %s. [b]Progreso: %s/%s[/b]" % [cifra_needed, res_colored, cifra_current, cifra_needed]
+				txt += prefix + "[b]Objetivo:[/b] Producir %s %s. [b]Progreso: %s/%s[/b]" % [cifra_needed, res_colored, cifra_current, cifra_needed]
 				if tech_info.get("goal_hint", "").length() > 0:
 					txt += "\n[i]%s[/i]" % tech_info["goal_hint"]
 			elif cond.get("type") == "building_count":
 				var building_name = cond.get("building", "")
 				var needed = int(cond.get("amount", 0))
 				var current = TechTree.get_placed_building_count(building_name) if TechTree else 0
-				txt += "\n[b]Objetivo:[/b] Tener %d %s colocados. [b]Progreso: %d/%d[/b]" % [needed, building_name, current, needed]
+				txt += prefix + "[b]Objetivo:[/b] Tener %d %s colocados. [b]Progreso: %d/%d[/b]" % [needed, building_name, current, needed]
 				if tech_info.get("goal_hint", "").length() > 0:
 					txt += "\n[i]%s[/i]" % tech_info["goal_hint"]
 		
