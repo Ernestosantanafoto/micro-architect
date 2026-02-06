@@ -12,6 +12,10 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 *(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
 
+- **[#40](https://github.com/Ernestosantanafoto/micro-architect/issues/40) – Description (Constructor inicial no duplicable con clic central)**  
+  Cerrado: 2025-02-03  
+  - construction_manager: en _procesar_clic_central(), si el edificio tiene meta starter_constructor, no clonar (return false).
+
 - **[#37](https://github.com/Ernestosantanafoto/micro-architect/issues/37) – Bug: Cannot select buildings from menu in normal game mode**  
   Cerrado: 2025-02-03  
   - Menú Infraestructura: muestra por cada tipo el número de edificios **colocados** en el mundo (no inventario).

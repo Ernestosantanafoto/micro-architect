@@ -340,6 +340,8 @@ func _procesar_clic_central() -> bool:
 	if res:
 		var collider = res.collider
 		var edificio = _obtener_raiz_edificio(collider)
+		if edificio.has_meta("starter_constructor") and edificio.get_meta("starter_constructor"):
+			return false
 		var path_str = edificio.get("scene_file_path")
 		var nombre = _identificar_item_por_ruta(path_str if path_str else "")
 		if nombre == "":
