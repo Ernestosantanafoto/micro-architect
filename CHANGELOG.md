@@ -12,6 +12,11 @@ Todos los cambios notables del proyecto se documentan aquí.
 
 *(Cada issue se añade aquí con fecha y hora al cerrarlo; ver flujo en [docs/issues.md](docs/issues.md).)*
 
+- **[#37](https://github.com/Ernestosantanafoto/micro-architect/issues/37) – Bug: Cannot select buildings from menu in normal game mode**  
+  Cerrado: 2025-02-03  
+  - Menú Infraestructura: muestra por cada tipo el número de edificios **colocados** en el mundo (no inventario).
+  - Selección en modo normal ya permitida: STARTER_PACK en nueva partida, techs iniciales incl. Compresor, inventario se comprueba al colocar.
+
 - **HUD y menús: cierre unificado y sin DIM en barra central**  
   Cerrado: 2025-02-03  
   - Regla única: todos los menús se cierran al clic fuera o al clic en el botón que los abrió; si se cierra por el mismo botón se consume el clic.

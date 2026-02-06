@@ -392,10 +392,10 @@ func _rellenar_recursos_dropdown():
 			continue
 		if not TechTree or not TechTree.is_unlocked(recipe_name):
 			continue
-		var count = TechTree.get_placed_building_count(recipe_name) if TechTree else 0
+		var colocados = TechTree.get_placed_building_count(recipe_name) if TechTree else 0
 		var label = RECURSOS_LABELS.get(recipe_name, recipe_name)
 		var btn = Button.new()
-		btn.text = "%s: %d" % [label, count]
+		btn.text = "%s: %d" % [label, colocados]
 		btn.custom_minimum_size = Vector2(ANCHO_BOTON_RECURSOS, ALTURA_BOTON_HUD)
 		btn.size_flags_horizontal = Control.SIZE_FILL
 		btn.add_theme_stylebox_override("normal", estilo.duplicate())
